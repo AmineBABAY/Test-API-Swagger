@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Transformation test">
+
+	<test name="Transforamtion for document builder without annotations">
+		<classes>
+			<class name="com.arender.tests.TransformationTest">
+				<methods>
+					<include name="uploadDocument" />
+					<include name="transformDocumentBuilderWithoutAnnotations" />
+					<include name="checkTranformationOrder" />
+					<include name="checkTranformedFile" />
+					
+				</methods>
+			</class>
+
+		</classes>
+	</test>
+
+	<test name="Transforamtion for document builder with annotations ">
+		<classes>
+			<class name="com.arender.tests.TransformationTest">
+				<methods>
+					<include name="uploadDocument" />
+					<include name="transformDocumentBuilderWithAnnotations" />
+					<include name="checkTranformationOrderWithAnno" />
+					<include name="checkTranformedFileWithAnno" />
+					
+				</methods>
+			</class>
+		</classes>
+	</test>
+	
+	<test name="Alter Document Content Transformation ">
+		<classes>
+			<class name="com.arender.tests.TransformationTest">
+				<methods>
+					<include name="uploadAlterDocument" />
+					<include name="alterDocumentContent" />
+					<include name="checkAlterDocTranformationOrder" />
+					<include name="checkAlterDOcTranformedFile" />
+					
+				</methods>
+			</class>
+		</classes>
+	</test>
+
+	
+
+	
+</suite>

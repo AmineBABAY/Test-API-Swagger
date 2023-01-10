@@ -1,0 +1,7 @@
+{
+  "fuzz": 0,
+  "highlightColor": "string",
+  "leftDocumentId": "string",
+  "lowlightColor": "string",
+  "rightDocumentId": "string"
+}

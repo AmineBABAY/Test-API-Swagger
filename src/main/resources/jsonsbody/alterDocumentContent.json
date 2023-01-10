@@ -1,0 +1,32 @@
+{
+  "annotations": {
+    "annotations": [
+      {
+        "type": "com.arondor.viewer.annotation.api.SquareElemType",
+        "documentId": {
+          "id": "String"
+        },
+        "page": 0,
+        "position": {
+          "x": 10.0,
+          "y": 10.0,
+          "w": 100.0,
+          "h": 100.0
+        },
+        "interiorColor": {
+          "r": 0,
+          "g": 255,
+          "b": 0
+        }
+      }
+    ]
+  },
+  "format": "pdf",
+  "transformationDetails": {
+    "transformationElements": [
+      {
+        "documentId": "String"
+      }
+    ]
+  }
+}
