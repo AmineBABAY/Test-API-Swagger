@@ -25,7 +25,7 @@ public class ConversionTest extends AssertActions{
 	@Test(priority =1)
 	public void  uploadDocument()
 	{
-		Response response= Documents.uploadDocument(file);
+		Response response= Documents.uploadDocument("testDocx");
 		System.out.println(response.asString());
 		verifyStatusCode(response, 200);
 		JsonPath jsonPath = JsonPath.from (response.asString ());
