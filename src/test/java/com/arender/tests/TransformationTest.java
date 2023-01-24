@@ -23,6 +23,8 @@ public class TransformationTest extends AssertActions {
 	public static String transformationWithAnnoResultDocumentID = "";
 	public static String transformationAlterDocumentId = "";
 	public static String transformationAlterDocumentID = "";
+	public static String transformationWithFDFAnnoId = "";
+	public static String transformationWithFDFAnnoResultDocumentID = "";
 
 	@Test
 	public void uploadDocument() {
@@ -257,6 +259,79 @@ public class TransformationTest extends AssertActions {
 	public void checkAlterDOcTranformedFile() throws InterruptedException {
 
 		Response response = Documents.getDocumentContent(transformationAlterDocumentID, "pdf");
+
+		verifyStatusCode(response, 200);
+		assertTrue(response.header("content-type").contains("application/pdf"));
+
+	}
+
+	@Test(priority = 12)
+	public void transformDocumentWithFDFAnnotations() throws InterruptedException {
+
+		String body;
+		// read the json file for transformation
+		JSONObject contentFile = Config.readJsonFile("transformationWithFDFAnnotation");
+		// get the transformationdetails object
+		JSONObject transformationdetails = contentFile.getJSONObject("transformationDetails");
+		// from the transformationdetails object, get the transformationElements array
+		JSONArray transformationElements = transformationdetails.getJSONArray("transformationElements");
+
+		// get the first JSON Object in the JSON transformationElements Array
+		JSONObject firstItemObject = (JSONObject) transformationElements.get(0);
+		// put the documentId stored in the first id object
+		firstItemObject.put("documentId", documentId);
+		// get the array annotations
+		JSONObject annotations = contentFile.getJSONObject("annotations");
+		assertTrue(!annotations.isEmpty(), "The transform document is without FDF annotations");
+		JSONArray anno_array = annotations.getJSONArray("annotations");
+		// put the id of the first document in the fieled documentId throughout the
+		// length of the annotaion array
+		for (int i = 0; i < anno_array.length(); i++) {
+			JSONObject id = (JSONObject) anno_array.getJSONObject(i).get("documentId");
+			id.put("id", documentId);
+		}
+		// fill the variable string body with the contentfile as string
+		body = contentFile.toString();
+
+		// make the request of transformation for the two pdf
+		Response response = Transformations.transformDocuments(body);
+		// verify status of request is ok
+		verifyStatusCode(response, 200);
+		JsonPath jsonPath = JsonPath.from(response.asString());
+		// get the returnd id of transformation
+		transformationWithFDFAnnoId = jsonPath.get("transformationOrderId.id");
+		System.out.println("transformation id with FDF annotations " + " : " + transformationWithAnnoId);
+
+	}
+
+	@Test(priority = 13)
+	public void checkTranformationOrderWithFDFAnno() throws InterruptedException {
+
+		// make a request on getTransformationOrdrer with the id received in
+		// transformDocument
+		Response response = Transformations.getTransformationOrdrer(transformationWithFDFAnnoId);
+		// verify status of request is ok
+		verifyStatusCode(response, 200);
+		JsonPath jsonPath = JsonPath.from(response.asString());
+		// get the status of the body response
+		String currentState = jsonPath.get("currentState");
+		// get the id of the body response
+		transformationWithFDFAnnoResultDocumentID = jsonPath.get("transformationResultDocumentID.id");
+		System.out.println("transformation order state with annotations " + " : " + currentState);
+		System.out.println(
+				"trasformation order id with FDF annotations " + " : " + transformationWithFDFAnnoResultDocumentID);
+		// Verify that the state is processed
+		assertTrue(currentState.equals("PROCESSED"), "The current state is not PROCESSED");
+		// verify that the id is genrated
+		assertTrue(transformationWithFDFAnnoResultDocumentID.length() != 0,
+				"the transformation result document ID is not generated");
+
+	}
+
+	@Test(priority = 14)
+	public void checkTranformedFileWithFDFAnno() throws InterruptedException {
+
+		Response response = Documents.getDocumentContent(transformationWithFDFAnnoResultDocumentID, "pdf");
 
 		verifyStatusCode(response, 200);
 		assertTrue(response.header("content-type").contains("application/pdf"));

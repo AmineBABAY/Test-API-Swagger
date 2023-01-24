@@ -10,7 +10,7 @@
 					<include name="transformDocumentBuilderWithoutAnnotations" />
 					<include name="checkTranformationOrder" />
 					<include name="checkTranformedFile" />
-					
+
 				</methods>
 			</class>
 
@@ -25,12 +25,12 @@
 					<include name="transformDocumentBuilderWithAnnotations" />
 					<include name="checkTranformationOrderWithAnno" />
 					<include name="checkTranformedFileWithAnno" />
-					
+
 				</methods>
 			</class>
 		</classes>
 	</test>
-	
+
 	<test name="Alter Document Content Transformation ">
 		<classes>
 			<class name="com.arender.tests.TransformationTest">
@@ -39,13 +39,25 @@
 					<include name="alterDocumentContent" />
 					<include name="checkAlterDocTranformationOrder" />
 					<include name="checkAlterDOcTranformedFile" />
-					
+
 				</methods>
 			</class>
 		</classes>
 	</test>
 
-	
+	<test name="Transforamtion for document with FDF annotations ">
+		<classes>
+			<class name="com.arender.tests.TransformationTest">
+				<methods>
+					<include name="uploadDocument" />
+					<include name="transformDocumentWithFDFAnnotations" />
+					<include name="checkTranformationOrderWithFDFAnno" />
+					<include name="checkTranformedFileWithFDFAnno" />
 
-	
+				</methods>
+			</class>
+		</classes>
+	</test>
+
+
 </suite>
