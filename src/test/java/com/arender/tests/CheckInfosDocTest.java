@@ -28,6 +28,8 @@ public class CheckInfosDocTest extends AssertActions {
 
 		Response response = Documents.getDocument(documentId);
 		verifyStatusCode(response, 200);
+	    Response response2 = Documents.checkDocument(documentId);
+	    verifyStatusCode(response2, 200);
 		ResponseBody body = response.body();
 		Assert.assertNotNull(body);
 
@@ -37,8 +39,9 @@ public class CheckInfosDocTest extends AssertActions {
 	public void casAbsentDocument() {
 
 		Response response = Documents.getDocument("A");
-		
+		Response response2 = Documents.getDocument("A");
 		verifyStatusCode(response, 404);
+		verifyStatusCode(response2, 404);
 
 	}
 }

@@ -14,6 +14,10 @@ public class Documents extends Initialization {
 		RestAssured.baseURI = url;
 		return RestAssured.given().contentType(ContentType.BINARY).body(f).post("/documents");
 	}
+	   public static Response checkDocument(String id) {
+	        RestAssured.baseURI = url;
+	        return RestAssured.given().contentType("application/json").when().get("/documents/" + id +"/check");
+	    }
 
 	public static Response getDocument(String id) {
 		RestAssured.baseURI = url;
