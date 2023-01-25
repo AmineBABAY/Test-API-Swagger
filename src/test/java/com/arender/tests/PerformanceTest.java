@@ -6,18 +6,21 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.log4j.Logger;
 import org.testng.annotations.Test;
 import com.arender.actions.AssertActions;
 import com.arender.actions.Tasks;
 
 public class PerformanceTest extends AssertActions
 {
-
-    String documentId = "";
+    private final static Logger LOGGER = Logger.getLogger(PerformanceTest.class);
+    
 
     @Test(priority = 1)
-    public static void uploadDocument() throws InterruptedException
-    {
+    public static void testMultipleRequests() throws InterruptedException
+    {   
+        LOGGER.info("Test has been started.");
+        LOGGER.info("Available processors : " + Runtime.getRuntime().availableProcessors());
         ArrayList<Tasks> tabTasks = new ArrayList<Tasks>();
         ExecutorService executorPDF = Executors.newFixedThreadPool(numberOfUsers);
         ExecutorService executorTXT = Executors.newFixedThreadPool(numberOfUsers);
@@ -48,21 +51,23 @@ public class PerformanceTest extends AssertActions
         executorTXT.awaitTermination(10, TimeUnit.MINUTES);
         executorDOCX.shutdown();
         executorDOCX.awaitTermination(10, TimeUnit.MINUTES);
-        //System.out.println(completed.get());
+        LOGGER.info("Available processors : " + Runtime.getRuntime());
         for (int i = 0; i < tabTasks.size(); i++)
         {
             Tasks task=tabTasks.get(i);
-            System.out.println("\t user name : " + task.getName());
-            System.out.println("\t number of succes request is  : " + task.getNumberOfSuccessRequest());
+            LOGGER.info("\t user name : " + task.getName());
+            LOGGER.info("\t number of succes request is  : " + task.getNumberOfSuccessRequest());
+            //System.out.println("\t user name : " + task.getName());
+            //System.out.println("\t number of succes request is  : " + task.getNumberOfSuccessRequest());
             for (int j = 0; j < task.getTabResponses().size(); j++)
             {
                 
-            System.out.print("\t code status of response  : " + (j+1) + " "+ task.getTabResponses().get(j).getStatusCode());
-            System.out.print("\t time of response "+ (j+1)  +" : "+ task.getTabResponses().get(j).time());
-            System.out.println(" ");
+                LOGGER.info("\t code status of response  : " + (j+1) + " "+ task.getTabResponses().get(j).getStatusCode());
+                LOGGER.info("\t time of response "+ (j+1)  +" : "+ task.getTabResponses().get(j).time());
+            //System.out.println(" ");
         }
 
     }
-        System.out.println("Total number of users : " + completed.get());
+        LOGGER.info("Total number of users : " + completed.get());
 }
 }

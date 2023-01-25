@@ -17,7 +17,7 @@ public class Tasks extends AssertActions {
         tabResponses= new ArrayList<Response>();
         Thread.currentThread().setName("Im the user : " +Thread.currentThread().getName());
         this.name=Thread.currentThread().getName();
-        for(int i=1;i<=2;i++)
+        for(int i=1;i<=3;i++)
         {
         Response upload=Documents.uploadDocument(file);
         tabResponses.add(upload);
@@ -37,6 +37,7 @@ public class Tasks extends AssertActions {
             this.numberOfSuccessRequest++;
         }
         tabResponses.add(getImage);
+        
 
         }
         
