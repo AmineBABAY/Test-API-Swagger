@@ -14,11 +14,10 @@ import com.arender.actions.Tasks;
 public class PerformanceTest extends AssertActions
 {
     private final static Logger LOGGER = Logger.getLogger(PerformanceTest.class);
-    
 
     @Test(priority = 1)
     public static void testMultipleRequests() throws InterruptedException
-    {   
+    {
         LOGGER.info("Test has been started.");
         LOGGER.info("Available processors : " + Runtime.getRuntime().availableProcessors());
         ArrayList<Tasks> tabTasks = new ArrayList<Tasks>();
@@ -30,17 +29,41 @@ public class PerformanceTest extends AssertActions
         {
 
             executorPDF.submit(() -> {
-                tabTasks.add(new Tasks("pdf"));
-                completed.incrementAndGet();
+                try
+                {
+                    tabTasks.add(new Tasks("pdf"));
+                    completed.incrementAndGet();
+                }
+                catch (Exception e)
+                {
+                    LOGGER.error(e.getMessage());
+                }
 
             });
             executorTXT.submit(() -> {
-                tabTasks.add(new Tasks("txt"));
-                completed.incrementAndGet();
+                try
+                {
+
+                    tabTasks.add(new Tasks("txt"));
+                    completed.incrementAndGet();
+                }
+                catch (Exception e)
+                {
+                    LOGGER.error(e.getMessage());
+                    ;
+                }
+
             });
             executorDOCX.submit(() -> {
-                tabTasks.add(new Tasks("docx"));
-                completed.incrementAndGet();
+                try
+                {
+                    tabTasks.add(new Tasks("docx"));
+                    completed.incrementAndGet();
+                }
+                catch (Exception e)
+                {
+                    LOGGER.error(e.getMessage());
+                }
 
             });
         }
@@ -54,20 +77,25 @@ public class PerformanceTest extends AssertActions
         LOGGER.info("Available processors : " + Runtime.getRuntime());
         for (int i = 0; i < tabTasks.size(); i++)
         {
-            Tasks task=tabTasks.get(i);
-            LOGGER.info("\t user name : " + task.getName());
-            LOGGER.info("\t number of succes request is  : " + task.getNumberOfSuccessRequest());
-            //System.out.println("\t user name : " + task.getName());
-            //System.out.println("\t number of succes request is  : " + task.getNumberOfSuccessRequest());
+            Tasks task = tabTasks.get(i);
+            LOGGER.info("\n Im the user " + task.getName() + "\n");
+            LOGGER.info("\t number of succes request is  : " + task.getNumberOfSuccessRequest() + "/" +task.getTabResponses().size());
+
             for (int j = 0; j < task.getTabResponses().size(); j++)
             {
-                
-                LOGGER.info("\t code status of response  : " + (j+1) + " "+ task.getTabResponses().get(j).getStatusCode());
-                LOGGER.info("\t time of response "+ (j+1)  +" : "+ task.getTabResponses().get(j).time());
-            //System.out.println(" ");
-        }
+                //LOGGER.info("Response : " +task.getTabResponses());
+                LOGGER.info("\t code status of response  " + (j + 1) + " : "
+                        + task.getTabResponses().get(j).getStatusCode());
+                LOGGER.info("\t time of response " + (j + 1) + " : " + task.getTabResponses().get(j).time());
 
-    }
+            }
+
+        }
         LOGGER.info("Total number of users : " + completed.get());
-}
+    }
+    @Test(priority = 2)
+    public static void scheduledTestDuration()
+    {
+        
+    }
 }

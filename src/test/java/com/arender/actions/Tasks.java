@@ -12,37 +12,39 @@ public class Tasks extends AssertActions {
     private String name;
     private int numberOfSuccessRequest=0;
 
-    public Tasks(String file)
+    public Tasks(String fileToUpload) throws Exception
     {  
         tabResponses= new ArrayList<Response>();
-        Thread.currentThread().setName("Im the user : " +Thread.currentThread().getName());
-        this.name=Thread.currentThread().getName();
-        for(int i=1;i<=3;i++)
+        this.name=Thread.currentThread().getName().substring(7) +" of :"+ Thread.currentThread().getName().substring(0,6);
+        for(int i=1;i<=2;i++)
         {
-        Response upload=Documents.uploadDocument(file);
+ 
+        Response upload=Documents.uploadDocument(fileToUpload);
         tabResponses.add(upload);
         if(upload.getStatusCode()==200)
         {
             this.numberOfSuccessRequest++;
         }
-        Response getLayout=Documents.getDocumentLayout(JsonPath.from(upload.asString()).get("id"));
+        String idDoc=JsonPath.from(upload.asString()).get("id");
+        Response getLayout=Documents.getDocumentLayout(idDoc);
         if(getLayout.getStatusCode()==200)
         {
             this.numberOfSuccessRequest++;
         }
         tabResponses.add(getLayout);
-        Response getImage = Documents.getPageImage(JsonPath.from(upload.asString()).get("id"), 0);
+        Response getImage = Documents.getPageImage(idDoc, 0);
         if(getImage.getStatusCode()==200)
         {
             this.numberOfSuccessRequest++;
         }
         tabResponses.add(getImage);
-        
-
+        Response evictDocument= Documents.evictDocument(idDoc);
+        if(evictDocument.getStatusCode()==200)
+        {
+            this.numberOfSuccessRequest++;
         }
-        
-        
-        
+        tabResponses.add(evictDocument);
+        }       
     }
 
     public int getNumberOfSuccessRequest()
