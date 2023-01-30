@@ -17,7 +17,8 @@ public class PerformanceTest extends AssertActions
 
     @Test(priority = 1)
     public static void testMultipleRequests() throws InterruptedException
-    {
+    {   int totalSuccessRequest=0;
+        int totalRequest=0;
         LOGGER.info("Test has been started.");
         LOGGER.info("Available processors : " + Runtime.getRuntime().availableProcessors());
         ArrayList<Tasks> tabTasks = new ArrayList<Tasks>();
@@ -80,7 +81,8 @@ public class PerformanceTest extends AssertActions
             Tasks task = tabTasks.get(i);
             LOGGER.info("\n Im the user " + task.getName() + "\n");
             LOGGER.info("\t number of succes request is  : " + task.getNumberOfSuccessRequest() + "/" +task.getTabResponses().size());
-
+            totalSuccessRequest+=task.getNumberOfSuccessRequest();
+            totalRequest+=task.getTabResponses().size();
             for (int j = 0; j < task.getTabResponses().size(); j++)
             {
                 //LOGGER.info("Response : " +task.getTabResponses());
@@ -92,6 +94,8 @@ public class PerformanceTest extends AssertActions
 
         }
         LOGGER.info("Total number of users : " + completed.get());
+        LOGGER.info("Total  request  : " + totalRequest);
+        LOGGER.info("Total success request  : " + totalSuccessRequest);
     }
     @Test(priority = 2)
     public static void scheduledTestDuration()
