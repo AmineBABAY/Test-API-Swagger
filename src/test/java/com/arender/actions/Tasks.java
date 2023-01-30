@@ -17,7 +17,7 @@ public class Tasks extends AssertActions {
     {  
         tabResponses= new ArrayList<Response>();
         nameOfResponses= new ArrayList<String>();
-        this.name=Thread.currentThread().getName().substring(7) +" of :"+ Thread.currentThread().getName().substring(0,6);
+        this.name=Thread.currentThread().getName().substring(7) +" of :"+ Thread.currentThread().getName().substring(0,6) +"file :"+fileToUpload;
         for(int i=1;i<=2;i++)
         {
  

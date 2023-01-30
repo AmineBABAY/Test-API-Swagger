@@ -85,10 +85,10 @@ public class PerformanceTest extends AssertActions
             totalRequest+=task.getTabResponses().size();
             for (int j = 0; j < task.getTabResponses().size(); j++)
             {
-                LOGGER.info("Response  "+ (j + 1) +" " +task.getNameOfResponses().get(j));
-                LOGGER.info("\t code status of response   :" 
+                LOGGER.info("\t Response  "+ (j + 1) +" " +task.getNameOfResponses().get(j));
+                LOGGER.info("\t \t code status of response   :" 
                         + task.getTabResponses().get(j).getStatusCode());
-                LOGGER.info("\t time of response " + (j + 1) + " : " + task.getTabResponses().get(j).time());
+                LOGGER.info("\t \t time of response " + (j + 1) + " : " + task.getTabResponses().get(j).time());
 
             }
 
