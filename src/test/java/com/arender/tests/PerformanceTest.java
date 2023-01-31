@@ -1,5 +1,9 @@
 package com.arender.tests;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -16,8 +20,34 @@ public class PerformanceTest extends AssertActions
     private final static Logger LOGGER = Logger.getLogger(PerformanceTest.class);
 
     @Test(priority = 1)
-    public static void testMultipleRequests() throws InterruptedException
-    {   int totalSuccessRequest=0;
+    public static void testMultipleRequests() throws InterruptedException, IOException
+    {   
+    	
+    	File procFolder = new File("/proc/");
+    	for(File file : procFolder.listFiles())
+    	{
+    		if(file.isDirectory())
+    		{
+    			try
+    			{
+    			Integer.parseInt(file.getName());
+    			}catch(Exception e)
+    			{
+    				continue;
+    			}
+    	    	Process process = Runtime.getRuntime()
+    	    	        .exec(String.format("ls -l /proc/%s/fd", file.getName()));
+    	    	
+    	    	BufferedReader stderrStream = new BufferedReader(new InputStreamReader(process.getInputStream()));
+    	        String line;
+ 	           LOGGER.info("--> " + String.format("ls -l /proc/%s/fd", file.getName()));
+    	        while ((line = stderrStream.readLine()) != null)
+    	        {
+    	           LOGGER.info("--> " + line);
+    	        }
+    		}
+    	}
+    	int totalSuccessRequest=0;
         int totalRequest=0;
         LOGGER.info("Test has been started.");
         LOGGER.info("Available processors : " + Runtime.getRuntime().availableProcessors());
@@ -58,7 +88,7 @@ public class PerformanceTest extends AssertActions
             executorDOCX.submit(() -> {
                 try
                 {
-                    tabTasks.add(new Tasks("docx"));
+                    tabTasks.add(new Tasks("jpeg"));
                     completed.incrementAndGet();
                 }
                 catch (Exception e)
@@ -69,11 +99,8 @@ public class PerformanceTest extends AssertActions
             });
         }
 
-        executorPDF.shutdown();
         executorPDF.awaitTermination(10, TimeUnit.MINUTES);
-        executorTXT.shutdown();
         executorTXT.awaitTermination(10, TimeUnit.MINUTES);
-        executorDOCX.shutdown();
         executorDOCX.awaitTermination(10, TimeUnit.MINUTES);
         LOGGER.info("Available processors : " + Runtime.getRuntime());
         for (int i = 0; i < tabTasks.size(); i++)
@@ -96,6 +123,30 @@ public class PerformanceTest extends AssertActions
         LOGGER.info("Total number of users : " + completed.get());
         LOGGER.info("Total  request  : " + totalRequest);
         LOGGER.info("Total success request  : " + totalSuccessRequest);
+        
+    	for(File file : procFolder.listFiles())
+    	{
+    		if(file.isDirectory())
+    		{
+    			try
+    			{
+    			Integer.parseInt(file.getName());
+    			}catch(Exception e)
+    			{
+    				continue;
+    			}
+    	    	Process process = Runtime.getRuntime()
+    	    	        .exec(String.format("ls -l /proc/%s/fd", file.getName()));
+    	    	
+    	    	BufferedReader stderrStream = new BufferedReader(new InputStreamReader(process.getInputStream()));
+    	        String line;
+ 	           LOGGER.info("--> " + String.format("ls -l /proc/%s/fd", file.getName()));
+    	        while ((line = stderrStream.readLine()) != null)
+    	        {
+    	           LOGGER.info("--> " + line);
+    	        }
+    		}
+    	}
     }
     @Test(priority = 2)
     public static void scheduledTestDuration()
