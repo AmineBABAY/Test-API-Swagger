@@ -22,6 +22,8 @@ public class PerformanceTest extends AssertActions
     private static File jpeg;
     
     private final static Logger LOGGER = Logger.getLogger(PerformanceTest.class);
+    private static int totalSuccessRequest=0;
+    private static int totalRequest=0;
     
     @BeforeTest
     public static void initialization()
@@ -38,32 +40,7 @@ public class PerformanceTest extends AssertActions
     public static void testMultipleRequests() throws InterruptedException, IOException
     {   
     	
-//    	File procFolder = new File("/proc/");
-//    	for(File file : procFolder.listFiles())
-//    	{
-//    		if(file.isDirectory())
-//    		{
-//    			try
-//    			{
-//    			Integer.parseInt(file.getName());
-//    			}catch(Exception e)
-//    			{
-//    				continue;
-//    			}
-//    	    	Process process = Runtime.getRuntime()
-//    	    	        .exec(String.format("ls -l /proc/%s/fd", file.getName()));
-//    	    	
-//    	    	BufferedReader stderrStream = new BufferedReader(new InputStreamReader(process.getInputStream()));
-//    	        String line;
-// 	           LOGGER.info("--> " + String.format("ls -l /proc/%s/fd", file.getName()));
-//    	        while ((line = stderrStream.readLine()) != null)
-//    	        {
-//    	           LOGGER.info("--> " + line);
-//    	        }
-//    		}
-//    	}
-    	int totalSuccessRequest=0;
-        int totalRequest=0;
+
         LOGGER.info("Test has been started.");
         LOGGER.info("Available processors : " + Runtime.getRuntime().availableProcessors());
         ArrayList<Tasks> tabTasks = new ArrayList<Tasks>();
@@ -167,15 +144,16 @@ public class PerformanceTest extends AssertActions
 //    		}
 //    	}
     }
-//    @Test(priority = 2)
-//    public static void scheduledTestDuration() throws InterruptedException, IOException
-//    {      Instant start = Instant.now();
-//           Duration duration = Duration.ofMinutes(3);
-//        while(Duration.between(start, Instant.now()).compareTo(duration) < 0)
-//        {
-//            testMultipleRequests();
-//            
-//        }
-//
-//    }
+    @Test(priority = 2)
+    public static void scheduledTestDuration() throws InterruptedException, IOException
+    {      Instant start = Instant.now();
+           Duration duration = Duration.ofMinutes(20);
+        while(Duration.between(start, Instant.now()).compareTo(duration) < 0)
+        {
+            testMultipleRequests();
+            LOGGER.info("Total  request  : " + totalRequest);
+            LOGGER.info("Total success request  : " + totalSuccessRequest);
+        }
+
+    }
 }
