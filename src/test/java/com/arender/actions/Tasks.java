@@ -1,5 +1,6 @@
 package com.arender.actions;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import com.arender.endpoint.Documents;
@@ -13,11 +14,11 @@ public class Tasks extends AssertActions {
     private String name;
     private int numberOfSuccessRequest=0;
 
-    public Tasks(String fileToUpload) throws Exception
-    {  
+    public Tasks(File fileToUpload) throws Exception
+    {
         tabResponses= new ArrayList<Response>();
         nameOfResponses= new ArrayList<String>();
-        this.name=Thread.currentThread().getName().substring(7) +" of :"+ Thread.currentThread().getName().substring(0,6) +"file :"+fileToUpload;
+        this.name=Thread.currentThread().getName().substring(7) +" of :"+ Thread.currentThread().getName().substring(0,6) +"file :"+fileToUpload.getName() ;
         for(int i=1;i<=2;i++)
         {
  

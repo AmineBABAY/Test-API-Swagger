@@ -1,9 +1,9 @@
 package com.arender.tests;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -11,42 +11,57 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.Logger;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import com.arender.actions.AssertActions;
 import com.arender.actions.Tasks;
 
 public class PerformanceTest extends AssertActions
-{
+{   private static File pdf;
+    private static File txt;
+    private static File jpeg;
+    
     private final static Logger LOGGER = Logger.getLogger(PerformanceTest.class);
+    
+    @BeforeTest
+    public static void initialization()
+    {
+        String filepathPDF = System.getProperty("user.dir") + prop.getProperty("pdf");
+        pdf = new File(filepathPDF);
+        String filepathTXT = System.getProperty("user.dir") + prop.getProperty("txt");
+        txt = new File(filepathTXT);
+        String filepathJPPEG = System.getProperty("user.dir") + prop.getProperty("jpeg");
+        jpeg = new File(filepathJPPEG);
+    }
 
     @Test(priority = 1)
     public static void testMultipleRequests() throws InterruptedException, IOException
     {   
     	
-    	File procFolder = new File("/proc/");
-    	for(File file : procFolder.listFiles())
-    	{
-    		if(file.isDirectory())
-    		{
-    			try
-    			{
-    			Integer.parseInt(file.getName());
-    			}catch(Exception e)
-    			{
-    				continue;
-    			}
-    	    	Process process = Runtime.getRuntime()
-    	    	        .exec(String.format("ls -l /proc/%s/fd", file.getName()));
-    	    	
-    	    	BufferedReader stderrStream = new BufferedReader(new InputStreamReader(process.getInputStream()));
-    	        String line;
- 	           LOGGER.info("--> " + String.format("ls -l /proc/%s/fd", file.getName()));
-    	        while ((line = stderrStream.readLine()) != null)
-    	        {
-    	           LOGGER.info("--> " + line);
-    	        }
-    		}
-    	}
+//    	File procFolder = new File("/proc/");
+//    	for(File file : procFolder.listFiles())
+//    	{
+//    		if(file.isDirectory())
+//    		{
+//    			try
+//    			{
+//    			Integer.parseInt(file.getName());
+//    			}catch(Exception e)
+//    			{
+//    				continue;
+//    			}
+//    	    	Process process = Runtime.getRuntime()
+//    	    	        .exec(String.format("ls -l /proc/%s/fd", file.getName()));
+//    	    	
+//    	    	BufferedReader stderrStream = new BufferedReader(new InputStreamReader(process.getInputStream()));
+//    	        String line;
+// 	           LOGGER.info("--> " + String.format("ls -l /proc/%s/fd", file.getName()));
+//    	        while ((line = stderrStream.readLine()) != null)
+//    	        {
+//    	           LOGGER.info("--> " + line);
+//    	        }
+//    		}
+//    	}
     	int totalSuccessRequest=0;
         int totalRequest=0;
         LOGGER.info("Test has been started.");
@@ -62,7 +77,7 @@ public class PerformanceTest extends AssertActions
             executorPDF.submit(() -> {
                 try
                 {
-                    tabTasks.add(new Tasks("pdf"));
+                    tabTasks.add(new Tasks(pdf));
                     completed.incrementAndGet();
                 }
                 catch (Exception e)
@@ -75,7 +90,7 @@ public class PerformanceTest extends AssertActions
                 try
                 {
 
-                    tabTasks.add(new Tasks("txt"));
+                    tabTasks.add(new Tasks(txt));
                     completed.incrementAndGet();
                 }
                 catch (Exception e)
@@ -88,7 +103,7 @@ public class PerformanceTest extends AssertActions
             executorDOCX.submit(() -> {
                 try
                 {
-                    tabTasks.add(new Tasks("jpeg"));
+                    tabTasks.add(new Tasks(jpeg));
                     completed.incrementAndGet();
                 }
                 catch (Exception e)
@@ -126,34 +141,41 @@ public class PerformanceTest extends AssertActions
         LOGGER.info("Total number of users : " + completed.get());
         LOGGER.info("Total  request  : " + totalRequest);
         LOGGER.info("Total success request  : " + totalSuccessRequest);
+        //Thread.sleep(3 * 60 * 1000);
         
-    	for(File file : procFolder.listFiles())
-    	{
-    		if(file.isDirectory())
-    		{
-    			try
-    			{
-    			Integer.parseInt(file.getName());
-    			}catch(Exception e)
-    			{
-    				continue;
-    			}
-    	    	Process process = Runtime.getRuntime()
-    	    	        .exec(String.format("ls -l /proc/%s/fd", file.getName()));
-    	    	
-    	    	BufferedReader stderrStream = new BufferedReader(new InputStreamReader(process.getInputStream()));
-    	        String line;
- 	           LOGGER.info("--> " + String.format("ls -l /proc/%s/fd", file.getName()));
-    	        while ((line = stderrStream.readLine()) != null)
-    	        {
-    	           LOGGER.info("--> " + line);
-    	        }
-    		}
-    	}
+//    	for(File file : procFolder.listFiles())
+//    	{
+//    		if(file.isDirectory())
+//    		{
+//    			try
+//    			{
+//    			Integer.parseInt(file.getName());
+//    			}catch(Exception e)
+//    			{
+//    				continue;
+//    			}
+//    	    	Process process = Runtime.getRuntime()
+//    	    	        .exec(String.format("ls -l /proc/%s/fd", file.getName()));
+//    	    	
+//    	    	BufferedReader stderrStream = new BufferedReader(new InputStreamReader(process.getInputStream()));
+//    	        String line;
+// 	           LOGGER.info("--> " + String.format("ls -l /proc/%s/fd", file.getName()));
+//    	        while ((line = stderrStream.readLine()) != null)
+//    	        {
+//    	           LOGGER.info("--> " + line);
+//    	        }
+//    		}
+//    	}
     }
-    @Test(priority = 2)
-    public static void scheduledTestDuration()
-    {
-        
-    }
+//    @Test(priority = 2)
+//    public static void scheduledTestDuration() throws InterruptedException, IOException
+//    {      Instant start = Instant.now();
+//           Duration duration = Duration.ofMinutes(3);
+//        while(Duration.between(start, Instant.now()).compareTo(duration) < 0)
+//        {
+//            testMultipleRequests();
+//            
+//        }
+//
+//    }
 }

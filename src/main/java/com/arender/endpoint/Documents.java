@@ -14,9 +14,12 @@ public class Documents extends Initialization {
 	static
 	{
 		RestAssured.baseURI = url;
-		ConnectionConfig connectionConfig = new ConnectionConfig(new ConnectionConfig.CloseIdleConnectionConfig(0, TimeUnit.NANOSECONDS) );
+		ConnectionConfig connectionConfig = new ConnectionConfig(new ConnectionConfig.CloseIdleConnectionConfig(0, TimeUnit.NANOSECONDS));
 		RestAssured.config().connectionConfig(connectionConfig);
 	}
+	   public static Response uploadDocument(File file) {
+	        return RestAssured.given().contentType(ContentType.BINARY).body(file).post("/documents");
+	    }
 	public static Response uploadDocument(String file) {
 		String filepath = System.getProperty("user.dir") + prop.getProperty(file);
 		File f = new File(filepath);
