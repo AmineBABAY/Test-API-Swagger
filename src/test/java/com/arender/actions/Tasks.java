@@ -19,9 +19,7 @@ public class Tasks extends AssertActions {
         tabResponses= new ArrayList<Response>();
         nameOfResponses= new ArrayList<String>();
         this.name=Thread.currentThread().getName().substring(7) +" of :"+ Thread.currentThread().getName().substring(0,6) +"file :"+fileToUpload.getName() ;
-        for(int i=1;i<=2;i++)
-        {
- 
+
         Response upload=Documents.uploadDocument(fileToUpload);
         tabResponses.add(upload);
         nameOfResponses.add("upload document");
@@ -50,8 +48,7 @@ public class Tasks extends AssertActions {
         {
             this.numberOfSuccessRequest++;
         }
-        tabResponses.add(evictDocument);
-        }       
+        tabResponses.add(evictDocument);    
     }
     
     public ArrayList<String> getNameOfResponses()

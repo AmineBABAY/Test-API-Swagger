@@ -151,8 +151,7 @@ public class PerformanceTest extends AssertActions
         while(Duration.between(start, Instant.now()).compareTo(duration) < 0)
         {
             testMultipleRequests();
-            LOGGER.info("Total  request  : " + totalRequest);
-            LOGGER.info("Total success request  : " + totalSuccessRequest);
+
         }
 
     }
