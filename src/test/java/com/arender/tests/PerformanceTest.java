@@ -118,41 +118,18 @@ public class PerformanceTest extends AssertActions
         LOGGER.info("Total number of users : " + completed.get());
         LOGGER.info("Total  request  : " + totalRequest);
         LOGGER.info("Total success request  : " + totalSuccessRequest);
-        //Thread.sleep(3 * 60 * 1000);
-        
-//    	for(File file : procFolder.listFiles())
-//    	{
-//    		if(file.isDirectory())
-//    		{
-//    			try
-//    			{
-//    			Integer.parseInt(file.getName());
-//    			}catch(Exception e)
-//    			{
-//    				continue;
-//    			}
-//    	    	Process process = Runtime.getRuntime()
-//    	    	        .exec(String.format("ls -l /proc/%s/fd", file.getName()));
-//    	    	
-//    	    	BufferedReader stderrStream = new BufferedReader(new InputStreamReader(process.getInputStream()));
-//    	        String line;
-// 	           LOGGER.info("--> " + String.format("ls -l /proc/%s/fd", file.getName()));
-//    	        while ((line = stderrStream.readLine()) != null)
-//    	        {
-//    	           LOGGER.info("--> " + line);
-//    	        }
-//    		}
-//    	}
-    }
-    @Test(priority = 2)
-    public static void scheduledTestDuration() throws InterruptedException, IOException
-    {      Instant start = Instant.now();
-           Duration duration = Duration.ofMinutes(20);
-        while(Duration.between(start, Instant.now()).compareTo(duration) < 0)
-        {
-            testMultipleRequests();
-
-        }
+        LOGGER.info("Percentage  : " + (totalSuccessRequest/totalRequest)*100 +"%");
 
     }
+//    @Test(priority = 2)
+//    public static void scheduledTestDuration() throws InterruptedException, IOException
+//    {      Instant start = Instant.now();
+//           Duration duration = Duration.ofMinutes(20);
+//        while(Duration.between(start, Instant.now()).compareTo(duration) < 0)
+//        {
+//            testMultipleRequests();
+//
+//        }
+//
+//    }
 }
