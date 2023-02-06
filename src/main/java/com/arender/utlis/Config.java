@@ -19,6 +19,7 @@ public  class Config{
 	public static String file;
 	public static String url;
 	public static int numberOfUsers;
+	public static long durationOfTest;
 	
 	
 	public Config()
@@ -39,12 +40,14 @@ public  class Config{
 		url = System.getProperty("URL");
 		file= System.getProperty("file");
 		numberOfUsers=Integer.parseInt(System.getProperty("number_of_users"));
+		durationOfTest= Long.parseLong(System.getProperty("duration"));
 	}
 	public static void localConfig()
 	{
 		url = prop.getProperty("URL");
 		file= prop.getProperty("file");
 		numberOfUsers=Integer.parseInt(prop.getProperty("number_of_users"));
+		durationOfTest= Long.parseLong(prop.getProperty("duration"));
 	}
 	
     public static JSONObject readJsonFile(String nameOfFile)

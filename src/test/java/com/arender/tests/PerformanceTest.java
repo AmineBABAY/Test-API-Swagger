@@ -121,15 +121,15 @@ public class PerformanceTest extends AssertActions
         LOGGER.info("Percentage  : " + (totalSuccessRequest/totalRequest)*100 +"%");
 
     }
-//    @Test(priority = 2)
-//    public static void scheduledTestDuration() throws InterruptedException, IOException
-//    {      Instant start = Instant.now();
-//           Duration duration = Duration.ofMinutes(20);
-//        while(Duration.between(start, Instant.now()).compareTo(duration) < 0)
-//        {
-//            testMultipleRequests();
-//
-//        }
-//
-//    }
+    @Test(priority = 2)
+    public static void scheduledTestDuration() throws InterruptedException, IOException
+    {      Instant start = Instant.now();
+           Duration duration = Duration.ofMinutes(durationOfTest);
+        while(Duration.between(start, Instant.now()).compareTo(duration) < 0)
+        {
+            testMultipleRequests();
+
+        }
+
+    }
 }
