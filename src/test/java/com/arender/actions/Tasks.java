@@ -35,13 +35,20 @@ public class Tasks extends AssertActions {
             this.numberOfSuccessRequest++;
         }
         tabResponses.add(getLayout);
-        Response getImage = Documents.getPageImage(idDoc, 0);
-        nameOfResponses.add("get page image");
+        Response getImage = Documents.getPageImage(idDoc, 0,"IM_100_0");
+        nameOfResponses.add("get page image resolution: 100px");
         if(getImage.getStatusCode()==200)
         {
             this.numberOfSuccessRequest++;
         }
         tabResponses.add(getImage);
+        Response getImageFullScreen = Documents.getPageImage(idDoc, 0,"IM_800_0");
+        nameOfResponses.add("get page image resolution: 800px");
+        if(getImageFullScreen.getStatusCode()==200)
+        {
+            this.numberOfSuccessRequest++;
+        }
+        tabResponses.add(getImageFullScreen);
         Response evictDocument= Documents.evictDocument(idDoc);
         nameOfResponses.add("evict document");
         if(evictDocument.getStatusCode()==200)
