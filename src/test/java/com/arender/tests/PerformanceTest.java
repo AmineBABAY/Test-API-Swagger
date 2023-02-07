@@ -91,11 +91,11 @@ public class PerformanceTest extends AssertActions
             });
         }
         executorPDF.shutdown();
-        executorPDF.awaitTermination(10, TimeUnit.MINUTES);
+        executorPDF.awaitTermination(3, TimeUnit.MINUTES);
         executorTXT.shutdown();
-        executorTXT.awaitTermination(10, TimeUnit.MINUTES);
+        executorTXT.awaitTermination(3, TimeUnit.MINUTES);
         executorDOCX.shutdown();
-        executorDOCX.awaitTermination(10, TimeUnit.MINUTES);
+        executorDOCX.awaitTermination(3, TimeUnit.MINUTES);
         
         LOGGER.info("Available processors : " + Runtime.getRuntime());
         for (int i = 0; i < tabTasks.size(); i++)
