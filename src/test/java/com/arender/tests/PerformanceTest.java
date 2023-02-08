@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.Logger;
+import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import com.arender.actions.AssertActions;
@@ -34,7 +35,7 @@ public class PerformanceTest extends AssertActions
 
     private static int totalRequest = 0;
 
-    @BeforeTest
+    @BeforeSuite
     public static void initialization()
     {
         String filepathPDF100KO = System.getProperty("user.dir") + prop.getProperty("pdf_with_100KO");
