@@ -2,7 +2,7 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 <suite name="Health Records Viewer test">
 
-    <test name="Make requests on the Health Records Viewer Test endpoint ">
+	<test name="Make requests on the Health Records Viewer Test endpoint ">
 		<classes>
 			<class name="com.arender.tests.HealthRecordsViewerTest"></class>
 		</classes>

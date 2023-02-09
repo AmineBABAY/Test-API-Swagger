@@ -47,7 +47,7 @@ public class PerformanceTest extends AssertActions
         String filepathJPPEG = System.getProperty("user.dir") + prop.getProperty("jpeg");
         jpeg = new File(filepathJPPEG);
 
-        String fileFromConfig =System.getProperty("user.dir") + prop.getProperty(file);
+        String fileFromConfig = System.getProperty("user.dir") + prop.getProperty(file);
         fileToUploadFromConfig = new File(fileFromConfig);
     }
 

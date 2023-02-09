@@ -7,7 +7,7 @@
 			<class name="com.arender.tests.CheckInfosDocTest"></class>
 		</classes>
 	</test>
-	
+
 	<test name="Check if the document is deleted">
 		<classes>
 			<class name="com.arender.tests.DeleteTest"></class>

@@ -1,5 +1,6 @@
 package com.arender.actions;
 
-public class APIActions {
+public class APIActions
+{
 
 }

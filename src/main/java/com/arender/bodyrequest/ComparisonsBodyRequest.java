@@ -1,13 +1,18 @@
 package com.arender.bodyrequest;
 
-public class ComparisonsBodyRequest {
-	
-	private int fuzz;
-	private String highlightColor;
-	private String leftDocumentId;
-	private String lowlightColor;
-	private String rightDocumentId;
-	
+public class ComparisonsBodyRequest
+{
+
+    private int fuzz;
+
+    private String highlightColor;
+
+    private String leftDocumentId;
+
+    private String lowlightColor;
+
+    private String rightDocumentId;
+
     public ComparisonsBodyRequest(int fuzz, String highlightColor, String leftDocumentId, String lowlightColor,
             String rightDocumentId)
     {
@@ -67,9 +72,5 @@ public class ComparisonsBodyRequest {
     {
         this.rightDocumentId = rightDocumentId;
     }
-    
-	
-	
 
-	
 }

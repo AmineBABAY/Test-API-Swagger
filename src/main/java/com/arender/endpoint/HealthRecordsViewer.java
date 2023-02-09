@@ -7,7 +7,8 @@ import io.restassured.response.Response;
 
 public class HealthRecordsViewer extends Initialization
 {
-    public static Response readiness() {
+    public static Response readiness()
+    {
         RestAssured.baseURI = url;
         return RestAssured.given().when().get("/health/readiness");
     }
