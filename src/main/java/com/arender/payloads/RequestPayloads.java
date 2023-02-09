@@ -1,5 +1,6 @@
 package com.arender.payloads;
 
-public class RequestPayloads {
+public class RequestPayloads
+{
 
 }

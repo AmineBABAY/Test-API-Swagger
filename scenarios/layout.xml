@@ -2,7 +2,7 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 <suite name="Layout test">
 
-    <test name="Make requests on the layout endpoint ">
+	<test name="Make requests on the layout endpoint ">
 		<classes>
 			<class name="com.arender.tests.LayoutTest"></class>
 		</classes>

@@ -2,7 +2,7 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 <suite name="File test">
 
-    <test name="Make requests on the file endpoint ">
+	<test name="Make requests on the file endpoint ">
 		<classes>
 			<class name="com.arender.tests.FileTest"></class>
 		</classes>
