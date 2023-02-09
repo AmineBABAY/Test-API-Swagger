@@ -105,7 +105,6 @@ public class TransformationTest extends AssertActions
         System.out.println("transformation order state without annotations" + " : " + currentState);
         System.out.println("trasformation order id without annotations " + " : " + transformationResultDocumentID);
         // Verify that the state is processed
-        Thread.sleep(4000);
         assertTrue(currentState.equals("PROCESSED"), "The current state is not PROCESSED");
         // verify that the id is genrated
         assertTrue(transformationResultDocumentID.length() != 0,
@@ -189,7 +188,6 @@ public class TransformationTest extends AssertActions
         System.out.println("transformation order state with annotations " + " : " + currentState);
         System.out.println("trasformation order id with annotations " + " : " + transformationWithAnnoResultDocumentID);
         // Verify that the state is processed
-        Thread.sleep(4000);
         assertTrue(currentState.equals("PROCESSED"), "The current state is not PROCESSED");
         // verify that the id is genrated
         assertTrue(transformationWithAnnoResultDocumentID.length() != 0,
@@ -276,7 +274,6 @@ public class TransformationTest extends AssertActions
         System.out.println("transformation order state for alter document " + " : " + currentState);
         System.out.println("trasformation order id for alter document " + " : " + transformationAlterDocumentID);
         // Verify that the state is processed
-        Thread.sleep(4000);
         assertTrue(currentState.equals("PROCESSED"), "The current state is not PROCESSED");
         // verify that the id is genrated
         assertTrue(transformationAlterDocumentID.length() != 0,
@@ -356,7 +353,6 @@ public class TransformationTest extends AssertActions
         System.out.println(
                 "trasformation order id with FDF annotations " + " : " + transformationWithFDFAnnoResultDocumentID);
         // Verify that the state is processed
-        Thread.sleep(4000);
         assertTrue(currentState.equals("PROCESSED"), "The current state is not PROCESSED");
         // verify that the id is genrated
         assertTrue(transformationWithFDFAnnoResultDocumentID.length() != 0,

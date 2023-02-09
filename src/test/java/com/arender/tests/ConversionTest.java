@@ -1,13 +1,16 @@
 package com.arender.tests;
 
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 import org.json.JSONObject;
 import org.testng.annotations.Test;
+
 import com.arender.actions.AssertActions;
 import com.arender.endpoint.Conversions;
 import com.arender.endpoint.Documents;
 import com.arender.utlis.Config;
+
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 
@@ -15,8 +18,6 @@ public class ConversionTest extends AssertActions
 {
 
     public static Response response1;
-
-    public static Response response2;
 
     public static Response response3;
 
@@ -51,21 +52,35 @@ public class ConversionTest extends AssertActions
         JsonPath jsonPath = JsonPath.from(response1.asString());
         conversionOrderId = jsonPath.get("conversionOrderId.id");
         System.out.println("conversion order id " + " : " + conversionOrderId);
-        Thread.sleep(4000);
 
     }
 
     @Test(priority = 3)
     public void checkConversionOrder() throws InterruptedException
     {
+        for (int iteration = 0; iteration < 60; iteration++)
+        {
+            Response response2 = Conversions.getConversionOrder(conversionOrderId);
+            System.out.println(response2.asString());
+            verifyStatusCode(response2, 200);
+            JsonPath jsonPath = JsonPath.from(response2.asString());
+            String currentState = jsonPath.get("currentState");
+            System.out.println("conversion order state " + " : " + currentState);
+            if (currentState.equals("PROCESSED"))
+            {
+                System.out.println("Done");
+                return;
+            }
+            else if (currentState.equals("PROCESSING"))
+            {
+                System.out.println("Not yet");
+            }
+            else
+            {
+                assertFalse(true, "the are is a problem !");
+            }
+        }
 
-        response2 = Conversions.getConversionOrder(conversionOrderId);
-        System.out.println(response2.asString());
-        verifyStatusCode(response2, 200);
-        JsonPath jsonPath = JsonPath.from(response2.asString());
-        String currentState = jsonPath.get("currentState");
-        System.out.println("conversion order state " + " : " + currentState);
-        assertTrue(currentState.equals("PROCESSED"), "The current state is not PROCESSED");
     }
 
     @Test(priority = 4)

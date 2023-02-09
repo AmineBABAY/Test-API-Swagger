@@ -1,0 +1,11 @@
+Run from command line performance  test
+syntax :
+mvn clean install -DTest="scenarios/"$xmlFile".xml" -Dfile=$file -DURL=$URL -Dnumber_of_users=$number_of_users -DdurationOfTest=$durationOfTest
+example :
+mvn clean install -DTest=scenarios/PerformanceTest.xml -Dfile=pdf -DURL=http://34.244.115.6:8761/ -Dnumber_of_users=20 -DdurationOfTest=30
+
+Run from eclipse
+	1)install TestNG plugin
+	2)open config.properties
+ 	3)change your url, file, duration
+ 	4)open any xml file from /scenario theb run as TestNG

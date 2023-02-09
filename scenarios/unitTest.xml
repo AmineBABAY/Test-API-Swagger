@@ -1,0 +1,15 @@
+<suite name="Unit tests">
+<suite-files>
+    <suite-file path="bookmark.xml"></suite-file>
+    <suite-file path="comparisons.xml"></suite-file>
+    <suite-file path="conversions.xml"></suite-file>
+    <suite-file path="destination.xml"></suite-file>
+    <suite-file path="documents.xml"></suite-file>
+    <suite-file path="file.xml"></suite-file>
+    <suite-file path="healthRecordsViewer.xml"></suite-file>
+    <suite-file path="layout.xml"></suite-file>
+    <suite-file path="pages.xml"></suite-file>
+    <suite-file path="printable.xml"></suite-file>
+    <suite-file path="transformation.xml"></suite-file>
+</suite-files>
+</suite>

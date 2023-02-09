@@ -4,8 +4,10 @@ import static org.testng.Assert.assertTrue;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
 import com.arender.actions.AssertActions;
 import com.arender.endpoint.Documents;
+
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 
@@ -29,7 +31,7 @@ public class PagesTest extends AssertActions
     @Test(priority = 2)
     public void getPageImageWithoutDescription()
     {
-        Response response = Documents.getPageImage(documentId, 1);
+        Response response = Documents.getPageImage(documentId, 0);
         verifyStatusCode(response, 200);
         assertTrue(response.header("content-type").equals("image/png"));
 
@@ -38,7 +40,7 @@ public class PagesTest extends AssertActions
     @Test(priority = 3)
     public void getPageImageWithDescription()
     {
-        Response response = Documents.getPageImage(documentId, 1, "IM_200_90_FILTERS~C~35~B~-100~I~50");
+        Response response = Documents.getPageImage(documentId, 0, "IM_200_90_FILTERS~C~35~B~-100~I~50");
         verifyStatusCode(response, 200);
         assertTrue(response.header("content-type").equals("image/png"));
 
@@ -47,7 +49,7 @@ public class PagesTest extends AssertActions
     @Test(priority = 4)
     public void getPageImageWithWrongIdDocument()
     {
-        Response response = Documents.getPageImage("bad id", 1);
+        Response response = Documents.getPageImage("bad id", 0);
         verifyStatusCode(response, 404);
     }
 

@@ -17,7 +17,7 @@ public class Transformations extends Initialization
     public static Response getTransformationOrdrer(String transformationOrderId)
     {
         RestAssured.baseURI = url;
-        return RestAssured.given().contentType("application/json").when()
+        return RestAssured.given().queryParam("timeoutMs", 60000).contentType("application/json").when()
                 .get("/transformations/" + transformationOrderId);
     }
 }
