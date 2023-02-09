@@ -1,5 +1,9 @@
 package com.arender.tests;
 
+import java.io.File;
+import java.io.IOException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -7,17 +11,54 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.Logger;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import com.arender.actions.AssertActions;
 import com.arender.actions.Tasks;
 
 public class PerformanceTest extends AssertActions
 {
+    private static File pdf100KO;
+
+    private static File pdf1MO;
+
+    private static File txt;
+
+    private static File jpeg;
+
+    private static File fileToUploadFromConfig;
+
     private final static Logger LOGGER = Logger.getLogger(PerformanceTest.class);
 
-    @Test(priority = 1)
-    public static void testMultipleRequests() throws InterruptedException
+    private static int totalSuccessRequest = 0;
+
+    private static int totalRequest = 0;
+
+    @BeforeSuite
+    public static void initialization()
     {
+        String filepathPDF100KO = System.getProperty("user.dir") + prop.getProperty("pdf_with_100KO");
+        pdf100KO = new File(filepathPDF100KO);
+        String filepathPDF1MO = System.getProperty("user.dir") + prop.getProperty("pdf_with_1MO");
+        pdf1MO = new File(filepathPDF1MO);
+        String filepathTXT = System.getProperty("user.dir") + prop.getProperty("txt");
+        txt = new File(filepathTXT);
+        String filepathJPPEG = System.getProperty("user.dir") + prop.getProperty("jpeg");
+        jpeg = new File(filepathJPPEG);
+
+        String fileFromConfig = System.getProperty("user.dir") + prop.getProperty(file);
+        fileToUploadFromConfig = new File(fileFromConfig);
+    }
+
+    public static void scheduledTestWithDuration() throws InterruptedException, IOException
+    {
+    }
+
+    public static void testMultipleRequests(File fileToUploadGP1, File fileToUploadGP2, File fileToUploadGP3)
+            throws InterruptedException, IOException
+    {
+
         LOGGER.info("Test has been started.");
         LOGGER.info("Available processors : " + Runtime.getRuntime().availableProcessors());
         ArrayList<Tasks> tabTasks = new ArrayList<Tasks>();
@@ -31,7 +72,7 @@ public class PerformanceTest extends AssertActions
             executorPDF.submit(() -> {
                 try
                 {
-                    tabTasks.add(new Tasks("pdf"));
+                    tabTasks.add(new Tasks(fileToUploadGP1));
                     completed.incrementAndGet();
                 }
                 catch (Exception e)
@@ -44,7 +85,7 @@ public class PerformanceTest extends AssertActions
                 try
                 {
 
-                    tabTasks.add(new Tasks("txt"));
+                    tabTasks.add(new Tasks(fileToUploadGP2));
                     completed.incrementAndGet();
                 }
                 catch (Exception e)
@@ -57,7 +98,7 @@ public class PerformanceTest extends AssertActions
             executorDOCX.submit(() -> {
                 try
                 {
-                    tabTasks.add(new Tasks("docx"));
+                    tabTasks.add(new Tasks(fileToUploadGP3));
                     completed.incrementAndGet();
                 }
                 catch (Exception e)
@@ -67,35 +108,48 @@ public class PerformanceTest extends AssertActions
 
             });
         }
-
         executorPDF.shutdown();
-        executorPDF.awaitTermination(10, TimeUnit.MINUTES);
+        executorPDF.awaitTermination(3, TimeUnit.MINUTES);
         executorTXT.shutdown();
-        executorTXT.awaitTermination(10, TimeUnit.MINUTES);
+        executorTXT.awaitTermination(3, TimeUnit.MINUTES);
         executorDOCX.shutdown();
-        executorDOCX.awaitTermination(10, TimeUnit.MINUTES);
+        executorDOCX.awaitTermination(3, TimeUnit.MINUTES);
+
         LOGGER.info("Available processors : " + Runtime.getRuntime());
         for (int i = 0; i < tabTasks.size(); i++)
         {
             Tasks task = tabTasks.get(i);
             LOGGER.info("\n Im the user " + task.getName() + "\n");
-            LOGGER.info("\t number of succes request is  : " + task.getNumberOfSuccessRequest() + "/" +task.getTabResponses().size());
-
+            LOGGER.info("\t number of succes request is  : " + task.getNumberOfSuccessRequest() + "/"
+                    + task.getTabResponses().size());
+            totalSuccessRequest += task.getNumberOfSuccessRequest();
+            totalRequest += task.getTabResponses().size();
             for (int j = 0; j < task.getTabResponses().size(); j++)
             {
-                //LOGGER.info("Response : " +task.getTabResponses());
-                LOGGER.info("\t code status of response  " + (j + 1) + " : "
-                        + task.getTabResponses().get(j).getStatusCode());
-                LOGGER.info("\t time of response " + (j + 1) + " : " + task.getTabResponses().get(j).time());
+                LOGGER.info("\t Response  " + (j + 1) + " " + task.getNameOfResponses().get(j));
+                LOGGER.info("\t \t code status of response   :" + task.getTabResponses().get(j).getStatusCode());
+                LOGGER.info("\t \t time of response " + (j + 1) + " : " + task.getTabResponses().get(j).time());
 
             }
 
         }
         LOGGER.info("Total number of users : " + completed.get());
+        LOGGER.info("Total  request  : " + totalRequest);
+        LOGGER.info("Total success request  : " + totalSuccessRequest);
+        LOGGER.info("Percentage  : " + (totalSuccessRequest / totalRequest) * 100 + "%");
+
     }
-    @Test(priority = 2)
-    public static void scheduledTestDuration()
+
+    @Test(priority = 1)
+    public static void pdfWith1MOSize() throws InterruptedException, IOException
     {
-        
+        Instant start = Instant.now();
+        Duration duration = Duration.ofMinutes(durationOfTest);
+        while (Duration.between(start, Instant.now()).compareTo(duration) < 0)
+        {
+            testMultipleRequests(fileToUploadFromConfig, fileToUploadFromConfig, fileToUploadFromConfig);
+
+        }
     }
+
 }

@@ -2,7 +2,7 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 <suite name="Conversions test">
 
-    <test name="Make calls on the conversions endpoint ">
+	<test name="Make calls on the conversions endpoint ">
 		<classes>
 			<class name="com.arender.tests.ConversionTest"></class>
 		</classes>

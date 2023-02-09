@@ -2,7 +2,7 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 <suite name="Performance test">
 
-    <test name="upload multi files with differents users then getLayout, getImage, evictDocument">
+	<test name="upload multi files with differents users then getLayout, getImage, evictDocument">
 		<classes>
 			<class name="com.arender.tests.PerformanceTest"></class>
 		</classes>

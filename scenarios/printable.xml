@@ -2,7 +2,7 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
 <suite name="Printable test">
 
-    <test name="upload document then check if it printable">
+	<test name="upload document then check if it printable">
 		<classes>
 			<class name="com.arender.tests.PrintableTest"></class>
 		</classes>

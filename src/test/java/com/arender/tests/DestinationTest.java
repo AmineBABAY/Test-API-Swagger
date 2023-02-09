@@ -22,7 +22,9 @@ public class DestinationTest extends AssertActions
     {
 
         // upload document
+
         Response response = Documents.uploadDocument("destination");
+
         // get reponse body
         JsonPath jsonPath = JsonPath.from(response.asString());
         // verify status of request is ok
