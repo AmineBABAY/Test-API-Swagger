@@ -19,7 +19,7 @@ public class Tasks extends AssertActions {
         tabResponses= new ArrayList<Response>();
         nameOfResponses= new ArrayList<String>();
         this.name=Thread.currentThread().getName().substring(7) +" of :"+ Thread.currentThread().getName().substring(0,6) +"file :"+fileToUpload.getName() ;
-
+        //upload 
         Response upload=Documents.uploadDocument(fileToUpload);
         tabResponses.add(upload);
         nameOfResponses.add("upload document");
@@ -27,28 +27,35 @@ public class Tasks extends AssertActions {
         {
             this.numberOfSuccessRequest++;
         }
+        //get Layout
         String idDoc=JsonPath.from(upload.asString()).get("id");
         Response getLayout=Documents.getDocumentLayout(idDoc);
+        JsonPath layoutResponse=JsonPath.from(getLayout.asString());
+        
         nameOfResponses.add("get document layout");
         if(getLayout.getStatusCode()==200)
         {
             this.numberOfSuccessRequest++;
         }
         tabResponses.add(getLayout);
-        Response getImage = Documents.getPageImage(idDoc, 0,"IM_100_0");
+        //get all image with different 
+        for(int i=0;i<=layoutResponse.getList("pageDimensionsList").size()-1;i++)
+        {
+        Response getImage = Documents.getPageImage(idDoc, i,"IM_100_0");
         nameOfResponses.add("get page image resolution: 100px");
         if(getImage.getStatusCode()==200)
         {
             this.numberOfSuccessRequest++;
         }
         tabResponses.add(getImage);
-        Response getImageFullScreen = Documents.getPageImage(idDoc, 0,"IM_800_0");
-        nameOfResponses.add("get page image resolution: 800px");
+        Response getImageFullScreen = Documents.getPageImage(idDoc, i,"IM_800_0");
+        nameOfResponses.add("Page"+"get page image resolution: 800px");
         if(getImageFullScreen.getStatusCode()==200)
         {
             this.numberOfSuccessRequest++;
-        }
+        }        
         tabResponses.add(getImageFullScreen);
+        }
         Response evictDocument= Documents.evictDocument(idDoc);
         nameOfResponses.add("evict document");
         if(evictDocument.getStatusCode()==200)
