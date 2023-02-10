@@ -1,25 +1,32 @@
 package com.arender.endpoint;
 
+import java.util.concurrent.TimeUnit;
+
 import com.arender.utlis.Initialization;
-import com.google.gson.Gson;
 
 import io.restassured.RestAssured;
+import io.restassured.config.ConnectionConfig;
 import io.restassured.response.Response;
 
 public class Conversions extends Initialization
 {
-    public static Gson gson = new Gson();
+    static
+    {
+        RestAssured.baseURI = url;
+        ConnectionConfig connectionConfig = new ConnectionConfig(
+                new ConnectionConfig.CloseIdleConnectionConfig(0, TimeUnit.NANOSECONDS));
+        RestAssured.config().connectionConfig(connectionConfig);
+    }
 
     public static Response convertDocumentToTargetFormat(String body)
     {
-        RestAssured.baseURI = url;
         return RestAssured.given().header("Content-type", "application/json").and().body(body).when()
                 .post("/conversions");
     }
 
     public static Response getConversionOrder(String conversionOrderId)
     {
-        RestAssured.baseURI = url;
+
         return RestAssured.given().contentType("application/json").when().get("/conversions/" + conversionOrderId);
     }
 }

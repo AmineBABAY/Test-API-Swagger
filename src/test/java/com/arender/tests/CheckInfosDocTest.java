@@ -1,5 +1,7 @@
 package com.arender.tests;
 
+import static org.testng.Assert.assertTrue;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -8,44 +10,52 @@ import com.arender.endpoint.Documents;
 
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
-import io.restassured.response.ResponseBody;
 
 public class CheckInfosDocTest extends AssertActions
 {
 
-    public static String documentId = "";
-
-    @Test(priority = 1)
-    public void uploadDocument()
+    private String uploadDocument(String f)
     {
-
-        Response response = Documents.uploadDocument(file);
-        JsonPath jsonPath = JsonPath.from(response.asString());
+        Response response = Documents.uploadDocument(f);
         verifyStatusCode(response, 200);
-        documentId = jsonPath.get("id");
+        JsonPath jsonPath = JsonPath.from(response.asString());
+        String id = jsonPath.get("id");
+        assertTrue(id != null && !id.isEmpty(), "Your id is empty or null");
+        return id;
     }
 
-    @Test(priority = 2)
-    public void casPassant()
+    @Test()
+    public void getDocumentTest()
     {
-
+        String documentId = uploadDocument(file);
         Response response = Documents.getDocument(documentId);
         verifyStatusCode(response, 200);
-        Response response2 = Documents.checkDocument(documentId);
-        verifyStatusCode(response2, 200);
-        ResponseBody body = response.body();
-        Assert.assertNotNull(body);
 
     }
 
-    @Test(priority = 3)
-    public void casAbsentDocument()
+    @Test()
+    public void checkDocumentTest()
+
+    {
+        String documentId = uploadDocument(file);
+        Response response = Documents.checkDocument(documentId);
+        verifyStatusCode(response, 200);
+        Assert.assertNotNull(response.body(), "Body of your document is null !");
+    }
+
+    @Test()
+    public void getDocumentWithWrongDocumentIdTest()
     {
 
         Response response = Documents.getDocument("A");
-        Response response2 = Documents.getDocument("A");
         verifyStatusCode(response, 404);
-        verifyStatusCode(response2, 404);
 
+    }
+
+    @Test()
+    public void checkDocumentWithWrongDocumentIdTest()
+    {
+        Response response = Documents.checkDocument("A");
+        verifyStatusCode(response, 404);
     }
 }

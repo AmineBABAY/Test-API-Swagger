@@ -3,30 +3,30 @@ package com.arender.tests;
 import static org.testng.Assert.assertTrue;
 
 import org.testng.annotations.Test;
+
 import com.arender.actions.AssertActions;
 import com.arender.endpoint.Documents;
+
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 
 public class FileTest extends AssertActions
 {
 
-    String documentId = "";
-
-    String zipDocumentId = "";
-
-    @Test(priority = 1)
-    public void uploadDocument()
+    private String uploadDocument(String f)
     {
-        Response response = Documents.uploadDocument("docx");
-        JsonPath jsonPath = JsonPath.from(response.asString());
+        Response response = Documents.uploadDocument(f);
         verifyStatusCode(response, 200);
-        documentId = jsonPath.get("id");
+        JsonPath jsonPath = JsonPath.from(response.asString());
+        String id = jsonPath.get("id");
+        assertTrue(id != null && !id.isEmpty(), "Your id is empty or null");
+        return id;
     }
 
-    @Test(priority = 2)
+    @Test()
     public void getDocumentAndCheckFormat()
     {
+        String documentId = uploadDocument("docx");
         Response response = Documents.getDocumentContent(documentId, "docx");
         verifyStatusCode(response, 200);
         assertTrue(response.getHeaders().get("Content-Type").toString().contains("officedocument"),
@@ -34,18 +34,20 @@ public class FileTest extends AssertActions
 
     }
 
-    @Test(priority = 3)
+    @Test()
     public void getDocumentWithConvertType()
     {
+        String documentId = uploadDocument("docx");
         Response response = Documents.getDocumentContent(documentId, "txt");
         verifyStatusCode(response, 200);
         assertTrue(response.getHeaders().get("Content-Type").toString().contains("text"),
                 "This file does not contain the correct format");
     }
 
-    @Test(priority = 4)
+    @Test()
     public void getDocumentWithDifferentFormat()
     {
+        String documentId = uploadDocument("docx");
         Response response = Documents.getDocumentContent(documentId, "avi");
         verifyStatusCode(response, 406);
     }

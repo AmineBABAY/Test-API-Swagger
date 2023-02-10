@@ -1,5 +1,7 @@
 package com.arender.tests;
 
+import static org.testng.Assert.assertTrue;
+
 import java.io.UnsupportedEncodingException;
 
 import org.testng.Assert;
@@ -15,28 +17,21 @@ import io.restassured.response.Response;
 public class DestinationTest extends AssertActions
 {
 
-    String documentId = "";
-
-    @Test(priority = 1)
-    public void uploadDocument() throws InterruptedException
+    private String uploadDocument(String f)
     {
-
-        // upload document
-
-        Response response = Documents.uploadDocument("destination");
-
-        // get reponse body
-        JsonPath jsonPath = JsonPath.from(response.asString());
-        // verify status of request is ok
+        String id;
+        Response response = Documents.uploadDocument(f);
         verifyStatusCode(response, 200);
-        // get th id of document
-        documentId = jsonPath.get("id");
+        JsonPath jsonPath = JsonPath.from(response.asString());
+        id = jsonPath.get("id");
+        assertTrue(id != null && !id.isEmpty(), "Your id is empty or null");
+        return id;
     }
 
-    @Test(priority = 2)
-    public void casPassant() throws UnsupportedEncodingException
+    @Test()
+    public void getNameDestinationTest() throws UnsupportedEncodingException
     {
-
+        String documentId = uploadDocument("destination");
         // Make a GET request on the end point destinations
         Response response = Documents.getNameDestination(documentId);
         // verify status of request is ok
@@ -63,8 +58,8 @@ public class DestinationTest extends AssertActions
 
     }
 
-    @Test(priority = 3)
-    public void casBloquant()
+    @Test()
+    public void getNameDestinationWithWrongId()
     {
 
         //// Make a GET request on the end point destinations with an id of a

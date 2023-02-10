@@ -15,17 +15,16 @@ public class PrintableTest extends AssertActions
 
     private String uploadDocument(String f)
     {
-        String id;
         Response response = Documents.uploadDocument(f);
         verifyStatusCode(response, 200);
         JsonPath jsonPath = JsonPath.from(response.asString());
-        id = jsonPath.get("id");
+        String id = jsonPath.get("id");
         assertTrue(id != null && !id.isEmpty(), "Your id is empty or null");
         return id;
     }
 
-    @Test(priority = 1)
-    public void casPassant()
+    @Test()
+    public void getPrintableDocumentTest()
     {
         String documentId = uploadDocument(file);
         Response response = Documents.getPrintableDocument(documentId);
@@ -38,8 +37,8 @@ public class PrintableTest extends AssertActions
                 "the body of your response does not contains the right code");
     }
 
-    @Test(priority = 2)
-    public void casBloquant()
+    @Test()
+    public void getPrintableDocumentWithWrongDocumentIdTest()
     {
         Response response = Documents.getPrintableDocument("bad id");
         verifyStatusCode(response, 404);

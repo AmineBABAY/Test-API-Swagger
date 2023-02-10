@@ -3,6 +3,7 @@ package com.arender.tests;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 import org.testng.annotations.Test;
 
@@ -16,29 +17,21 @@ import io.restassured.response.Response;
 
 public class ConversionTest extends AssertActions
 {
+    private static Logger LOGGER = Logger.getLogger(ConversionTest.class);
 
-    public static Response response1;
-
-    public static Response response3;
-
-    public static String documentId = "";
-
-    public static String conversionOrderId = "";
-
-    @Test(priority = 1)
-    public void uploadDocument()
+    private String uploadDocument(String f)
     {
-        Response response = Documents.uploadDocument("testDocx");
-        System.out.println(response.asString());
+        Response response = Documents.uploadDocument(f);
         verifyStatusCode(response, 200);
         JsonPath jsonPath = JsonPath.from(response.asString());
-        documentId = jsonPath.get("id");
+        String id = jsonPath.get("id");
+        assertTrue(id != null && !id.isEmpty(), "Your id is empty or null");
+        return id;
     }
 
-    @Test(priority = 2)
-    public void convertDocxToTxt() throws InterruptedException
+    private String convertDocxToTxt()
     {
-
+        String documentId = uploadDocument("testDocx");
         String body;
 
         JSONObject json = Config.readJsonFile("conversionsBody");
@@ -46,34 +39,38 @@ public class ConversionTest extends AssertActions
         json.put("format", "txt");
         body = json.toString();
 
-        response1 = Conversions.convertDocumentToTargetFormat(body);
-        System.out.println(response1.asString());
-        verifyStatusCode(response1, 200);
-        JsonPath jsonPath = JsonPath.from(response1.asString());
-        conversionOrderId = jsonPath.get("conversionOrderId.id");
-        System.out.println("conversion order id " + " : " + conversionOrderId);
+        Response response = Conversions.convertDocumentToTargetFormat(body);
+        verifyStatusCode(response, 200);
+        JsonPath jsonPath = JsonPath.from(response.asString());
+        return jsonPath.get("conversionOrderId.id");
+    }
+
+    @Test()
+    public void convertDocxToTxtTest() throws InterruptedException
+    {
+        convertDocxToTxt();
 
     }
 
-    @Test(priority = 3)
+    @Test()
     public void checkConversionOrder() throws InterruptedException
     {
+        String conversionOrderId = convertDocxToTxt();
         for (int iteration = 0; iteration < 60; iteration++)
         {
             Response response2 = Conversions.getConversionOrder(conversionOrderId);
-            System.out.println(response2.asString());
             verifyStatusCode(response2, 200);
             JsonPath jsonPath = JsonPath.from(response2.asString());
             String currentState = jsonPath.get("currentState");
             System.out.println("conversion order state " + " : " + currentState);
             if (currentState.equals("PROCESSED"))
             {
-                System.out.println("Done");
+                LOGGER.info("Done");
                 return;
             }
             else if (currentState.equals("PROCESSING"))
             {
-                System.out.println("Not yet");
+                LOGGER.info("Not yet");
             }
             else
             {
@@ -83,14 +80,13 @@ public class ConversionTest extends AssertActions
 
     }
 
-    @Test(priority = 4)
+    @Test()
     public void checkConvertedFile() throws InterruptedException
     {
-
-        response3 = Documents.getDocumentContent(documentId, "txt");
-        System.out.println(response3.asString());
-        verifyStatusCode(response3, 200);
-        assertTrue(response3.asString().contains("TEST"), "The current file does not contains the word TEST");
+        String documentId = uploadDocument("testDocx");
+        Response response = Documents.getDocumentContent(documentId, "txt");
+        verifyStatusCode(response, 200);
+        assertTrue(response.asString().contains("TEST"), "The current file does not contains the word TEST");
     }
 
 }

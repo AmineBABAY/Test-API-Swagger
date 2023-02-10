@@ -1,7 +1,10 @@
 package com.arender.tests;
 
+import static org.testng.Assert.assertTrue;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
 import com.arender.actions.AssertActions;
 import com.arender.endpoint.Documents;
 
@@ -11,27 +14,21 @@ import io.restassured.response.Response;
 public class SignatureTest extends AssertActions
 {
 
-    String documentId = "";
-
-    @Test(priority = 1)
-    public void uploadDocument() throws InterruptedException
+    private String uploadDocument(String f)
     {
-
-        // upload document with signature
-        Response response = Documents.uploadDocument("signature");
-        // get reponse body
-        JsonPath jsonPath = JsonPath.from(response.asString());
-        // verify status of request is ok
+        Response response = Documents.uploadDocument(f);
         verifyStatusCode(response, 200);
-        // get th id of document
-        documentId = jsonPath.get("id");
+        JsonPath jsonPath = JsonPath.from(response.asString());
+        String id = jsonPath.get("id");
+        assertTrue(id != null && !id.isEmpty(), "Your id is empty or null");
+        return id;
     }
 
-    @Test(priority = 2)
+    @Test()
     public void documentWithSignatures()
     {
 
-        // Make a GET request on the end point bookmark
+        String documentId = uploadDocument("signature");
         Response response = Documents.getSignatures(documentId);
         // verify status of request is ok
         verifyStatusCode(response, 200);
@@ -47,25 +44,22 @@ public class SignatureTest extends AssertActions
 
     }
 
-    @Test(priority = 3)
+    @Test()
     public void documentWithoutSignature()
     {
 
         // upload document without signatures
-        Response response = Documents.uploadDocument("imageA");
-        JsonPath jsonPath = JsonPath.from(response.asString());
-        verifyStatusCode(response, 200);
+        String documentId = uploadDocument("imageA");
 
-        documentId = jsonPath.get("id");
-        Response response2 = Documents.getSignatures(documentId);
-        String responseContent = response2.jsonPath().getString("signatures");
+        Response response = Documents.getSignatures(documentId);
+        String responseContent = response.jsonPath().getString("signatures");
 
         // verify that the list of signatures is empty
         Assert.assertTrue(responseContent.contains("[]"));
     }
 
-    @Test(priority = 4)
-    public void uploadDocumentwithWrongId()
+    @Test()
+    public void getSignaturesWithWrongId()
     {
 
         //// Make a GET request on the end point signature with an id of a

@@ -17,47 +17,20 @@ import io.restassured.response.Response;
 public class TransformationTest extends AssertActions
 {
 
-    public static String documentId = "";
-
-    public static String documentId1 = "";
-
-    public static String transformationId = "";
-
-    public static String transformationWithAnnoId = "";
-
-    public static String transformationResultDocumentID = "";
-
-    public static String transformationWithAnnoResultDocumentID = "";
-
-    public static String transformationAlterDocumentId = "";
-
-    public static String transformationAlterDocumentID = "";
-
-    public static String transformationWithFDFAnnoId = "";
-
-    public static String transformationWithFDFAnnoResultDocumentID = "";
-
-    @Test
-    public void uploadDocument()
+    private String uploadDocument(String f)
     {
-
-        // upload a first pdf file
-        Response response = Documents.uploadDocument("pdf_");
+        Response response = Documents.uploadDocument(f);
+        verifyStatusCode(response, 200);
         JsonPath jsonPath = JsonPath.from(response.asString());
-        // get the id of the file
-        documentId = jsonPath.get("id");
-        // upload a second pdf file
-        Response response1 = Documents.uploadDocument("fw4_pdf");
-        JsonPath jsonPath1 = JsonPath.from(response1.asString());
-        // get the id of the document
-        documentId1 = jsonPath1.get("id");
-
+        String id = jsonPath.get("id");
+        assertTrue(id != null && !id.isEmpty(), "Your id is empty or null");
+        return id;
     }
 
-    @Test(priority = 2)
-    public void transformDocumentBuilderWithoutAnnotations() throws InterruptedException
+    private String transformDocumentBuilderWithoutAnnotations() throws InterruptedException
     {
-
+        String documentId = uploadDocument("pdf_");
+        String documentId2 = uploadDocument("fw4_pdf");
         String body;
         // read the json file for transformation
         JSONObject contentFile = Config.readJsonFile("transformationBodyWithoutAnno");
@@ -74,7 +47,7 @@ public class TransformationTest extends AssertActions
         // get second JSON Object in the JSON transformationElements Array
         JSONObject secondItemObject = (JSONObject) transformationElements.get(1);
         // put the documentId1 stored in the second id object
-        secondItemObject.put("documentId", documentId1);
+        secondItemObject.put("documentId", documentId2);
         // fill the variable string body with the contentfile as string
         body = contentFile.toString();
         // make the request of transformation for the two pdf
@@ -83,40 +56,48 @@ public class TransformationTest extends AssertActions
         verifyStatusCode(response, 200);
         JsonPath jsonPath = JsonPath.from(response.asString());
         // get the returnd id of transformation
-        transformationId = jsonPath.get("transformationOrderId.id");
-        System.out.println("transformation id without annotations" + " : " + transformationId);
+        return jsonPath.get("transformationOrderId.id");
 
     }
 
-    @Test(priority = 3)
-    public void checkTranformationOrder() throws InterruptedException
+    @Test()
+    public void transformDocumentBuilderWithoutAnnotationsTest() throws InterruptedException
     {
+        transformDocumentBuilderWithoutAnnotations();
+    }
 
+    public String checkTranformationOrder() throws InterruptedException
+    {
+        String transformationId = transformDocumentBuilderWithoutAnnotations();
         // make a request on getTransformationOrdrer with the id received in
         // transformDocument
         Response response = Transformations.getTransformationOrdrer(transformationId);
         // verify status of request is ok
         verifyStatusCode(response, 200);
         JsonPath jsonPath = JsonPath.from(response.asString());
+        String transformationResultDocumentID = jsonPath.get("transformationResultDocumentID.id");
         // get the status of the body response
         String currentState = jsonPath.get("currentState");
-        // get the id of the body response
-        transformationResultDocumentID = jsonPath.get("transformationResultDocumentID.id");
-        System.out.println("transformation order state without annotations" + " : " + currentState);
-        System.out.println("trasformation order id without annotations " + " : " + transformationResultDocumentID);
         // Verify that the state is processed
         assertTrue(currentState.equals("PROCESSED"), "The current state is not PROCESSED");
         // verify that the id is genrated
         assertTrue(transformationResultDocumentID.length() != 0,
                 "the transformation result document ID is not generated");
+        return transformationResultDocumentID;
 
     }
 
-    @Test(priority = 4)
+    @Test()
+    public void checkTranformationOrderTest() throws InterruptedException
+    {
+        checkTranformationOrder();
+    }
+
+    @Test()
     public void checkTranformedFile() throws InterruptedException
     {
-
-        Response response = Documents.getDocumentContent(transformationResultDocumentID, "pdf");
+        String transformationResultDocumentId = checkTranformationOrder();
+        Response response = Documents.getDocumentContent(transformationResultDocumentId, "pdf");
 
         verifyStatusCode(response, 200);
 
@@ -124,10 +105,10 @@ public class TransformationTest extends AssertActions
 
     }
 
-    @Test(priority = 5)
-    public void transformDocumentBuilderWithAnnotations() throws InterruptedException
+    public String transformDocumentBuilderWithAnnotations() throws InterruptedException
     {
-
+        String documentId = uploadDocument("pdf_");
+        String documentId2 = uploadDocument("fw4_pdf");
         String body;
         // read the json file for transformation
         JSONObject contentFile = Config.readJsonFile("transformationBodyWithAnno");
@@ -144,7 +125,7 @@ public class TransformationTest extends AssertActions
         // get second JSON Object in the JSON transformationElements Array
         JSONObject secondItemObject = (JSONObject) transformationElements.get(1);
         // put the documentId1 stored in the second id object
-        secondItemObject.put("documentId", documentId1);
+        secondItemObject.put("documentId", documentId2);
         // get the array annotations
         JSONObject annotations = contentFile.getJSONObject("annotations");
         assertTrue(!annotations.isEmpty(), "The transform document is without annotations");
@@ -166,15 +147,19 @@ public class TransformationTest extends AssertActions
         verifyStatusCode(response, 200);
         JsonPath jsonPath = JsonPath.from(response.asString());
         // get the returnd id of transformation
-        transformationWithAnnoId = jsonPath.get("transformationOrderId.id");
-        System.out.println("transformation id with annotations " + " : " + transformationWithAnnoId);
+        return jsonPath.get("transformationOrderId.id");
 
     }
 
-    @Test(priority = 6)
-    public void checkTranformationOrderWithAnno() throws InterruptedException
+    @Test()
+    public void transformDocumentBuilderWithAnnotationsTest() throws InterruptedException
     {
+        transformDocumentBuilderWithAnnotations();
+    }
 
+    public String checkTranformationOrderWithAnno() throws InterruptedException
+    {
+        String transformationWithAnnoId = transformDocumentBuilderWithAnnotations();
         // make a request on getTransformationOrdrer with the id received in
         // transformDocument
         Response response = Transformations.getTransformationOrdrer(transformationWithAnnoId);
@@ -183,23 +168,26 @@ public class TransformationTest extends AssertActions
         JsonPath jsonPath = JsonPath.from(response.asString());
         // get the status of the body response
         String currentState = jsonPath.get("currentState");
-        // get the id of the body response
-        transformationWithAnnoResultDocumentID = jsonPath.get("transformationResultDocumentID.id");
-        System.out.println("transformation order state with annotations " + " : " + currentState);
-        System.out.println("trasformation order id with annotations " + " : " + transformationWithAnnoResultDocumentID);
-        // Verify that the state is processed
+        String transformationWithAnnoResultDocumentID = jsonPath.get("transformationResultDocumentID.id");
         assertTrue(currentState.equals("PROCESSED"), "The current state is not PROCESSED");
         // verify that the id is genrated
         assertTrue(transformationWithAnnoResultDocumentID.length() != 0,
                 "the transformation result document ID is not generated");
+        return transformationWithAnnoResultDocumentID;
 
     }
 
-    @Test(priority = 7)
+    @Test()
+    public void checkTranformationOrderWithAnnoTest() throws InterruptedException
+    {
+        checkTranformationOrderWithAnno();
+    }
+
+    @Test()
     public void checkTranformedFileWithAnno() throws InterruptedException
     {
-
-        Response response = Documents.getDocumentContent(transformationWithAnnoResultDocumentID, "pdf");
+        String transformationWithAnnoResultDocumentId = checkTranformationOrderWithAnno();
+        Response response = Documents.getDocumentContent(transformationWithAnnoResultDocumentId, "pdf");
 
         verifyStatusCode(response, 200);
         assertTrue(response.header("content-type").contains("application/pdf"));
@@ -212,21 +200,10 @@ public class TransformationTest extends AssertActions
      * that require alter
      **/
 
-    @Test(priority = 8)
-    public void uploadAlterDocument() throws InterruptedException
+    @Test()
+    public String alterDocumentContent() throws InterruptedException
     {
-
-        Response response = Documents.uploadDocument("fw4_pdf");
-        JsonPath jsonPath = JsonPath.from(response.asString());
-        // get the id of the file
-        documentId = jsonPath.get("id");
-        verifyStatusCode(response, 200);
-    }
-
-    @Test(priority = 9)
-    public void alterDocumentContent() throws InterruptedException
-    {
-
+        String documentId = uploadDocument("fw4_pdf");
         String body;
         // read the json file for transformation
         JSONObject contentFile = Config.readJsonFile("alterDocumentContent");
@@ -252,15 +229,19 @@ public class TransformationTest extends AssertActions
         verifyStatusCode(transformation, 200);
         JsonPath jsonPath = JsonPath.from(transformation.asString());
         // get the returnd id of transformation
-        transformationAlterDocumentId = jsonPath.get("transformationOrderId.id");
-        System.out.println("transformation id for alter document" + " : " + transformationAlterDocumentId);
+        return jsonPath.get("transformationOrderId.id");
 
     }
 
-    @Test(priority = 10)
-    public void checkAlterDocTranformationOrder() throws InterruptedException
+    @Test()
+    public void alterDocumentContentTest() throws InterruptedException
     {
+        alterDocumentContent();
+    }
 
+    public String checkAlterDocTranformationOrder() throws InterruptedException
+    {
+        String transformationAlterDocumentId = alterDocumentContent();
         // make a request on getTransformationOrdrer with the id received in
         // transformDocument
         Response response = Transformations.getTransformationOrdrer(transformationAlterDocumentId);
@@ -269,22 +250,26 @@ public class TransformationTest extends AssertActions
         JsonPath jsonPath = JsonPath.from(response.asString());
         // get the status of the body response
         String currentState = jsonPath.get("currentState");
-        // get the id of the body response
-        transformationAlterDocumentID = jsonPath.get("transformationResultDocumentID.id");
-        System.out.println("transformation order state for alter document " + " : " + currentState);
-        System.out.println("trasformation order id for alter document " + " : " + transformationAlterDocumentID);
+        String transformationAlterDocumentID = jsonPath.get("transformationResultDocumentID.id");
         // Verify that the state is processed
         assertTrue(currentState.equals("PROCESSED"), "The current state is not PROCESSED");
         // verify that the id is genrated
         assertTrue(transformationAlterDocumentID.length() != 0,
                 "the transformation result document ID is not generated");
+        return transformationAlterDocumentID;
 
     }
 
-    @Test(priority = 11)
-    public void checkAlterDOcTranformedFile() throws InterruptedException
+    @Test()
+    public void checkAlterDocTranformationOrderTest() throws InterruptedException
     {
+        checkAlterDocTranformationOrder();
+    }
 
+    @Test()
+    public void checkAlterDocTranformedFile() throws InterruptedException
+    {
+        String transformationAlterDocumentID = checkAlterDocTranformationOrder();
         Response response = Documents.getDocumentContent(transformationAlterDocumentID, "pdf");
 
         verifyStatusCode(response, 200);
@@ -292,10 +277,9 @@ public class TransformationTest extends AssertActions
 
     }
 
-    @Test(priority = 12)
-    public void transformDocumentWithFDFAnnotations() throws InterruptedException
+    public String transformDocumentWithFDFAnnotations() throws InterruptedException
     {
-
+        String documentId = uploadDocument("pdf_");
         String body;
         // read the json file for transformation
         JSONObject contentFile = Config.readJsonFile("transformationWithFDFAnnotation");
@@ -330,15 +314,19 @@ public class TransformationTest extends AssertActions
         verifyStatusCode(response, 200);
         JsonPath jsonPath = JsonPath.from(response.asString());
         // get the returnd id of transformation
-        transformationWithFDFAnnoId = jsonPath.get("transformationOrderId.id");
-        System.out.println("transformation id with FDF annotations " + " : " + transformationWithAnnoId);
+        return jsonPath.get("transformationOrderId.id");
 
     }
 
-    @Test(priority = 13)
-    public void checkTranformationOrderWithFDFAnno() throws InterruptedException
+    @Test()
+    public void transformDocumentWithFDFAnnotationsTest() throws InterruptedException
     {
+        transformDocumentWithFDFAnnotations();
+    }
 
+    public String checkTranformationOrderWithFDFAnno() throws InterruptedException
+    {
+        String transformationWithFDFAnnoId = transformDocumentWithFDFAnnotations();
         // make a request on getTransformationOrdrer with the id received in
         // transformDocument
         Response response = Transformations.getTransformationOrdrer(transformationWithFDFAnnoId);
@@ -348,22 +336,25 @@ public class TransformationTest extends AssertActions
         // get the status of the body response
         String currentState = jsonPath.get("currentState");
         // get the id of the body response
-        transformationWithFDFAnnoResultDocumentID = jsonPath.get("transformationResultDocumentID.id");
-        System.out.println("transformation order state with annotations " + " : " + currentState);
-        System.out.println(
-                "trasformation order id with FDF annotations " + " : " + transformationWithFDFAnnoResultDocumentID);
-        // Verify that the state is processed
+        String transformationWithFDFAnnoResultDocumentID = jsonPath.get("transformationResultDocumentID.id");
+
         assertTrue(currentState.equals("PROCESSED"), "The current state is not PROCESSED");
         // verify that the id is genrated
         assertTrue(transformationWithFDFAnnoResultDocumentID.length() != 0,
                 "the transformation result document ID is not generated");
-
+        return transformationWithFDFAnnoResultDocumentID;
     }
 
-    @Test(priority = 14)
+    @Test()
+    public void checkTranformationOrderWithFDFAnnoTest() throws InterruptedException
+    {
+        checkTranformationOrderWithFDFAnno();
+    }
+
+    @Test()
     public void checkTranformedFileWithFDFAnno() throws InterruptedException
     {
-
+        String transformationWithFDFAnnoResultDocumentID = checkTranformationOrderWithFDFAnno();
         Response response = Documents.getDocumentContent(transformationWithFDFAnnoResultDocumentID, "pdf");
 
         verifyStatusCode(response, 200);

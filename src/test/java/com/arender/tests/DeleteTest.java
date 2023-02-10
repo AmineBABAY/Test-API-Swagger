@@ -3,30 +3,30 @@ package com.arender.tests;
 import static org.testng.Assert.assertTrue;
 
 import org.testng.annotations.Test;
+
 import com.arender.actions.AssertActions;
 import com.arender.endpoint.Documents;
+
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 
 public class DeleteTest extends AssertActions
 {
 
-    String documentId = "";
-
-    @Test(priority = 1)
-    public void uploadDocument()
+    private String uploadDocument(String f)
     {
-        Response response = Documents.uploadDocument(file);
-        JsonPath jsonPath = JsonPath.from(response.asString());
-
+        Response response = Documents.uploadDocument(f);
         verifyStatusCode(response, 200);
-        documentId = jsonPath.get("id");
-
+        JsonPath jsonPath = JsonPath.from(response.asString());
+        String id = jsonPath.get("id");
+        assertTrue(id != null && !id.isEmpty(), "Your id is empty or null");
+        return id;
     }
 
-    @Test(priority = 2)
+    @Test()
     public void deleteEvictDocument()
     {
+        String documentId = uploadDocument(file);
         Response response = Documents.evictDocument(documentId);
 
         verifyStatusCode(response, 200);

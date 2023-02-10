@@ -1,7 +1,10 @@
 package com.arender.tests;
 
+import static org.testng.Assert.assertTrue;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
 import com.arender.actions.AssertActions;
 import com.arender.endpoint.Documents;
 
@@ -11,34 +14,23 @@ import io.restassured.response.Response;
 public class BookmarkTest extends AssertActions
 {
 
-    String documentId = "";
-
-    @Test(priority = 1)
-    public void uploadDocument() throws InterruptedException
+    private String uploadDocument(String f)
     {
-
-        // upload document with bookmark
-        Response response = Documents.uploadDocument("bookmark");
-        // get reponse body
-        JsonPath jsonPath = JsonPath.from(response.asString());
-        // verify status of request is ok
+        Response response = Documents.uploadDocument(f);
         verifyStatusCode(response, 200);
-        // get th id of document
-        documentId = jsonPath.get("id");
+        JsonPath jsonPath = JsonPath.from(response.asString());
+        String id = jsonPath.get("id");
+        assertTrue(id != null && !id.isEmpty(), "Your id is empty or null");
+        return id;
     }
 
-    @Test(priority = 2)
+    @Test()
     public void documentWithBookmarks()
     {
-
-        // Make a GET request on the end point bookmark
+        String documentId = uploadDocument("bookmark");
         Response response = Documents.getBookmarks(documentId);
-        // verify status of request is ok
         verifyStatusCode(response, 200);
-        // Get the list of boomark
         String responseContent = response.jsonPath().getString("bookmarks");
-        System.out.print(responseContent);
-        // verify that the list of bookmark is not empty
         Assert.assertTrue(responseContent.contains("title"));
         Assert.assertTrue(responseContent.contains("page"));
         Assert.assertTrue(responseContent.contains("namedDestination"));
@@ -46,24 +38,17 @@ public class BookmarkTest extends AssertActions
 
     }
 
-    @Test(priority = 3)
+    @Test()
     public void documentWithoutBookmark()
     {
+        String documentId = uploadDocument("imageA");
 
-        // upload document without bookmark from rendition
-        Response response = Documents.uploadDocument("imageA");
-        JsonPath jsonPath = JsonPath.from(response.asString());
-        verifyStatusCode(response, 200);
-
-        documentId = jsonPath.get("id");
         Response response2 = Documents.getBookmarks(documentId);
         String responseContent = response2.jsonPath().getString("bookmarks");
-
-        // verify that the list of bookmark is empty
         Assert.assertTrue(responseContent.contains("[]"));
     }
 
-    @Test(priority = 4)
+    @Test()
     public void uploadDocumentwithWrongId()
     {
 

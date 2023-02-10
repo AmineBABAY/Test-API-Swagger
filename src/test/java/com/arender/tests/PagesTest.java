@@ -25,7 +25,7 @@ public class PagesTest extends AssertActions
         return id;
     }
 
-    @Test(priority = 1)
+    @Test()
     public void getPageImageWithoutDescription()
     {
         String documentId = uploadDocument("pdf");
@@ -35,7 +35,7 @@ public class PagesTest extends AssertActions
 
     }
 
-    @Test(priority = 2)
+    @Test()
     public void getPageImageWithDescription()
     {
         String documentId = uploadDocument("pdf");
@@ -45,14 +45,14 @@ public class PagesTest extends AssertActions
 
     }
 
-    @Test(priority = 3)
+    @Test()
     public void getPageImageWithWrongIdDocument()
     {
         Response response = Documents.getPageImage("bad id", 0);
         verifyStatusCode(response, 404);
     }
 
-    @Test(priority = 4)
+    @Test()
     public void getPageImageWithWrongPage()
     {
         String documentId = uploadDocument("pdf");
@@ -60,7 +60,7 @@ public class PagesTest extends AssertActions
         verifyStatusCode(response, 500);
     }
 
-    @Test(priority = 5)
+    @Test()
     public void searchOnDocumentWithText()
     {
 
@@ -79,7 +79,7 @@ public class PagesTest extends AssertActions
 
     }
 
-    @Test(priority = 6)
+    @Test()
     public void searchTextOnNoExistentPage()
     {
         String documentId = uploadDocument("pdf");
@@ -91,7 +91,7 @@ public class PagesTest extends AssertActions
 
     }
 
-    @Test(priority = 7)
+    @Test()
     public void PagesOfSearchResult()
     {
         String documentId = uploadDocument("pdf");
@@ -104,7 +104,7 @@ public class PagesTest extends AssertActions
 
     }
 
-    @Test(priority = 8)
+    @Test()
     public void searchOnDocumentWithoutText()
     {
 
@@ -117,7 +117,7 @@ public class PagesTest extends AssertActions
         Assert.assertEquals(responseContent, "[]");
     }
 
-    @Test(priority = 9)
+    @Test()
     public void PagesOfSearchResultOnDocumentWithoutText()
     {
 
@@ -132,7 +132,7 @@ public class PagesTest extends AssertActions
         Assert.assertEquals(documentId, response.jsonPath().getString("uuid.id"));
     }
 
-    @Test(priority = 10)
+    @Test()
     public void uploadDocumentwithWrongId()
     {
 
@@ -141,7 +141,7 @@ public class PagesTest extends AssertActions
 
     }
 
-    @Test(priority = 11)
+    @Test()
     public void uploadDocumentwithWrongIdforsearchPages()
     {
 
@@ -151,7 +151,7 @@ public class PagesTest extends AssertActions
 
     }
 
-    @Test(priority = 12)
+    @Test()
     public void positionTextOnDocumentWithText()
     {
         String documentId = uploadDocument("pdf");
@@ -172,7 +172,7 @@ public class PagesTest extends AssertActions
 
     }
 
-    @Test(priority = 13)
+    @Test()
     public void positionTextOnNoExistentPage()
     {
         String documentId = uploadDocument("pdf");
@@ -184,7 +184,7 @@ public class PagesTest extends AssertActions
 
     }
 
-    @Test(priority = 14)
+    @Test()
     public void positionTextOnDocumentWithoutText()
     {
 
@@ -199,7 +199,7 @@ public class PagesTest extends AssertActions
         Assert.assertEquals(responseContent, "[]");
     }
 
-    @Test(priority = 15)
+    @Test()
     public void positionTextWithWrongId()
     {
         Response response = Documents.getTextPosition("bad id", 0);
