@@ -125,4 +125,10 @@ public class Documents extends Initialization
         return RestAssured.given().when().delete("/documents/" + id);
     }
 
+    public static Response getDocumentAnnotations(String id)
+    {
+
+        return RestAssured.given().when().get("/documents/" + id + "/file/annotations");
+    }
+
 }
