@@ -77,7 +77,7 @@ public class ConversionTest extends AssertActions
             }
             else
             {
-                assertFalse(true, "the are is a problem !");
+                assertFalse(true, "the is a problem !");
             }
         }
 

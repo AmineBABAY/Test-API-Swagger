@@ -8,4 +8,4 @@ Run from eclipse
 	1)install TestNG plugin
 	2)open config.properties
  	3)change your url, file, duration
- 	4)open any xml file from /scenario theb run as TestNG
+ 	4)open any xml file from /scenario then run as TestNG
