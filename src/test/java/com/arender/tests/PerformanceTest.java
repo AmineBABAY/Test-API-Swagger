@@ -12,21 +12,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.Logger;
 import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+
 import com.arender.actions.AssertActions;
 import com.arender.actions.Tasks;
 
 public class PerformanceTest extends AssertActions
 {
-    private static File pdf100KO;
-
-    private static File pdf1MO;
-
-    private static File txt;
-
-    private static File jpeg;
-
     private static File fileToUploadFromConfig;
 
     private final static Logger LOGGER = Logger.getLogger(PerformanceTest.class);
@@ -38,21 +30,8 @@ public class PerformanceTest extends AssertActions
     @BeforeSuite
     public static void initialization()
     {
-        String filepathPDF100KO = System.getProperty("user.dir") + prop.getProperty("pdf_with_100KO");
-        pdf100KO = new File(filepathPDF100KO);
-        String filepathPDF1MO = System.getProperty("user.dir") + prop.getProperty("pdf_with_1MO");
-        pdf1MO = new File(filepathPDF1MO);
-        String filepathTXT = System.getProperty("user.dir") + prop.getProperty("txt");
-        txt = new File(filepathTXT);
-        String filepathJPPEG = System.getProperty("user.dir") + prop.getProperty("jpeg");
-        jpeg = new File(filepathJPPEG);
-
         String fileFromConfig = System.getProperty("user.dir") + prop.getProperty(file);
         fileToUploadFromConfig = new File(fileFromConfig);
-    }
-
-    public static void scheduledTestWithDuration() throws InterruptedException, IOException
-    {
     }
 
     public static void testMultipleRequests(File fileToUploadGP1, File fileToUploadGP2, File fileToUploadGP3)
@@ -62,14 +41,14 @@ public class PerformanceTest extends AssertActions
         LOGGER.info("Test has been started.");
         LOGGER.info("Available processors : " + Runtime.getRuntime().availableProcessors());
         ArrayList<Tasks> tabTasks = new ArrayList<Tasks>();
-        ExecutorService executorPDF = Executors.newFixedThreadPool(numberOfUsers);
-        ExecutorService executorTXT = Executors.newFixedThreadPool(numberOfUsers);
-        ExecutorService executorDOCX = Executors.newFixedThreadPool(numberOfUsers);
+        ExecutorService executorGroup1 = Executors.newFixedThreadPool(numberOfUsers);
+        ExecutorService executorGroup2 = Executors.newFixedThreadPool(numberOfUsers);
+        ExecutorService executorGroup3 = Executors.newFixedThreadPool(numberOfUsers);
         AtomicInteger completed = new AtomicInteger();
         for (int i = 1; i <= numberOfUsers; i++)
         {
 
-            executorPDF.submit(() -> {
+            executorGroup1.submit(() -> {
                 try
                 {
                     tabTasks.add(new Tasks(fileToUploadGP1));
@@ -81,7 +60,7 @@ public class PerformanceTest extends AssertActions
                 }
 
             });
-            executorTXT.submit(() -> {
+            executorGroup2.submit(() -> {
                 try
                 {
 
@@ -95,7 +74,7 @@ public class PerformanceTest extends AssertActions
                 }
 
             });
-            executorDOCX.submit(() -> {
+            executorGroup3.submit(() -> {
                 try
                 {
                     tabTasks.add(new Tasks(fileToUploadGP3));
@@ -108,12 +87,12 @@ public class PerformanceTest extends AssertActions
 
             });
         }
-        executorPDF.shutdown();
-        executorPDF.awaitTermination(3, TimeUnit.MINUTES);
-        executorTXT.shutdown();
-        executorTXT.awaitTermination(3, TimeUnit.MINUTES);
-        executorDOCX.shutdown();
-        executorDOCX.awaitTermination(3, TimeUnit.MINUTES);
+        executorGroup1.shutdown();
+        executorGroup1.awaitTermination(3, TimeUnit.MINUTES);
+        executorGroup2.shutdown();
+        executorGroup2.awaitTermination(3, TimeUnit.MINUTES);
+        executorGroup3.shutdown();
+        executorGroup3.awaitTermination(3, TimeUnit.MINUTES);
 
         LOGGER.info("Available processors : " + Runtime.getRuntime());
         for (int i = 0; i < tabTasks.size(); i++)
@@ -140,8 +119,20 @@ public class PerformanceTest extends AssertActions
 
     }
 
-    @Test(priority = 1)
-    public static void pdfWith1MOSize() throws InterruptedException, IOException
+    @Test()
+    public static void PerforamnceTestInShortDuration() throws InterruptedException, IOException
+    {
+        Instant start = Instant.now();
+        Duration duration = Duration.ofMinutes(2);
+        while (Duration.between(start, Instant.now()).compareTo(duration) < 0)
+        {
+            testMultipleRequests(fileToUploadFromConfig, fileToUploadFromConfig, fileToUploadFromConfig);
+
+        }
+    }
+
+    @Test()
+    public static void PerforamnceTestWithConfiguredDuration() throws InterruptedException, IOException
     {
         Instant start = Instant.now();
         Duration duration = Duration.ofMinutes(durationOfTest);
