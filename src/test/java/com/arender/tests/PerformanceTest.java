@@ -126,9 +126,6 @@ public class PerformanceTest extends AssertActions
             }
 
             totalEvic += task.getEvicResponses().time();
-            LOGGER.info("time: " + task.getEvicResponses().time());
-            LOGGER.info("size: " + tabTasks.size());
-            LOGGER.info("size: " + totalEvic);
 
         }
         LOGGER.info("Total number of users : " + completed.get());
