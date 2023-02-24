@@ -13,6 +13,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.commons.math3.stat.StatUtils;
 import org.apache.log4j.Logger;
 import org.knowm.xchart.BitmapEncoder;
 import org.knowm.xchart.BitmapEncoder.BitmapFormat;
@@ -34,17 +35,18 @@ public class PerformanceTest extends AssertActions
 
     private final static Logger LOGGER = Logger.getLogger(PerformanceTest.class);
 
-    private ArrayList<Tasks> tabAllTasks = new ArrayList<Tasks>();
+    private ArrayList<Long> uploadList = new ArrayList<>();
 
-    private static CategoryChart chart;
+    private ArrayList<Long> getLayoutList = new ArrayList<>();
 
-    long totalUpload = 0, totalLayout = 0, totalGetImage100px = 0, totalGetImage800px = 0, totalEvic = 0,
-            numberOfGetLayout100px = 0, numberOfGetLayout800px = 0, maxOfUpload = 0, maxOfLayout = 0,
-            maxOfGetImage100px = 0, maxOfGetImage800px = 0, maxOfEvic = 0, minOfUpload = 0, minOfLayout = 0,
-            minOfGetImage100px = 0, minOfGetImage800px = 0, minOfEvic = 0;
+    private ArrayList<Long> getImage100pxList = new ArrayList<>();
+
+    private ArrayList<Long> getImage800pxList = new ArrayList<>();
+
+    private ArrayList<Long> evictList = new ArrayList<>();
 
     @BeforeSuite
-    public static void initialization()
+    private static void initialization()
     {
 
         String fileFromConfig = System.getProperty("user.dir") + prop.getProperty(file);
@@ -52,12 +54,59 @@ public class PerformanceTest extends AssertActions
 
     }
 
-    // public long findMax()
-
-    public void testMultipleRequests(File fileToUploadGP1, File fileToUploadGP2, File fileToUploadGP3)
-            throws InterruptedException, IOException
+    private byte[] generateImageForGraph(CategoryChart chart) throws IOException
     {
-        ArrayList<Tasks> tabTasks = new ArrayList<Tasks>();
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        BitmapEncoder.saveBitmap(chart, outputStream, BitmapFormat.PNG);
+        return outputStream.toByteArray();
+    }
+
+    private ArrayList<Long> stat(ArrayList<Long> RequestList)
+    {
+        ArrayList<Long> result = new ArrayList<>();
+        result.add(calculMin(RequestList));
+        result.add(calculPercentile(RequestList, 50.0));
+        result.add(calculPercentile(RequestList, 75.0));
+        result.add(calculPercentile(RequestList, 95.0));
+        result.add(calculPercentile(RequestList, 99.0));
+        result.add(calculMax(RequestList));
+        return result;
+    }
+
+    private CategoryChart chartForRequest(String nameRequest)
+    {
+        CategoryChart chart = new CategoryChartBuilder().title(nameRequest + " " + file).xAxisTitle(nameRequest)
+                .yAxisTitle("Time in milliseonds").theme(ChartTheme.Matlab).build();
+        chart.getStyler().setLegendPosition(LegendPosition.OutsideE);
+        chart.getStyler().setLabelsVisible(true);
+        return chart;
+    }
+
+    private long calculPercentile(ArrayList<Long> list, double percentile)
+    {
+        double[] myArray = list.stream().mapToDouble(Long::doubleValue).toArray();
+        Arrays.sort(myArray);
+        return (long) StatUtils.percentile(myArray, percentile);
+    }
+
+    private long calculMax(ArrayList<Long> list)
+    {
+        return list.stream().max(Long::compare).orElse(null);
+    }
+
+    private long calculMin(ArrayList<Long> list)
+    {
+        return list.stream().min(Long::compare).orElse(null);
+    }
+
+    private long calculMean(ArrayList<Long> list)
+    {
+        return (long) list.stream().mapToLong(Long::longValue).average().orElse(Double.NaN);
+    }
+
+    public void testMultipleRequests(File fileToUploadGP) throws InterruptedException, IOException
+    {
+        ArrayList<Tasks> tasks = new ArrayList<Tasks>();
 
         ExecutorService executorGroup = Executors.newFixedThreadPool(numberOfUsers);
 
@@ -67,100 +116,31 @@ public class PerformanceTest extends AssertActions
             executorGroup.submit(() -> {
                 try
                 {
-                    tabTasks.add(new Tasks(fileToUploadGP1));
+                    tasks.add(new Tasks(fileToUploadGP));
                     completed.incrementAndGet();
                 }
                 catch (Exception e)
                 {
-                    LOGGER.error(e.getMessage());
+                    LOGGER.error("exception : " + e.getMessage());
                 }
             });
 
         }
         executorGroup.shutdown();
         executorGroup.awaitTermination(3, TimeUnit.MINUTES);
-        for (int i = 0; i < tabTasks.size(); i++)
+        for (int i = 0; i < tasks.size(); i++)
         {
-            Tasks task = tabTasks.get(i);
-            tabAllTasks.add(task);
-            if (maxOfUpload < task.getUploadResponse().time())
-            {
-                maxOfUpload = task.getUploadResponse().time();
-            }
-            if (maxOfLayout < task.getGetLayoutResponse().time())
-            {
-                maxOfLayout = task.getGetLayoutResponse().time();
-            }
-            if (maxOfEvic < task.getEvicResponses().time())
-            {
-                maxOfEvic = task.getGetLayoutResponse().time();
-            }
+            Tasks task = tasks.get(i);
 
-            if (minOfUpload == 0)
-            {
-                minOfUpload = tabTasks.get(0).getUploadResponse().time();
-            }
-            else if (minOfUpload > task.getUploadResponse().time())
-            {
-                minOfUpload = task.getUploadResponse().time();
-            }
-
-            if (minOfLayout == 0)
-            {
-                minOfLayout = tabTasks.get(0).getGetLayoutResponse().time();
-            }
-            else if (minOfLayout > task.getGetLayoutResponse().time())
-            {
-                minOfLayout = task.getGetLayoutResponse().time();
-            }
-            if (minOfEvic == 0)
-            {
-                minOfEvic = tabTasks.get(0).getEvicResponses().time();
-            }
-            else if (minOfEvic > task.getEvicResponses().time())
-            {
-                minOfEvic = task.getEvicResponses().time();
-            }
-            totalUpload += task.getUploadResponse().time();
-
-            totalLayout += task.getGetLayoutResponse().time();
-            numberOfGetLayout100px += task.getTabGetImage100pxResponses().size();
-            numberOfGetLayout800px += task.getTabGetImage800pxResponses().size();
+            uploadList.add(task.getUploadResponse().time());
+            getLayoutList.add(task.getGetLayoutResponse().time());
+            evictList.add(task.getEvictResponse().time());
 
             for (int l = 0; l < task.getTabGetImage100pxResponses().size(); l++)
             {
-                totalGetImage100px += task.getTabGetImage100pxResponses().get(l).time();
-                if (maxOfGetImage100px < task.getTabGetImage100pxResponses().get(l).time())
-                {
-                    maxOfGetImage100px = task.getTabGetImage100pxResponses().get(l).time();
-                }
-                if (minOfGetImage100px == 0)
-                {
-                    minOfGetImage100px = task.getTabGetImage100pxResponses().get(0).time();
-                }
-                else if (minOfGetImage100px > task.getTabGetImage100pxResponses().get(l).time())
-                {
-                    minOfGetImage100px = task.getTabGetImage100pxResponses().get(l).time();
-                }
+                getImage100pxList.add(task.getTabGetImage100pxResponses().get(l).time());
+                getImage800pxList.add(task.getTabGetImage800pxResponses().get(l).time());
             }
-            for (int m = 0; m < task.getTabGetImage800pxResponses().size(); m++)
-            {
-                totalGetImage800px += task.getTabGetImage800pxResponses().get(m).time();
-                if (maxOfGetImage800px < task.getTabGetImage800pxResponses().get(m).time())
-                {
-                    maxOfGetImage800px = task.getTabGetImage800pxResponses().get(m).time();
-                }
-                if (minOfGetImage800px == 0)
-                {
-                    minOfGetImage800px = task.getTabGetImage800pxResponses().get(0).time();
-                }
-                else if (minOfGetImage800px > task.getTabGetImage800pxResponses().get(m).time())
-                {
-                    minOfGetImage800px = task.getTabGetImage800pxResponses().get(m).time();
-                }
-            }
-
-            totalEvic += task.getEvicResponses().time();
 
         }
         LOGGER.info("Total number of users : " + completed.get());
@@ -176,56 +156,35 @@ public class PerformanceTest extends AssertActions
         Duration duration = Duration.ofMinutes(2);
         while (Duration.between(start, Instant.now()).compareTo(duration) < 0)
         {
-            testMultipleRequests(fileToUploadFromConfig, fileToUploadFromConfig, fileToUploadFromConfig);
+            testMultipleRequests(fileToUploadFromConfig);
 
         }
-        chart = new CategoryChartBuilder().title("Average of requests for : " + file).xAxisTitle("Request")
-                .yAxisTitle("Time in milliseonds").theme(ChartTheme.Matlab).build();
-        chart.getStyler().setLegendPosition(LegendPosition.OutsideE);
-        chart.getStyler().setLabelsVisible(true);
-        // chart.getStyler().setPlotGridLinesVisible(true);
-        ArrayList<Long> averageOfUpload = new ArrayList<Long>();
-        ArrayList<Long> averageOfLayout = new ArrayList<Long>();
-        ArrayList<Long> averageOfGetImage100px = new ArrayList<Long>();
-        ArrayList<Long> averageOfGetImage800px = new ArrayList<Long>();
-        ArrayList<Long> averageOfEvic = new ArrayList<Long>();
-        ArrayList<String> nameOfAxis = new ArrayList<String>(Arrays.asList(new String[] { "Average", "Max", "Min" }));
 
-        averageOfUpload.add(totalUpload / tabAllTasks.size());
-        averageOfUpload.add(maxOfUpload);
-        averageOfUpload.add(minOfUpload);
+        ArrayList<String> nameOfAxis = new ArrayList<String>(Arrays
+                .asList(new String[] { "Min", "Percentile50", "Percentile75", "Percentile95", "Percentile99", "Max" }));
 
-        averageOfLayout.add(totalLayout / tabAllTasks.size());
-        averageOfLayout.add(maxOfLayout);
-        averageOfLayout.add(minOfLayout);
+        CategoryChart chartUpload = chartForRequest("Upload");
+        chartUpload.addSeries("Upload", nameOfAxis, stat(uploadList));
+        CategoryChart chartLayout = chartForRequest("Get Layout");
+        chartLayout.addSeries("Get Layout", nameOfAxis, stat(getLayoutList));
+        CategoryChart chartImage100px = chartForRequest("Get image 100px");
+        chartImage100px.addSeries("Get image 100px", nameOfAxis, stat(getImage100pxList));
+        CategoryChart chartImage800px = chartForRequest("Get image 800px");
+        chartImage800px.addSeries("Get image 800px", nameOfAxis, stat(getImage800pxList));
+        CategoryChart chartEvict = chartForRequest("Evict");
+        chartEvict.addSeries("Evict", nameOfAxis, stat(evictList));
+        //
 
-        averageOfGetImage100px.add(totalGetImage100px / numberOfGetLayout100px);
-        averageOfGetImage100px.add(maxOfGetImage100px);
-        averageOfGetImage100px.add(minOfGetImage100px);
-
-        averageOfGetImage800px.add(totalGetImage800px / numberOfGetLayout800px);
-        averageOfGetImage800px.add(maxOfGetImage800px);
-        averageOfGetImage800px.add(minOfGetImage800px);
-
-        averageOfEvic.add(totalEvic / tabAllTasks.size());
-        averageOfEvic.add(maxOfEvic);
-        averageOfEvic.add(minOfEvic);
-
-        chart.addSeries("upload", nameOfAxis, averageOfUpload);
-        chart.addSeries("get layout ", nameOfAxis, averageOfLayout);
-        chart.addSeries("get image 100px ", nameOfAxis, averageOfGetImage100px);
-        chart.addSeries("get image 800px ", nameOfAxis, averageOfGetImage800px);
-        chart.addSeries("evic ", nameOfAxis, averageOfEvic);
-
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        BitmapEncoder.saveBitmap(chart, outputStream, BitmapFormat.PNG);
-        byte[] imageBytes = outputStream.toByteArray();
-        Allure.addAttachment("Average of requests", "image/png", new ByteArrayInputStream(imageBytes), ".png");
-        LOGGER.info("average of upload  : " + averageOfUpload.get(0));
-        LOGGER.info("average of get layout  : " + averageOfLayout.get(0));
-        LOGGER.info("average of get image 100px  : " + averageOfGetImage100px.get(0));
-        LOGGER.info("average of get image 800px  : " + averageOfGetImage800px.get(0));
-        LOGGER.info("average of evic   : " + averageOfEvic.get(0));
+        Allure.addAttachment("report of Upload", "image/png",
+                new ByteArrayInputStream(generateImageForGraph(chartUpload)), ".png");
+        Allure.addAttachment("report of getLayout", "image/png",
+                new ByteArrayInputStream(generateImageForGraph(chartLayout)), ".png");
+        Allure.addAttachment("report of getImage100px", "image/png",
+                new ByteArrayInputStream(generateImageForGraph(chartImage100px)), ".png");
+        Allure.addAttachment("report of getImage800px", "image/png",
+                new ByteArrayInputStream(generateImageForGraph(chartImage800px)), ".png");
+        Allure.addAttachment("report of evict", "image/png",
+                new ByteArrayInputStream(generateImageForGraph(chartEvict)), ".png");
 
     }
 
@@ -240,11 +199,7 @@ public class PerformanceTest extends AssertActions
             // fileToUploadFromConfig, fileToUploadFromConfig);
 
         }
-        ;
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        BitmapEncoder.saveBitmap(chart, outputStream, BitmapFormat.PNG);
-        byte[] imageBytes = outputStream.toByteArray();
-        Allure.addAttachment("Graph of responses", "image/png", new ByteArrayInputStream(imageBytes), ".png");
+
     }
 
 }
