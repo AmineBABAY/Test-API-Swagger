@@ -4,12 +4,10 @@
 	<groupId>arenderQA_API</groupId>
 	<artifactId>arenderQA_API</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-
 	<properties>
 		<aspectj.version>1.9.6</aspectj.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>11</java.version>
-
 		<!--Plugin Versions -->
 		<driver-binary-downloader-maven-plugin.version>1.0.18</driver-binary-downloader-maven-plugin.version>
 		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
@@ -61,9 +59,17 @@
 			<artifactId>log4j</artifactId>
 			<version>1.2.17</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.knowm.xchart</groupId>
+			<artifactId>xchart</artifactId>
+			<version>3.8.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-math3</artifactId>
+			<version>3.6.1</version>
+		</dependency>
 	</dependencies>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -90,14 +96,12 @@
 						<artifactId>driver-binary-downloader-maven-plugin</artifactId>
 						<version>${driver-binary-downloader-maven-plugin.version}</version>
 						<configuration>
-
 							<operatingSystems>
 								<windows>true</windows>
 								<linux>true</linux>
 								<mac>true</mac>
 							</operatingSystems>
 						</configuration>
-
 					</plugin>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>

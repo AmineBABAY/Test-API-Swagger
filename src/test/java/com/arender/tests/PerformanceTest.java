@@ -1,21 +1,33 @@
 package com.arender.tests;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.commons.math3.stat.StatUtils;
 import org.apache.log4j.Logger;
+import org.knowm.xchart.BitmapEncoder;
+import org.knowm.xchart.BitmapEncoder.BitmapFormat;
+import org.knowm.xchart.CategoryChart;
+import org.knowm.xchart.CategoryChartBuilder;
+import org.knowm.xchart.style.Styler.ChartTheme;
+import org.knowm.xchart.style.Styler.LegendPosition;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import com.arender.actions.AssertActions;
 import com.arender.actions.Tasks;
+
+import io.qameta.allure.Allure;
 
 public class PerformanceTest extends AssertActions
 {
@@ -23,124 +35,171 @@ public class PerformanceTest extends AssertActions
 
     private final static Logger LOGGER = Logger.getLogger(PerformanceTest.class);
 
-    private static int totalSuccessRequest = 0;
+    private ArrayList<Long> uploadList = new ArrayList<>();
 
-    private static int totalRequest = 0;
+    private ArrayList<Long> getLayoutList = new ArrayList<>();
+
+    private ArrayList<Long> getImage100pxList = new ArrayList<>();
+
+    private ArrayList<Long> getImage800pxList = new ArrayList<>();
+
+    private ArrayList<Long> evictList = new ArrayList<>();
 
     @BeforeSuite
-    public static void initialization()
+    private static void initialization()
     {
+
         String fileFromConfig = System.getProperty("user.dir") + prop.getProperty(file);
         fileToUploadFromConfig = new File(fileFromConfig);
+
     }
 
-    public static void testMultipleRequests(File fileToUploadGP1, File fileToUploadGP2, File fileToUploadGP3)
-            throws InterruptedException, IOException
+    private byte[] generateImageForGraph(CategoryChart chart) throws IOException
     {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        BitmapEncoder.saveBitmap(chart, outputStream, BitmapFormat.PNG);
+        return outputStream.toByteArray();
+    }
 
-        LOGGER.info("Test has been started.");
-        LOGGER.info("Available processors : " + Runtime.getRuntime().availableProcessors());
-        ArrayList<Tasks> tabTasks = new ArrayList<Tasks>();
-        ExecutorService executorGroup1 = Executors.newFixedThreadPool(numberOfUsers);
-        ExecutorService executorGroup2 = Executors.newFixedThreadPool(numberOfUsers);
-        ExecutorService executorGroup3 = Executors.newFixedThreadPool(numberOfUsers);
+    private ArrayList<Long> stat(ArrayList<Long> RequestList)
+    {
+        ArrayList<Long> result = new ArrayList<>();
+        result.add(calculMin(RequestList));
+        result.add(calculPercentile(RequestList, 50.0));
+        result.add(calculPercentile(RequestList, 75.0));
+        result.add(calculPercentile(RequestList, 95.0));
+        result.add(calculPercentile(RequestList, 99.0));
+        result.add(calculMax(RequestList));
+        return result;
+    }
+
+    private CategoryChart chartForRequest(String nameRequest)
+    {
+        CategoryChart chart = new CategoryChartBuilder().title(nameRequest + " " + file).xAxisTitle(nameRequest)
+                .yAxisTitle("Time in milliseonds").theme(ChartTheme.Matlab).build();
+        chart.getStyler().setLegendPosition(LegendPosition.OutsideE);
+        chart.getStyler().setLabelsVisible(true);
+        return chart;
+    }
+
+    private long calculPercentile(ArrayList<Long> list, double percentile)
+    {
+        double[] myArray = list.stream().mapToDouble(Long::doubleValue).toArray();
+        Arrays.sort(myArray);
+        return (long) StatUtils.percentile(myArray, percentile);
+    }
+
+    private long calculMax(ArrayList<Long> list)
+    {
+        return list.stream().max(Long::compare).orElse(null);
+    }
+
+    private long calculMin(ArrayList<Long> list)
+    {
+        return list.stream().min(Long::compare).orElse(null);
+    }
+
+    private long calculMean(ArrayList<Long> list)
+    {
+        return (long) list.stream().mapToLong(Long::longValue).average().orElse(Double.NaN);
+    }
+
+    public void testMultipleRequests(File fileToUploadGP) throws InterruptedException, IOException
+    {
+        ArrayList<Tasks> tasks = new ArrayList<Tasks>();
+
+        ExecutorService executorGroup = Executors.newFixedThreadPool(numberOfUsers);
+
         AtomicInteger completed = new AtomicInteger();
         for (int i = 1; i <= numberOfUsers; i++)
         {
-
-            executorGroup1.submit(() -> {
+            executorGroup.submit(() -> {
                 try
                 {
-                    tabTasks.add(new Tasks(fileToUploadGP1));
+                    tasks.add(new Tasks(fileToUploadGP));
                     completed.incrementAndGet();
                 }
                 catch (Exception e)
                 {
-                    LOGGER.error(e.getMessage());
+                    LOGGER.error("exception : " + e.getMessage());
                 }
-
             });
-            executorGroup2.submit(() -> {
-                try
-                {
 
-                    tabTasks.add(new Tasks(fileToUploadGP2));
-                    completed.incrementAndGet();
-                }
-                catch (Exception e)
-                {
-                    LOGGER.error(e.getMessage());
-                    ;
-                }
-
-            });
-            executorGroup3.submit(() -> {
-                try
-                {
-                    tabTasks.add(new Tasks(fileToUploadGP3));
-                    completed.incrementAndGet();
-                }
-                catch (Exception e)
-                {
-                    LOGGER.error(e.getMessage());
-                }
-
-            });
         }
-        executorGroup1.shutdown();
-        executorGroup1.awaitTermination(3, TimeUnit.MINUTES);
-        executorGroup2.shutdown();
-        executorGroup2.awaitTermination(3, TimeUnit.MINUTES);
-        executorGroup3.shutdown();
-        executorGroup3.awaitTermination(3, TimeUnit.MINUTES);
-
-        LOGGER.info("Available processors : " + Runtime.getRuntime());
-        for (int i = 0; i < tabTasks.size(); i++)
+        executorGroup.shutdown();
+        executorGroup.awaitTermination(3, TimeUnit.MINUTES);
+        for (int i = 0; i < tasks.size(); i++)
         {
-            Tasks task = tabTasks.get(i);
-            LOGGER.info("\n Im the user " + task.getName() + "\n");
-            LOGGER.info("\t number of succes request is  : " + task.getNumberOfSuccessRequest() + "/"
-                    + task.getTabResponses().size());
-            totalSuccessRequest += task.getNumberOfSuccessRequest();
-            totalRequest += task.getTabResponses().size();
-            for (int j = 0; j < task.getTabResponses().size(); j++)
-            {
-                LOGGER.info("\t Response  " + (j + 1) + " " + task.getNameOfResponses().get(j));
-                LOGGER.info("\t \t code status of response   :" + task.getTabResponses().get(j).getStatusCode());
-                LOGGER.info("\t \t time of response " + (j + 1) + " : " + task.getTabResponses().get(j).time());
+            Tasks task = tasks.get(i);
 
+            uploadList.add(task.getUploadResponse().time());
+            getLayoutList.add(task.getGetLayoutResponse().time());
+            evictList.add(task.getEvictResponse().time());
+
+            for (int l = 0; l < task.getTabGetImage100pxResponses().size(); l++)
+            {
+                getImage100pxList.add(task.getTabGetImage100pxResponses().get(l).time());
+                getImage800pxList.add(task.getTabGetImage800pxResponses().get(l).time());
             }
 
         }
         LOGGER.info("Total number of users : " + completed.get());
-        LOGGER.info("Total  request  : " + totalRequest);
-        LOGGER.info("Total success request  : " + totalSuccessRequest);
-        LOGGER.info("Percentage  : " + (totalSuccessRequest / totalRequest) * 100 + "%");
 
     }
 
     @Test()
-    public static void PerforamnceTestInShortDuration() throws InterruptedException, IOException
+    public void PerforamnceTestInShortDuration() throws InterruptedException, IOException
     {
+        LOGGER.info("Test has been started.");
+        LOGGER.info("Available processors : " + Runtime.getRuntime().availableProcessors());
         Instant start = Instant.now();
         Duration duration = Duration.ofMinutes(2);
         while (Duration.between(start, Instant.now()).compareTo(duration) < 0)
         {
-            testMultipleRequests(fileToUploadFromConfig, fileToUploadFromConfig, fileToUploadFromConfig);
+            testMultipleRequests(fileToUploadFromConfig);
 
         }
+
+        ArrayList<String> nameOfAxis = new ArrayList<String>(Arrays
+                .asList(new String[] { "Min", "Percentile50", "Percentile75", "Percentile95", "Percentile99", "Max" }));
+
+        CategoryChart chartUpload = chartForRequest("Upload");
+        chartUpload.addSeries("Upload", nameOfAxis, stat(uploadList));
+        CategoryChart chartLayout = chartForRequest("Get Layout");
+        chartLayout.addSeries("Get Layout", nameOfAxis, stat(getLayoutList));
+        CategoryChart chartImage100px = chartForRequest("Get image 100px");
+        chartImage100px.addSeries("Get image 100px", nameOfAxis, stat(getImage100pxList));
+        CategoryChart chartImage800px = chartForRequest("Get image 800px");
+        chartImage800px.addSeries("Get image 800px", nameOfAxis, stat(getImage800pxList));
+        CategoryChart chartEvict = chartForRequest("Evict");
+        chartEvict.addSeries("Evict", nameOfAxis, stat(evictList));
+        //
+
+        Allure.addAttachment("report of Upload", "image/png",
+                new ByteArrayInputStream(generateImageForGraph(chartUpload)), ".png");
+        Allure.addAttachment("report of getLayout", "image/png",
+                new ByteArrayInputStream(generateImageForGraph(chartLayout)), ".png");
+        Allure.addAttachment("report of getImage100px", "image/png",
+                new ByteArrayInputStream(generateImageForGraph(chartImage100px)), ".png");
+        Allure.addAttachment("report of getImage800px", "image/png",
+                new ByteArrayInputStream(generateImageForGraph(chartImage800px)), ".png");
+        Allure.addAttachment("report of evict", "image/png",
+                new ByteArrayInputStream(generateImageForGraph(chartEvict)), ".png");
+
     }
 
-    @Test()
-    public static void PerforamnceTestWithConfiguredDuration() throws InterruptedException, IOException
+    @Test(enabled = false)
+    public void PerforamnceTestWithConfiguredDuration() throws InterruptedException, IOException
     {
         Instant start = Instant.now();
         Duration duration = Duration.ofMinutes(durationOfTest);
         while (Duration.between(start, Instant.now()).compareTo(duration) < 0)
         {
-            testMultipleRequests(fileToUploadFromConfig, fileToUploadFromConfig, fileToUploadFromConfig);
+            // testMultipleRequests(fileToUploadFromConfig,
+            // fileToUploadFromConfig, fileToUploadFromConfig);
 
         }
+
     }
 
 }

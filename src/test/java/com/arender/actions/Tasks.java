@@ -10,79 +10,92 @@ import io.restassured.response.Response;
 
 public class Tasks extends AssertActions
 {
-    private ArrayList<Response> tabResponses;
+    private Response uploadResponse;
 
-    private ArrayList<String> nameOfResponses;;
+    private Response getLayoutResponse;
+
+    private ArrayList<Response> tabGetImage100pxResponses;
+
+    private ArrayList<Response> tabGetImage800pxResponses;
+
+    private Response evictResponse;
 
     private String name;
 
-    private int numberOfSuccessRequest = 0;
-
     public Tasks(File fileToUpload) throws Exception
     {
-        tabResponses = new ArrayList<Response>();
-        nameOfResponses = new ArrayList<String>();
+
+        tabGetImage100pxResponses = new ArrayList<Response>();
+        tabGetImage800pxResponses = new ArrayList<Response>();
         this.name = Thread.currentThread().getName().substring(7) + " of :"
                 + Thread.currentThread().getName().substring(0, 6) + "file :" + fileToUpload.getName();
         // upload
-        Response upload = Documents.uploadDocument(fileToUpload, "doc ");
-        tabResponses.add(upload);
-        nameOfResponses.add("upload document");
-        if (upload.getStatusCode() == 200)
-        {
-            this.numberOfSuccessRequest++;
-        }
-        // get Layout
-        String idDoc = JsonPath.from(upload.asString()).get("id");
-        Response getLayout = Documents.getDocumentLayout(idDoc);
-        JsonPath layoutResponse = JsonPath.from(getLayout.asString());
+        uploadResponse = Documents.uploadDocument(fileToUpload, "doc ");
 
-        nameOfResponses.add("get document layout");
-        if (getLayout.getStatusCode() == 200)
-        {
-            this.numberOfSuccessRequest++;
-        }
-        tabResponses.add(getLayout);
+        // get Layout
+        String idDoc = JsonPath.from(uploadResponse.asString()).get("id");
+        getLayoutResponse = Documents.getDocumentLayout(idDoc);
+        JsonPath layoutResponse = JsonPath.from(getLayoutResponse.asString());
+
         // get all image with different
         for (int i = 0; i < layoutResponse.getList("pageDimensionsList").size(); i++)
         {
             Response getImage = Documents.getPageImage(idDoc, i, "IM_100_0");
-            nameOfResponses.add("get page image resolution: 100px");
-            if (getImage.getStatusCode() == 200)
-            {
-                this.numberOfSuccessRequest++;
-            }
-            tabResponses.add(getImage);
+            tabGetImage100pxResponses.add(getImage);
             Response getImageFullScreen = Documents.getPageImage(idDoc, i, "IM_800_0");
-            nameOfResponses.add("Page" + "get page image resolution: 800px");
-            if (getImageFullScreen.getStatusCode() == 200)
-            {
-                this.numberOfSuccessRequest++;
-            }
-            tabResponses.add(getImageFullScreen);
+            tabGetImage800pxResponses.add(getImageFullScreen);
         }
-        Response evictDocument = Documents.evictDocument(idDoc);
-        nameOfResponses.add("evict document");
-        if (evictDocument.getStatusCode() == 200)
-        {
-            this.numberOfSuccessRequest++;
-        }
-        tabResponses.add(evictDocument);
+        evictResponse = Documents.evictDocument(idDoc);
     }
 
-    public ArrayList<String> getNameOfResponses()
+    public ArrayList<Response> getTabGetImage100pxResponses()
     {
-        return nameOfResponses;
+        return tabGetImage100pxResponses;
     }
 
-    public int getNumberOfSuccessRequest()
+    public void setTabGetImage100pxResponses(ArrayList<Response> tabGetImage100pxResponses)
     {
-        return numberOfSuccessRequest;
+        this.tabGetImage100pxResponses = tabGetImage100pxResponses;
     }
 
-    public void setNumberOfSuccessRequest(int numberOfSuccessRequest)
+    public ArrayList<Response> getTabGetImage800pxResponses()
     {
-        this.numberOfSuccessRequest = numberOfSuccessRequest;
+        return tabGetImage800pxResponses;
+    }
+
+    public void setTabGetImage800pxResponses(ArrayList<Response> tabGetImage800pxResponses)
+    {
+        this.tabGetImage800pxResponses = tabGetImage800pxResponses;
+    }
+
+    public Response getUploadResponse()
+    {
+        return uploadResponse;
+    }
+
+    public void setUploadResponse(Response uploadResponse)
+    {
+        this.uploadResponse = uploadResponse;
+    }
+
+    public Response getGetLayoutResponse()
+    {
+        return getLayoutResponse;
+    }
+
+    public void setGetLayoutResponse(Response getLayoutResponse)
+    {
+        this.getLayoutResponse = getLayoutResponse;
+    }
+
+    public Response getEvictResponse()
+    {
+        return evictResponse;
+    }
+
+    public void setEvictResponse(Response evicResponses)
+    {
+        this.evictResponse = evicResponses;
     }
 
     public String getName()
@@ -95,8 +108,4 @@ public class Tasks extends AssertActions
         this.name = name;
     }
 
-    public ArrayList<Response> getTabResponses()
-    {
-        return tabResponses;
-    }
 }
