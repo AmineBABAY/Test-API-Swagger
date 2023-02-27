@@ -3,6 +3,8 @@ package com.arender.actions;
 import java.io.File;
 import java.util.ArrayList;
 
+import org.apache.log4j.Logger;
+
 import com.arender.endpoint.Documents;
 
 import io.restassured.path.json.JsonPath;
@@ -10,13 +12,15 @@ import io.restassured.response.Response;
 
 public class Tasks extends AssertActions
 {
+    private final static Logger LOGGER = Logger.getLogger(Tasks.class);
+
     private Response uploadResponse;
 
     private Response getLayoutResponse;
 
-    private ArrayList<Response> tabGetImage100pxResponses;
+    private ArrayList<Response> getImage100pxResponses;
 
-    private ArrayList<Response> tabGetImage800pxResponses;
+    private ArrayList<Response> getImage800pxResponses;
 
     private Response evictResponse;
 
@@ -25,47 +29,54 @@ public class Tasks extends AssertActions
     public Tasks(File fileToUpload) throws Exception
     {
 
-        tabGetImage100pxResponses = new ArrayList<Response>();
-        tabGetImage800pxResponses = new ArrayList<Response>();
+        getImage100pxResponses = new ArrayList<Response>();
+        getImage800pxResponses = new ArrayList<Response>();
         this.name = Thread.currentThread().getName().substring(7) + " of :"
                 + Thread.currentThread().getName().substring(0, 6) + "file :" + fileToUpload.getName();
         // upload
-        uploadResponse = Documents.uploadDocument(fileToUpload, "doc ");
-
-        // get Layout
-        String idDoc = JsonPath.from(uploadResponse.asString()).get("id");
-        getLayoutResponse = Documents.getDocumentLayout(idDoc);
-        JsonPath layoutResponse = JsonPath.from(getLayoutResponse.asString());
-
-        // get all image with different
-        for (int i = 0; i < layoutResponse.getList("pageDimensionsList").size(); i++)
+        try
         {
-            Response getImage = Documents.getPageImage(idDoc, i, "IM_100_0");
-            tabGetImage100pxResponses.add(getImage);
-            Response getImageFullScreen = Documents.getPageImage(idDoc, i, "IM_800_0");
-            tabGetImage800pxResponses.add(getImageFullScreen);
+            uploadResponse = Documents.uploadDocument(fileToUpload, "doc ");
+
+            // get Layout
+            String idDoc = JsonPath.from(uploadResponse.asString()).get("id");
+            getLayoutResponse = Documents.getDocumentLayout(idDoc);
+            JsonPath layoutResponse = JsonPath.from(getLayoutResponse.asString());
+
+            // get all image with different
+            for (int i = 0; i < layoutResponse.getList("pageDimensionsList").size(); i++)
+            {
+                Response getImage = Documents.getPageImage(idDoc, i, "IM_100_0");
+                getImage100pxResponses.add(getImage);
+                Response getImageFullScreen = Documents.getPageImage(idDoc, i, "IM_800_0");
+                getImage800pxResponses.add(getImageFullScreen);
+            }
+            evictResponse = Documents.evictDocument(idDoc);
         }
-        evictResponse = Documents.evictDocument(idDoc);
+        catch (Exception e)
+        {
+            LOGGER.info("task exception : " + e.getMessage());
+        }
     }
 
-    public ArrayList<Response> getTabGetImage100pxResponses()
+    public ArrayList<Response> getGetImage100pxResponses()
     {
-        return tabGetImage100pxResponses;
+        return getImage100pxResponses;
     }
 
-    public void setTabGetImage100pxResponses(ArrayList<Response> tabGetImage100pxResponses)
+    public void setGetImage100pxResponses(ArrayList<Response> getImage100pxResponses)
     {
-        this.tabGetImage100pxResponses = tabGetImage100pxResponses;
+        this.getImage100pxResponses = getImage100pxResponses;
     }
 
-    public ArrayList<Response> getTabGetImage800pxResponses()
+    public ArrayList<Response> getGetImage800pxResponses()
     {
-        return tabGetImage800pxResponses;
+        return getImage800pxResponses;
     }
 
-    public void setTabGetImage800pxResponses(ArrayList<Response> tabGetImage800pxResponses)
+    public void setGetImage800pxResponses(ArrayList<Response> getImage800pxResponses)
     {
-        this.tabGetImage800pxResponses = tabGetImage800pxResponses;
+        this.getImage800pxResponses = getImage800pxResponses;
     }
 
     public Response getUploadResponse()

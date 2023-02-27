@@ -35,6 +35,8 @@ public class PerformanceTest extends AssertActions
 
     private final static Logger LOGGER = Logger.getLogger(PerformanceTest.class);
 
+    private static ArrayList<File> listFiles = new ArrayList<>();
+
     private ArrayList<Long> uploadList = new ArrayList<>();
 
     private ArrayList<Long> getLayoutList = new ArrayList<>();
@@ -51,6 +53,11 @@ public class PerformanceTest extends AssertActions
 
         String fileFromConfig = System.getProperty("user.dir") + prop.getProperty(file);
         fileToUploadFromConfig = new File(fileFromConfig);
+        listFiles.add(new File(System.getProperty("user.dir") + prop.getProperty("pdf_with_100KO")));
+        listFiles.add(new File(System.getProperty("user.dir") + prop.getProperty("pdf_with_1MO")));
+        listFiles.add(new File(System.getProperty("user.dir") + prop.getProperty("doc_with_100KO")));
+        listFiles.add(new File(System.getProperty("user.dir") + prop.getProperty("tiff_with_lowSize")));
+        listFiles.add(new File(System.getProperty("user.dir") + prop.getProperty("jpeg_with_100KO")));
 
     }
 
@@ -104,19 +111,26 @@ public class PerformanceTest extends AssertActions
         return (long) list.stream().mapToLong(Long::longValue).average().orElse(Double.NaN);
     }
 
-    public void testMultipleRequests(File fileToUploadGP) throws InterruptedException, IOException
+    public void testMultipleRequests() throws InterruptedException, IOException
     {
         ArrayList<Tasks> tasks = new ArrayList<Tasks>();
 
         ExecutorService executorGroup = Executors.newFixedThreadPool(numberOfUsers);
 
         AtomicInteger completed = new AtomicInteger();
-        for (int i = 1; i <= numberOfUsers; i++)
+        for (int i = 0; i < numberOfUsers; i++)
         {
+            // Collections.shuffle(listFiles);
             executorGroup.submit(() -> {
                 try
                 {
-                    tasks.add(new Tasks(fileToUploadGP));
+
+                    for (int j = 0; j < listFiles.size(); j++)
+                    {
+                        File fileToUpload = listFiles.get(j);
+                        Tasks task = new Tasks(fileToUpload);
+                        addTasks(tasks, task);
+                    }
                     completed.incrementAndGet();
                 }
                 catch (Exception e)
@@ -127,24 +141,29 @@ public class PerformanceTest extends AssertActions
 
         }
         executorGroup.shutdown();
-        executorGroup.awaitTermination(3, TimeUnit.MINUTES);
+        executorGroup.awaitTermination(5, TimeUnit.MINUTES);
         for (int i = 0; i < tasks.size(); i++)
         {
             Tasks task = tasks.get(i);
-
             uploadList.add(task.getUploadResponse().time());
             getLayoutList.add(task.getGetLayoutResponse().time());
             evictList.add(task.getEvictResponse().time());
 
-            for (int l = 0; l < task.getTabGetImage100pxResponses().size(); l++)
+            for (int l = 0; l < task.getGetImage100pxResponses().size(); l++)
             {
-                getImage100pxList.add(task.getTabGetImage100pxResponses().get(l).time());
-                getImage800pxList.add(task.getTabGetImage800pxResponses().get(l).time());
+                getImage100pxList.add(task.getGetImage100pxResponses().get(l).time());
+                getImage800pxList.add(task.getGetImage800pxResponses().get(l).time());
             }
 
         }
         LOGGER.info("Total number of users : " + completed.get());
+        LOGGER.info("Total number of upload : " + uploadList.size());
 
+    }
+
+    private synchronized void addTasks(ArrayList<Tasks> tasks, Tasks task) throws Exception
+    {
+        tasks.add(task);
     }
 
     @Test()
@@ -156,7 +175,7 @@ public class PerformanceTest extends AssertActions
         Duration duration = Duration.ofMinutes(2);
         while (Duration.between(start, Instant.now()).compareTo(duration) < 0)
         {
-            testMultipleRequests(fileToUploadFromConfig);
+            testMultipleRequests();
 
         }
 
