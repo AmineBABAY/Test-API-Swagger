@@ -18,9 +18,13 @@ public class Tasks extends AssertActions
 
     private Response getLayoutResponse;
 
+    private Response getBookmarkstResponse;
+
     private ArrayList<Response> getImage100pxResponses;
 
     private ArrayList<Response> getImage800pxResponses;
+
+    private ArrayList<Response> getTextPositionResponses;
 
     private Response evictResponse;
 
@@ -31,6 +35,7 @@ public class Tasks extends AssertActions
 
         getImage100pxResponses = new ArrayList<Response>();
         getImage800pxResponses = new ArrayList<Response>();
+        getTextPositionResponses = new ArrayList<Response>();
         this.name = Thread.currentThread().getName().substring(7) + " of :"
                 + Thread.currentThread().getName().substring(0, 6) + "file :" + fileToUpload.getName();
         // upload
@@ -42,7 +47,7 @@ public class Tasks extends AssertActions
             String idDoc = JsonPath.from(uploadResponse.asString()).get("id");
             getLayoutResponse = Documents.getDocumentLayout(idDoc);
             JsonPath layoutResponse = JsonPath.from(getLayoutResponse.asString());
-
+            getBookmarkstResponse = Documents.getBookmarks(idDoc);
             // get all image with different
             for (int i = 0; i < layoutResponse.getList("pageDimensionsList").size(); i++)
             {
@@ -50,6 +55,7 @@ public class Tasks extends AssertActions
                 getImage100pxResponses.add(getImage);
                 Response getImageFullScreen = Documents.getPageImage(idDoc, i, "IM_800_0");
                 getImage800pxResponses.add(getImageFullScreen);
+                getTextPositionResponses.add(Documents.getTextPosition(idDoc, i));
             }
             evictResponse = Documents.evictDocument(idDoc);
         }
@@ -57,6 +63,26 @@ public class Tasks extends AssertActions
         {
             LOGGER.info("task exception : " + e.getMessage());
         }
+    }
+
+    public Response getGetBookmarkstResponse()
+    {
+        return getBookmarkstResponse;
+    }
+
+    public void setGetBookmarkstResponse(Response getBookmarkstResponse)
+    {
+        this.getBookmarkstResponse = getBookmarkstResponse;
+    }
+
+    public ArrayList<Response> getGetTextPositionResponses()
+    {
+        return getTextPositionResponses;
+    }
+
+    public void setGetTextPositionResponses(ArrayList<Response> getTextPositionResponses)
+    {
+        this.getTextPositionResponses = getTextPositionResponses;
     }
 
     public ArrayList<Response> getGetImage100pxResponses()

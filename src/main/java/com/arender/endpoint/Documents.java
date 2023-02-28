@@ -20,6 +20,7 @@ public class Documents extends Initialization
         ConnectionConfig connectionConfig = new ConnectionConfig(
                 new ConnectionConfig.CloseIdleConnectionConfig(0, TimeUnit.NANOSECONDS));
         RestAssured.config().connectionConfig(connectionConfig);
+
     }
 
     public static Response uploadDocument(File file)
