@@ -39,29 +39,77 @@ public class Tasks extends AssertActions
         this.name = Thread.currentThread().getName().substring(7) + " of :"
                 + Thread.currentThread().getName().substring(0, 6) + "file :" + fileToUpload.getName();
         // upload
+        String idDoc = "";
+        JsonPath layoutResponse = null;
         try
         {
             uploadResponse = Documents.uploadDocument(fileToUpload, "doc ");
 
             // get Layout
-            String idDoc = JsonPath.from(uploadResponse.asString()).get("id");
-            getLayoutResponse = Documents.getDocumentLayout(idDoc);
-            JsonPath layoutResponse = JsonPath.from(getLayoutResponse.asString());
-            getBookmarkstResponse = Documents.getBookmarks(idDoc);
-            // get all image with different
-            for (int i = 0; i < layoutResponse.getList("pageDimensionsList").size(); i++)
-            {
-                Response getImage = Documents.getPageImage(idDoc, i, "IM_100_0");
-                getImage100pxResponses.add(getImage);
-                Response getImageFullScreen = Documents.getPageImage(idDoc, i, "IM_800_0");
-                getImage800pxResponses.add(getImageFullScreen);
-                getTextPositionResponses.add(Documents.getTextPosition(idDoc, i));
-            }
-            evictResponse = Documents.evictDocument(idDoc);
+            idDoc = JsonPath.from(uploadResponse.asString()).get("id");
         }
         catch (Exception e)
         {
-            LOGGER.info("task exception : " + e.getMessage());
+            LOGGER.info("task exception upload : " + e.getMessage() + "with : " + fileToUpload);
+        }
+        try
+        {
+            getLayoutResponse = Documents.getDocumentLayout(idDoc);
+            layoutResponse = JsonPath.from(getLayoutResponse.asString());
+        }
+        catch (Exception e)
+        {
+            LOGGER.info("task exception getLayout : " + e.getMessage() + "with : " + fileToUpload);
+        }
+        try
+        {
+            getBookmarkstResponse = Documents.getBookmarks(idDoc);
+        }
+        catch (Exception e)
+        {
+            LOGGER.info("task exception getBookmarks : " + e.getMessage() + "with : " + fileToUpload);
+        }
+
+        // get all image with different
+        int numberOfPages = layoutResponse.getList("pageDimensionsList").size();
+        for (int i = 0; i < numberOfPages; i++)
+        {
+            try
+            {
+                Response getImage = Documents.getPageImage(idDoc, i, "IM_100_0");
+                getImage100pxResponses.add(getImage);
+            }
+            catch (Exception e)
+            {
+                LOGGER.info("task exception getPageImage 100 px: " + e.getMessage() + "with : " + fileToUpload);
+            }
+            try
+            {
+                Response getImageFullScreen = Documents.getPageImage(idDoc, i, "IM_800_0");
+                getImage800pxResponses.add(getImageFullScreen);
+            }
+            catch (Exception e)
+            {
+                LOGGER.info("task exception getPageImage 800 px: " + e.getMessage() + "with : " + fileToUpload);
+            }
+            try
+            {
+                getTextPositionResponses.add(Documents.getTextPosition(idDoc, i));
+            }
+            catch (Exception e)
+            {
+                LOGGER.info("task exception getTextPosition : " + e.getMessage() + "with : " + fileToUpload);
+            }
+        }
+
+        try
+        {
+            evictResponse = Documents.evictDocument(idDoc);
+
+        }
+        catch (Exception e)
+        {
+            LOGGER.info("task exception : evictDocument" + e.getMessage() + "with : " + fileToUpload);
         }
     }
 
