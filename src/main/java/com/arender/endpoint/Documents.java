@@ -19,7 +19,15 @@ public class Documents extends Initialization
         RestAssured.baseURI = url;
         ConnectionConfig connectionConfig = new ConnectionConfig(
                 new ConnectionConfig.CloseIdleConnectionConfig(0, TimeUnit.NANOSECONDS));
+        // RestAssured.config()
+        // .httpClient(HttpClientConfig.httpClientConfig()
+        // .setParam("http.connection.timeout", 10000) // set connection timeout
+        // to 10 seconds
+        // .setParam("http.socket.timeout", 60000) // set socket timeout to 60
+        // seconds
+        // .setParam("http.connection-manager.timeout", 100000));
         RestAssured.config().connectionConfig(connectionConfig);
+
     }
 
     public static Response uploadDocument(File file)

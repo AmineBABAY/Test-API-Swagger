@@ -6,6 +6,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -22,27 +23,33 @@ import com.arender.actions.Tasks;
 
 public class PerformanceTest extends AssertActions
 {
-    private static File fileToUploadFromConfig;
 
     private final static Logger LOGGER = Logger.getLogger(PerformanceTest.class);
+
+    private static ArrayList<File> listFiles = new ArrayList<>();
 
     private ArrayList<Long> uploadList = new ArrayList<>();
 
     private ArrayList<Long> getLayoutList = new ArrayList<>();
 
+    private ArrayList<Long> getBookmarksList = new ArrayList<>();
+
     private ArrayList<Long> getImage100pxList = new ArrayList<>();
 
     private ArrayList<Long> getImage800pxList = new ArrayList<>();
+
+    private ArrayList<Long> getTextPositionList = new ArrayList<>();
 
     private ArrayList<Long> evictList = new ArrayList<>();
 
     @BeforeSuite
     private static void initialization()
     {
-
-        String fileFromConfig = System.getProperty("user.dir") + prop.getProperty(file);
-        fileToUploadFromConfig = new File(fileFromConfig);
-
+        listFiles.add(new File(System.getProperty("user.dir") + prop.getProperty("pdf_with_100KO")));
+        listFiles.add(new File(System.getProperty("user.dir") + prop.getProperty("pdf_with_1MO")));
+        listFiles.add(new File(System.getProperty("user.dir") + prop.getProperty("doc_with_100KO")));
+        listFiles.add(new File(System.getProperty("user.dir") + prop.getProperty("tiff_with_lowSize")));
+        listFiles.add(new File(System.getProperty("user.dir") + prop.getProperty("jpeg_with_100KO")));
     }
 
     private ArrayList<Long> stat(ArrayList<Long> RequestList)
@@ -79,19 +86,26 @@ public class PerformanceTest extends AssertActions
         return (long) list.stream().mapToLong(Long::longValue).average().orElse(Double.NaN);
     }
 
-    public void testMultipleRequests(File fileToUploadGP) throws InterruptedException, IOException
+    public void testMultipleRequests() throws InterruptedException
     {
         ArrayList<Tasks> tasks = new ArrayList<Tasks>();
 
         ExecutorService executorGroup = Executors.newFixedThreadPool(numberOfUsers);
 
         AtomicInteger completed = new AtomicInteger();
-        for (int i = 1; i <= numberOfUsers; i++)
+        for (int i = 0; i < numberOfUsers; i++)
         {
+            Collections.shuffle(listFiles);
             executorGroup.submit(() -> {
                 try
                 {
-                    tasks.add(new Tasks(fileToUploadGP));
+
+                    for (int j = 0; j < listFiles.size(); j++)
+                    {
+                        File fileToUpload = listFiles.get(j);
+                        Tasks task = new Tasks(fileToUpload);
+                        addTasks(tasks, task);
+                    }
                     completed.incrementAndGet();
                 }
                 catch (Exception e)
@@ -102,24 +116,54 @@ public class PerformanceTest extends AssertActions
 
         }
         executorGroup.shutdown();
-        executorGroup.awaitTermination(3, TimeUnit.MINUTES);
+        executorGroup.awaitTermination(5, TimeUnit.MINUTES);
         for (int i = 0; i < tasks.size(); i++)
         {
             Tasks task = tasks.get(i);
-
-            uploadList.add(task.getUploadResponse().time());
-            getLayoutList.add(task.getGetLayoutResponse().time());
-            evictList.add(task.getEvictResponse().time());
-
-            for (int l = 0; l < task.getTabGetImage100pxResponses().size(); l++)
+            if (task.getUploadResponse() != null)
             {
-                getImage100pxList.add(task.getTabGetImage100pxResponses().get(l).time());
-                getImage800pxList.add(task.getTabGetImage800pxResponses().get(l).time());
+                uploadList.add(task.getUploadResponse().time());
+            }
+            if (task.getGetLayoutResponse() != null)
+            {
+                getLayoutList.add(task.getGetLayoutResponse().time());
+            }
+            if (task.getGetBookmarksResponse() != null)
+            {
+                getBookmarksList.add(task.getGetBookmarksResponse().time());
+            }
+            if (task.getEvictResponse() != null)
+            {
+                evictList.add(task.getEvictResponse().time());
+            }
+
+            for (int l = 0; l < task.getGetImage100pxResponses().size(); l++)
+            {
+                getImage100pxList.add(task.getGetImage100pxResponses().get(l).time());
+            }
+            for (int m = 0; m < task.getGetImage800pxResponses().size(); m++)
+            {
+                getImage800pxList.add(task.getGetImage800pxResponses().get(m).time());
+            }
+            for (int n = 0; n < task.getGetTextPositionResponses().size(); n++)
+            {
+                getTextPositionList.add(task.getGetTextPositionResponses().get(n).time());
             }
 
         }
-        LOGGER.info("Total number of users : " + completed.get());
+        LOGGER.info("Total users : " + completed.get());
+        LOGGER.info("Total upload : " + uploadList.size());
+        LOGGER.info("Total getBookmarks : " + getBookmarksList.size());
+        LOGGER.info("Total getImage100px : " + getImage100pxList.size());
+        LOGGER.info("Total getImage800px : " + getImage800pxList.size());
+        LOGGER.info("Total getTextPosition : " + getTextPositionList.size());
+        LOGGER.info("Total evictDocument : " + evictList.size());
 
+    }
+
+    private synchronized void addTasks(ArrayList<Tasks> tasks, Tasks task) throws Exception
+    {
+        tasks.add(task);
     }
 
     @Test()
@@ -131,7 +175,7 @@ public class PerformanceTest extends AssertActions
         Duration duration = Duration.ofMinutes(2);
         while (Duration.between(start, Instant.now()).compareTo(duration) < 0)
         {
-            testMultipleRequests(fileToUploadFromConfig);
+            testMultipleRequests();
 
         }
 
@@ -147,8 +191,13 @@ public class PerformanceTest extends AssertActions
                 "Time (ms)", "report of Get image 100px");
         GraphGenerator.generateGraph(stat(getImage800pxList), nameOfAxis, "Get image 800px", "Request Number",
                 "Time (ms)", "report of Get image 800px");
+        GraphGenerator.generateGraph(stat(getBookmarksList), nameOfAxis, "Get Bookmarks", "Request Number", "Time (ms)",
+                "report of getBookmarks");
+        GraphGenerator.generateGraph(stat(getTextPositionList), nameOfAxis, "Get Text position", "Request Number",
+                "Time (ms)", "report of getTextPosition");
         GraphGenerator.generateGraph(stat(evictList), nameOfAxis, "Evict", "Request Number", "Time (ms)",
                 "report of Evict");
+
     }
 
     @Test(enabled = false)
