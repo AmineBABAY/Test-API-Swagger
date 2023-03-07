@@ -18,7 +18,7 @@ public class Tasks extends AssertActions
 
     private Response getLayoutResponse;
 
-    private Response getBookmarkstResponse;
+    private Response getBookmarksResponse;
 
     private ArrayList<Response> getImage100pxResponses;
 
@@ -32,7 +32,6 @@ public class Tasks extends AssertActions
 
     public Tasks(File fileToUpload) throws Exception
     {
-
         getImage100pxResponses = new ArrayList<Response>();
         getImage800pxResponses = new ArrayList<Response>();
         getTextPositionResponses = new ArrayList<Response>();
@@ -50,7 +49,7 @@ public class Tasks extends AssertActions
         }
         catch (Exception e)
         {
-            LOGGER.info("task exception upload : " + e.getMessage() + "with : " + fileToUpload);
+            LOGGER.info("task exception upload : " + e.getMessage() + " with : " + fileToUpload);
         }
         try
         {
@@ -59,15 +58,15 @@ public class Tasks extends AssertActions
         }
         catch (Exception e)
         {
-            LOGGER.info("task exception getLayout : " + e.getMessage() + "with : " + fileToUpload);
+            LOGGER.info("task exception getLayout : " + e.getMessage() + " with : " + fileToUpload);
         }
         try
         {
-            getBookmarkstResponse = Documents.getBookmarks(idDoc);
+            getBookmarksResponse = Documents.getBookmarks(idDoc);
         }
         catch (Exception e)
         {
-            LOGGER.info("task exception getBookmarks : " + e.getMessage() + "with : " + fileToUpload);
+            LOGGER.info("task exception getBookmarks : " + e.getMessage() + " with : " + fileToUpload);
         }
 
         // get all image with different
@@ -81,7 +80,7 @@ public class Tasks extends AssertActions
             }
             catch (Exception e)
             {
-                LOGGER.info("task exception getPageImage 100 px: " + e.getMessage() + "with : " + fileToUpload);
+                LOGGER.info("task exception getPageImage 100 px: " + e.getMessage() + " with : " + fileToUpload);
             }
             try
             {
@@ -90,7 +89,7 @@ public class Tasks extends AssertActions
             }
             catch (Exception e)
             {
-                LOGGER.info("task exception getPageImage 800 px: " + e.getMessage() + "with : " + fileToUpload);
+                LOGGER.info("task exception getPageImage 800 px: " + e.getMessage() + " with : " + fileToUpload);
             }
             try
             {
@@ -98,7 +97,7 @@ public class Tasks extends AssertActions
             }
             catch (Exception e)
             {
-                LOGGER.info("task exception getTextPosition : " + e.getMessage() + "with : " + fileToUpload);
+                LOGGER.info("task exception getTextPosition : " + e.getMessage() + " with : " + fileToUpload);
             }
         }
 
@@ -109,18 +108,18 @@ public class Tasks extends AssertActions
         }
         catch (Exception e)
         {
-            LOGGER.info("task exception : evictDocument" + e.getMessage() + "with : " + fileToUpload);
+            LOGGER.info("task exception : evictDocument" + e.getMessage() + " with : " + fileToUpload);
         }
     }
 
-    public Response getGetBookmarkstResponse()
+    public Response getGetBookmarksResponse()
     {
-        return getBookmarkstResponse;
+        return getBookmarksResponse;
     }
 
-    public void setGetBookmarkstResponse(Response getBookmarkstResponse)
+    public void setGetBookmarksResponse(Response getBookmarksResponse)
     {
-        this.getBookmarkstResponse = getBookmarkstResponse;
+        this.getBookmarksResponse = getBookmarksResponse;
     }
 
     public ArrayList<Response> getGetTextPositionResponses()

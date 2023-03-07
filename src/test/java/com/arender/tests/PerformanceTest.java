@@ -145,21 +145,44 @@ public class PerformanceTest extends AssertActions
         for (int i = 0; i < tasks.size(); i++)
         {
             Tasks task = tasks.get(i);
-            uploadList.add(task.getUploadResponse().time());
-            getLayoutList.add(task.getGetLayoutResponse().time());
-            getBookmarksList.add(task.getGetBookmarkstResponse().time());
-            evictList.add(task.getEvictResponse().time());
+            if (task.getUploadResponse() != null)
+            {
+                uploadList.add(task.getUploadResponse().time());
+            }
+            if (task.getGetLayoutResponse() != null)
+            {
+                getLayoutList.add(task.getGetLayoutResponse().time());
+            }
+            if (task.getGetBookmarksResponse() != null)
+            {
+                getBookmarksList.add(task.getGetBookmarksResponse().time());
+            }
+            if (task.getEvictResponse() != null)
+            {
+                evictList.add(task.getEvictResponse().time());
+            }
 
             for (int l = 0; l < task.getGetImage100pxResponses().size(); l++)
             {
                 getImage100pxList.add(task.getGetImage100pxResponses().get(l).time());
-                getImage800pxList.add(task.getGetImage800pxResponses().get(l).time());
-                getTextPositionList.add(task.getGetTextPositionResponses().get(l).time());
+            }
+            for (int m = 0; m < task.getGetImage800pxResponses().size(); m++)
+            {
+                getImage800pxList.add(task.getGetImage800pxResponses().get(m).time());
+            }
+            for (int n = 0; n < task.getGetTextPositionResponses().size(); n++)
+            {
+                getTextPositionList.add(task.getGetTextPositionResponses().get(n).time());
             }
 
         }
-        LOGGER.info("Total number of users : " + completed.get());
-        LOGGER.info("Total number of upload : " + uploadList.size());
+        LOGGER.info("Total users : " + completed.get());
+        LOGGER.info("Total upload : " + uploadList.size());
+        LOGGER.info("Total getBookmarks : " + getBookmarksList.size());
+        LOGGER.info("Total getImage100px : " + getImage100pxList.size());
+        LOGGER.info("Total getImage800px : " + getImage800pxList.size());
+        LOGGER.info("Total getTextPosition : " + getTextPositionList.size());
+        LOGGER.info("Total evictDocument : " + evictList.size());
 
     }
 
