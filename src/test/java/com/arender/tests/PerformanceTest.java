@@ -1,7 +1,5 @@
 package com.arender.tests;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
@@ -16,19 +14,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.math3.stat.StatUtils;
 import org.apache.log4j.Logger;
-import org.knowm.xchart.BitmapEncoder;
-import org.knowm.xchart.BitmapEncoder.BitmapFormat;
-import org.knowm.xchart.CategoryChart;
-import org.knowm.xchart.CategoryChartBuilder;
-import org.knowm.xchart.style.Styler.ChartTheme;
-import org.knowm.xchart.style.Styler.LegendPosition;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import com.arender.actions.AssertActions;
+import com.arender.actions.GraphGenerator;
 import com.arender.actions.Tasks;
-
-import io.qameta.allure.Allure;
 
 public class PerformanceTest extends AssertActions
 {
@@ -61,13 +52,6 @@ public class PerformanceTest extends AssertActions
         listFiles.add(new File(System.getProperty("user.dir") + prop.getProperty("jpeg_with_100KO")));
     }
 
-    private byte[] generateImageForGraph(CategoryChart chart) throws IOException
-    {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        BitmapEncoder.saveBitmap(chart, outputStream, BitmapFormat.PNG);
-        return outputStream.toByteArray();
-    }
-
     private ArrayList<Long> stat(ArrayList<Long> RequestList)
     {
         ArrayList<Long> result = new ArrayList<>();
@@ -78,15 +62,6 @@ public class PerformanceTest extends AssertActions
         result.add(calculPercentile(RequestList, 99.0));
         result.add(calculMax(RequestList));
         return result;
-    }
-
-    private CategoryChart chartForRequest(String nameRequest)
-    {
-        CategoryChart chart = new CategoryChartBuilder().title(nameRequest + " " + file).xAxisTitle(nameRequest)
-                .yAxisTitle("Time in milliseonds").theme(ChartTheme.Matlab).build();
-        chart.getStyler().setLegendPosition(LegendPosition.OutsideE);
-        chart.getStyler().setLabelsVisible(true);
-        return chart;
     }
 
     private long calculPercentile(ArrayList<Long> list, double percentile)
@@ -207,36 +182,21 @@ public class PerformanceTest extends AssertActions
         ArrayList<String> nameOfAxis = new ArrayList<String>(Arrays
                 .asList(new String[] { "Min", "Percentile50", "Percentile75", "Percentile95", "Percentile99", "Max" }));
 
-        CategoryChart chartUpload = chartForRequest("Upload");
-        chartUpload.addSeries("Upload", nameOfAxis, stat(uploadList));
-        CategoryChart chartLayout = chartForRequest("Get Layout");
-        chartLayout.addSeries("Get Layout", nameOfAxis, stat(getLayoutList));
-        CategoryChart chartImage100px = chartForRequest("Get image 100px");
-        chartImage100px.addSeries("Get image 100px", nameOfAxis, stat(getImage100pxList));
-        CategoryChart chartImage800px = chartForRequest("Get image 800px");
-        chartImage800px.addSeries("Get image 800px", nameOfAxis, stat(getImage800pxList));
-        CategoryChart chartBookmarks = chartForRequest("Get Bookmarks");
-        chartBookmarks.addSeries("Get Bookmarks", nameOfAxis, stat(getBookmarksList));
-        CategoryChart chartTextPosition = chartForRequest("Get Text position");
-        chartTextPosition.addSeries("Get Text position", nameOfAxis, stat(getTextPositionList));
-        CategoryChart chartEvict = chartForRequest("Evict");
-        chartEvict.addSeries("Evict", nameOfAxis, stat(evictList));
-        //
-
-        Allure.addAttachment("report of Upload", "image/png",
-                new ByteArrayInputStream(generateImageForGraph(chartUpload)), ".png");
-        Allure.addAttachment("report of getLayout", "image/png",
-                new ByteArrayInputStream(generateImageForGraph(chartLayout)), ".png");
-        Allure.addAttachment("report of getBookmarks", "image/png",
-                new ByteArrayInputStream(generateImageForGraph(chartBookmarks)), ".png");
-        Allure.addAttachment("report of getImage100px", "image/png",
-                new ByteArrayInputStream(generateImageForGraph(chartImage100px)), ".png");
-        Allure.addAttachment("report of getImage800px", "image/png",
-                new ByteArrayInputStream(generateImageForGraph(chartImage800px)), ".png");
-        Allure.addAttachment("report of getTextPosition", "image/png",
-                new ByteArrayInputStream(generateImageForGraph(chartTextPosition)), ".png");
-        Allure.addAttachment("report of evict", "image/png",
-                new ByteArrayInputStream(generateImageForGraph(chartEvict)), ".png");
+        // Generate the graphs for each list of data
+        GraphGenerator.generateGraph(stat(uploadList), nameOfAxis, "Upload", "Request Number", "Time (ms)",
+                "report of Upload");
+        GraphGenerator.generateGraph(stat(getLayoutList), nameOfAxis, "Get Layout", "Request Number", "Time (ms)",
+                "report of getLayout");
+        GraphGenerator.generateGraph(stat(getImage100pxList), nameOfAxis, "Get image 100px", "Request Number",
+                "Time (ms)", "report of Get image 100px");
+        GraphGenerator.generateGraph(stat(getImage800pxList), nameOfAxis, "Get image 800px", "Request Number",
+                "Time (ms)", "report of Get image 800px");
+        GraphGenerator.generateGraph(stat(getBookmarksList), nameOfAxis, "Get Bookmarks", "Request Number", "Time (ms)",
+                "report of getBookmarks");
+        GraphGenerator.generateGraph(stat(getTextPositionList), nameOfAxis, "Get Text position", "Request Number",
+                "Time (ms)", "report of getTextPosition");
+        GraphGenerator.generateGraph(stat(evictList), nameOfAxis, "Evict", "Request Number", "Time (ms)",
+                "report of Evict");
 
     }
 
