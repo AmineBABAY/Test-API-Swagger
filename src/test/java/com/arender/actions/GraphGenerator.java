@@ -54,7 +54,7 @@ public class GraphGenerator
 
         CategoryPlot plot = (CategoryPlot) chart.getPlot();
         plot.setBackgroundPaint(new Color(245, 245, 245));
-        plot.setRangeGridlinePaint(Color.lightGray);
+        //plot.setRangeGridlinePaint(Color.lightGray);
 
         CategoryAxis domainAxis = plot.getDomainAxis();
         domainAxis.setTickLabelFont(new Font("Roboto", Font.PLAIN, 12));
