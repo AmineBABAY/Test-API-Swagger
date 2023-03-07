@@ -2,7 +2,7 @@ Run from command line performance  test
 syntax :
 mvn clean install -DTest="scenarios/"$xmlFile".xml" -Dfile=$file -DURL=$URL -Dnumber_of_users=$number_of_users -DdurationOfTest=$durationOfTest
 example :
-mvn clean install -DTest=scenarios/PerformanceTest.xml -Dfile=pdf -DURL=http://34.244.115.6:8761/ -Dnumber_of_users=20 -DdurationOfTest=30
+mvn clean install -DTest=scenarios/performance.xml -Dfile=pdf -DURL=http://34.250.253.12:8761/ -Dnumber_of_users=1 -DdurationOfTest=30
 
 Run from eclipse
 	1)install TestNG plugin
