@@ -42,7 +42,8 @@ public class Tasks extends AssertActions
         try
         {
             uploadResponse = Documents.uploadDocument(fileToUpload, "doc ");
-            LOGGER.info("Upload " + name + " Code status : " + uploadResponse.statusCode());
+            LOGGER.info(
+                    "Time : " + LocalTime.now() + " Upload " + name + " Code status : " + uploadResponse.statusCode());
             idDoc = JsonPath.from(uploadResponse.asString()).get("id");
         }
         catch (Exception e)
@@ -53,7 +54,8 @@ public class Tasks extends AssertActions
         try
         {
             getLayoutResponse = Documents.getDocumentLayout(idDoc);
-            LOGGER.info("getLayout " + name + " Code status : " + getLayoutResponse.statusCode());
+            LOGGER.info("Time : " + LocalTime.now() + " getLayout " + name + " Code status : "
+                    + getLayoutResponse.statusCode());
             layoutResponse = JsonPath.from(getLayoutResponse.asString());
         }
         catch (Exception e)
@@ -64,7 +66,8 @@ public class Tasks extends AssertActions
         try
         {
             getBookmarksResponse = Documents.getBookmarks(idDoc);
-            LOGGER.info("getBookmarks " + name + " Code status : " + getBookmarksResponse.statusCode());
+            LOGGER.info("Time : " + LocalTime.now() + " getBookmarks " + name + " Code status : "
+                    + getBookmarksResponse.statusCode());
         }
         catch (Exception e)
         {
@@ -79,7 +82,8 @@ public class Tasks extends AssertActions
             try
             {
                 Response getImage = Documents.getPageImage(idDoc, i, "IM_100_0");
-                LOGGER.info("getImage100px " + name + " Code status : " + getImage.statusCode());
+                LOGGER.info("Time : " + LocalTime.now() + " getImage100px " + name + " Code status : "
+                        + getImage.statusCode());
                 getImage100pxResponses.add(getImage);
             }
             catch (Exception e)
@@ -90,7 +94,8 @@ public class Tasks extends AssertActions
             try
             {
                 Response getImageFullScreen = Documents.getPageImage(idDoc, i, "IM_800_0");
-                LOGGER.info("getImage800px " + name + " Code status : " + getImageFullScreen.statusCode());
+                LOGGER.info("Time : " + LocalTime.now() + " getImage800px " + name + " Code status : "
+                        + getImageFullScreen.statusCode());
                 getImage800pxResponses.add(getImageFullScreen);
             }
             catch (Exception e)
@@ -101,7 +106,8 @@ public class Tasks extends AssertActions
             try
             {
                 Response getTextPosition = Documents.getTextPosition(idDoc, i);
-                LOGGER.info("getTextPosition " + name + " Code status : " + getTextPosition.statusCode());
+                LOGGER.info("Time : " + LocalTime.now() + " getTextPosition " + name + " Code status : "
+                        + getTextPosition.statusCode());
                 getTextPositionResponses.add(getTextPosition);
             }
             catch (Exception e)
@@ -114,7 +120,8 @@ public class Tasks extends AssertActions
         try
         {
             evictResponse = Documents.evictDocument(idDoc);
-            LOGGER.info("evictResponse " + name + " Code status : " + evictResponse.statusCode());
+            LOGGER.info("Time : " + LocalTime.now() + " evictResponse " + name + " Code status : "
+                    + evictResponse.statusCode());
         }
         catch (Exception e)
         {

@@ -245,6 +245,7 @@ public class PerformanceTest extends AssertActions
 
         ArrayList<String> nameOfAxis = new ArrayList<String>(Arrays
                 .asList(new String[] { "Min", "Percentile50", "Percentile75", "Percentile95", "Percentile99", "Max" }));
+
         GraphGenerator.globalGraph(passed, failed, warning, "Global graph");
         GraphGenerator.generateGraph(stat(uploadList), nameOfAxis, "Upload",
                 "Total of request : " + uploadList.size() + "  Total Passed : " + numberUploadOK, "Time (ms)",
