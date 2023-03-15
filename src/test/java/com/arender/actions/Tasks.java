@@ -1,6 +1,7 @@
 package com.arender.actions;
 
 import java.io.File;
+import java.time.LocalTime;
 import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
@@ -35,38 +36,40 @@ public class Tasks extends AssertActions
         getImage100pxResponses = new ArrayList<Response>();
         getImage800pxResponses = new ArrayList<Response>();
         getTextPositionResponses = new ArrayList<Response>();
-        this.name = Thread.currentThread().getName().substring(7) + " of :"
-                + Thread.currentThread().getName().substring(0, 6) + "file :" + fileToUpload.getName();
-        // upload
+        this.name = fileToUpload.getName();
         String idDoc = "";
         JsonPath layoutResponse = null;
         try
         {
             uploadResponse = Documents.uploadDocument(fileToUpload, "doc ");
-
-            // get Layout
+            LOGGER.info("Upload " + name + " Code status : " + uploadResponse.statusCode());
             idDoc = JsonPath.from(uploadResponse.asString()).get("id");
         }
         catch (Exception e)
         {
-            LOGGER.info("task exception upload : " + e.getMessage() + " with : " + fileToUpload);
+            LOGGER.info("task exception upload : " + e.getMessage() + " Time : " + LocalTime.now() + " file : "
+                    + this.name);
         }
         try
         {
             getLayoutResponse = Documents.getDocumentLayout(idDoc);
+            LOGGER.info("getLayout " + name + " Code status : " + getLayoutResponse.statusCode());
             layoutResponse = JsonPath.from(getLayoutResponse.asString());
         }
         catch (Exception e)
         {
-            LOGGER.info("task exception getLayout : " + e.getMessage() + " with : " + fileToUpload);
+            LOGGER.info("task exception getLayout : " + e.getMessage() + " Time : " + LocalTime.now() + " file : "
+                    + this.name);
         }
         try
         {
             getBookmarksResponse = Documents.getBookmarks(idDoc);
+            LOGGER.info("getBookmarks " + name + " Code status : " + getBookmarksResponse.statusCode());
         }
         catch (Exception e)
         {
-            LOGGER.info("task exception getBookmarks : " + e.getMessage() + " with : " + fileToUpload);
+            LOGGER.info("task exception getBookmarks : " + e.getMessage() + " Time : " + LocalTime.now() + " file : "
+                    + this.name);
         }
 
         // get all image with different
@@ -76,39 +79,47 @@ public class Tasks extends AssertActions
             try
             {
                 Response getImage = Documents.getPageImage(idDoc, i, "IM_100_0");
+                LOGGER.info("getImage100px " + name + " Code status : " + getImage.statusCode());
                 getImage100pxResponses.add(getImage);
             }
             catch (Exception e)
             {
-                LOGGER.info("task exception getPageImage 100 px: " + e.getMessage() + " with : " + fileToUpload);
+                LOGGER.info("task exception getPageImage 100 px: " + e.getMessage() + " Time : " + LocalTime.now()
+                        + " file : " + this.name);
             }
             try
             {
                 Response getImageFullScreen = Documents.getPageImage(idDoc, i, "IM_800_0");
+                LOGGER.info("getImage800px " + name + " Code status : " + getImageFullScreen.statusCode());
                 getImage800pxResponses.add(getImageFullScreen);
             }
             catch (Exception e)
             {
-                LOGGER.info("task exception getPageImage 800 px: " + e.getMessage() + " with : " + fileToUpload);
+                LOGGER.info("task exception getPageImage 800 px: " + e.getMessage() + " Time : " + LocalTime.now()
+                        + " file : " + this.name);
             }
             try
             {
-                getTextPositionResponses.add(Documents.getTextPosition(idDoc, i));
+                Response getTextPosition = Documents.getTextPosition(idDoc, i);
+                LOGGER.info("getTextPosition " + name + " Code status : " + getTextPosition.statusCode());
+                getTextPositionResponses.add(getTextPosition);
             }
             catch (Exception e)
             {
-                LOGGER.info("task exception getTextPosition : " + e.getMessage() + " with : " + fileToUpload);
+                LOGGER.info("task exception getTextPosition : " + e.getMessage() + " Time : " + LocalTime.now()
+                        + " file : " + this.name);
             }
         }
 
         try
         {
             evictResponse = Documents.evictDocument(idDoc);
-
+            LOGGER.info("evictResponse " + name + " Code status : " + evictResponse.statusCode());
         }
         catch (Exception e)
         {
-            LOGGER.info("task exception : evictDocument" + e.getMessage() + " with : " + fileToUpload);
+            LOGGER.info("task exception : evictDocument" + e.getMessage() + " Time : " + LocalTime.now() + " file : "
+                    + this.name);
         }
     }
 

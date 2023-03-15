@@ -4,9 +4,11 @@ import java.io.File;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -41,6 +43,12 @@ public class PerformanceTest extends AssertActions
     private ArrayList<Long> getTextPositionList = new ArrayList<>();
 
     private ArrayList<Long> evictList = new ArrayList<>();
+
+    private int numberUploadOK = 0, numberGetLayoutOK = 0, numberGetBookmarksOK = 0, numberGetImage100pxOK = 0,
+            numberGetImage800pxOK = 0, numberGetTextPositionOK = 0, numberEvictOK = 0, passed = 0, warning = 0,
+            failed = 0;
+
+    private AtomicInteger completed;
 
     @BeforeSuite
     private static void initialization()
@@ -86,23 +94,42 @@ public class PerformanceTest extends AssertActions
         return (long) list.stream().mapToLong(Long::longValue).average().orElse(Double.NaN);
     }
 
-    public void testMultipleRequests() throws InterruptedException
+    private void verifTime(ArrayList<Long> list)
     {
+        for (int i = 0; i < list.size(); i++)
+        {
+            if (list.get(i) <= 800)
+            {
+                passed++;
+            }
+            else if (list.get(i) > 800 && list.get(i) < 120000)
+            {
+                warning++;
+            }
+            else
+            {
+                failed++;
+            }
+        }
+    }
+
+    public void testMultipleRequests() throws Exception
+    {
+        completed = new AtomicInteger();
         ArrayList<Tasks> tasks = new ArrayList<Tasks>();
 
         ExecutorService executorGroup = Executors.newFixedThreadPool(numberOfUsers);
 
-        AtomicInteger completed = new AtomicInteger();
         for (int i = 0; i < numberOfUsers; i++)
         {
-            Collections.shuffle(listFiles);
             executorGroup.submit(() -> {
                 try
                 {
-
+                    List<Integer> randomRead = Arrays.asList(0, 1, 2, 3, 4);
+                    Collections.shuffle(randomRead);
                     for (int j = 0; j < listFiles.size(); j++)
                     {
-                        File fileToUpload = listFiles.get(j);
+                        File fileToUpload = listFiles.get(randomRead.get(j));
                         Tasks task = new Tasks(fileToUpload);
                         addTasks(tasks, task);
                     }
@@ -110,7 +137,7 @@ public class PerformanceTest extends AssertActions
                 }
                 catch (Exception e)
                 {
-                    LOGGER.error("exception : " + e.getMessage());
+                    LOGGER.error("exception : " + e.getMessage() + " Time : " + LocalTime.now());
                 }
             });
 
@@ -123,41 +150,70 @@ public class PerformanceTest extends AssertActions
             if (task.getUploadResponse() != null)
             {
                 uploadList.add(task.getUploadResponse().time());
+                if (task.getUploadResponse().getStatusCode() == 200)
+                {
+                    numberUploadOK++;
+                }
             }
             if (task.getGetLayoutResponse() != null)
             {
                 getLayoutList.add(task.getGetLayoutResponse().time());
+                if (task.getGetLayoutResponse().getStatusCode() == 200)
+                {
+                    numberGetLayoutOK++;
+                }
             }
             if (task.getGetBookmarksResponse() != null)
             {
                 getBookmarksList.add(task.getGetBookmarksResponse().time());
+                if (task.getGetBookmarksResponse().getStatusCode() == 200)
+                {
+                    numberGetBookmarksOK++;
+                }
             }
             if (task.getEvictResponse() != null)
             {
                 evictList.add(task.getEvictResponse().time());
+                if (task.getEvictResponse().getStatusCode() == 200)
+                {
+                    numberEvictOK++;
+                }
             }
 
             for (int l = 0; l < task.getGetImage100pxResponses().size(); l++)
             {
                 getImage100pxList.add(task.getGetImage100pxResponses().get(l).time());
+                if (task.getGetImage100pxResponses().get(l).getStatusCode() == 200)
+                {
+                    numberGetImage100pxOK++;
+                }
             }
             for (int m = 0; m < task.getGetImage800pxResponses().size(); m++)
             {
                 getImage800pxList.add(task.getGetImage800pxResponses().get(m).time());
+                if (task.getGetImage800pxResponses().get(m).getStatusCode() == 200)
+                {
+                    numberGetImage800pxOK++;
+                }
             }
             for (int n = 0; n < task.getGetTextPositionResponses().size(); n++)
             {
                 getTextPositionList.add(task.getGetTextPositionResponses().get(n).time());
+                if (task.getGetTextPositionResponses().get(n).getStatusCode() == 200)
+                {
+                    numberGetTextPositionOK++;
+                }
             }
 
         }
         LOGGER.info("Total users : " + completed.get());
-        LOGGER.info("Total upload : " + uploadList.size());
-        LOGGER.info("Total getBookmarks : " + getBookmarksList.size());
-        LOGGER.info("Total getImage100px : " + getImage100pxList.size());
-        LOGGER.info("Total getImage800px : " + getImage800pxList.size());
-        LOGGER.info("Total getTextPosition : " + getTextPositionList.size());
-        LOGGER.info("Total evictDocument : " + evictList.size());
+        LOGGER.info("Total upload : " + uploadList.size() + " Total OK : " + numberUploadOK);
+        LOGGER.info("Total getLayout : " + getLayoutList.size() + " Total OK : " + numberGetLayoutOK);
+        LOGGER.info("Total getBookmarks : " + getBookmarksList.size() + " Total OK : " + numberGetBookmarksOK);
+        LOGGER.info("Total getImage100px : " + getImage100pxList.size() + " Total OK : " + numberGetImage100pxOK);
+        LOGGER.info("Total getImage800px : " + getImage800pxList.size() + " Total OK : " + numberGetImage800pxOK);
+        LOGGER.info("Total getTextPosition : " + getTextPositionList.size() + " Total OK : " + numberGetTextPositionOK);
+        LOGGER.info("Total evictDocument : " + evictList.size() + " Total OK : " + numberEvictOK);
 
     }
 
@@ -167,10 +223,11 @@ public class PerformanceTest extends AssertActions
     }
 
     @Test()
-    public void PerforamnceTestInShortDuration() throws InterruptedException, IOException
+    public void PerforamnceTestInShortDuration() throws Exception, InterruptedException, IOException
     {
-        LOGGER.info("Test has been started.");
+        LOGGER.info("Test has been started : " + LocalTime.now());
         LOGGER.info("Available processors : " + Runtime.getRuntime().availableProcessors());
+
         Instant start = Instant.now();
         Duration duration = Duration.ofMinutes(2);
         while (Duration.between(start, Instant.now()).compareTo(duration) < 0)
@@ -178,24 +235,37 @@ public class PerformanceTest extends AssertActions
             testMultipleRequests();
 
         }
+        verifTime(uploadList);
+        verifTime(getLayoutList);
+        verifTime(getImage100pxList);
+        verifTime(getImage800pxList);
+        verifTime(getBookmarksList);
+        verifTime(getTextPositionList);
+        verifTime(evictList);
 
         ArrayList<String> nameOfAxis = new ArrayList<String>(Arrays
                 .asList(new String[] { "Min", "Percentile50", "Percentile75", "Percentile95", "Percentile99", "Max" }));
-
-        // Generate the graphs for each list of data
-        GraphGenerator.generateGraph(stat(uploadList), nameOfAxis, "Upload", "Request Number", "Time (ms)",
+        GraphGenerator.globalGraph(passed, failed, warning, "Global graph");
+        GraphGenerator.generateGraph(stat(uploadList), nameOfAxis, "Upload",
+                "Total of request : " + uploadList.size() + "  Total Passed : " + numberUploadOK, "Time (ms)",
                 "report of Upload");
-        GraphGenerator.generateGraph(stat(getLayoutList), nameOfAxis, "Get Layout", "Request Number", "Time (ms)",
+        GraphGenerator.generateGraph(stat(getLayoutList), nameOfAxis, "Get Layout",
+                "Total of request : " + getLayoutList.size() + "  Total Passed : " + numberGetLayoutOK, "Time (ms)",
                 "report of getLayout");
-        GraphGenerator.generateGraph(stat(getImage100pxList), nameOfAxis, "Get image 100px", "Request Number",
+        GraphGenerator.generateGraph(stat(getImage100pxList), nameOfAxis, "Get image 100px",
+                "Total of reuquest : " + getImage100pxList.size() + "  Total Passed : " + numberGetImage100pxOK,
                 "Time (ms)", "report of Get image 100px");
-        GraphGenerator.generateGraph(stat(getImage800pxList), nameOfAxis, "Get image 800px", "Request Number",
+        GraphGenerator.generateGraph(stat(getImage800pxList), nameOfAxis, "Get image 800px",
+                "Total of reuquest : " + getImage800pxList.size() + "  Total Passed : " + numberGetImage800pxOK,
                 "Time (ms)", "report of Get image 800px");
-        GraphGenerator.generateGraph(stat(getBookmarksList), nameOfAxis, "Get Bookmarks", "Request Number", "Time (ms)",
-                "report of getBookmarks");
-        GraphGenerator.generateGraph(stat(getTextPositionList), nameOfAxis, "Get Text position", "Request Number",
+        GraphGenerator.generateGraph(stat(getBookmarksList), nameOfAxis, "Get Bookmarks",
+                "Total of reuquest : " + getBookmarksList.size() + "  Total Passed : " + numberGetBookmarksOK,
+                "Time (ms)", "report of getBookmarks");
+        GraphGenerator.generateGraph(stat(getTextPositionList), nameOfAxis, "Get Text position",
+                "Total of reuquest : " + getTextPositionList.size() + "  Total Passed : " + numberGetTextPositionOK,
                 "Time (ms)", "report of getTextPosition");
-        GraphGenerator.generateGraph(stat(evictList), nameOfAxis, "Evict", "Request Number", "Time (ms)",
+        GraphGenerator.generateGraph(stat(evictList), nameOfAxis, "Evict",
+                "Total of reuquest : " + evictList.size() + "  Total Passed : " + numberEvictOK, "Time (ms)",
                 "report of Evict");
 
     }
