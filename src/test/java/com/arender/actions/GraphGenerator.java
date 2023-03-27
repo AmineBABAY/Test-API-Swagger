@@ -2,7 +2,6 @@ package com.arender.actions;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.GradientPaint;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -21,6 +20,8 @@ import org.jfree.chart.plot.PiePlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.StandardBarPainter;
+import org.jfree.chart.title.TextTitle;
+import org.jfree.chart.ui.RectangleEdge;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.DefaultPieDataset;
 
@@ -29,14 +30,19 @@ import io.qameta.allure.Allure;
 public class GraphGenerator
 {
 
-    public static void generateGraph(ArrayList<Long> dataList, ArrayList<String> nameOfAxis, String title,
-            String xAxisLabel, String yAxisLabel, String fileName)
+    public static void generateGraph(ArrayList<Long> dataList1, ArrayList<Long> dataList2, ArrayList<Long> dataList3,
+            ArrayList<Long> dataList4, ArrayList<Long> dataList5, ArrayList<String> nameOfAxis, String title,
+            String xAxisLabel, String yAxisLabel, String fileName, int numberUsers)
     {
         // Convert the ArrayList to a CategoryDataset
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        for (int i = 0; i < dataList.size(); i++)
+        for (int i = 0; i < dataList1.size(); i++)
         {
-            dataset.addValue(dataList.get(i), title, nameOfAxis.get(i));
+            dataset.addValue(dataList1.get(i), "Doc 100KO", nameOfAxis.get(i));
+            dataset.addValue(dataList2.get(i), "Pdf 100KO", nameOfAxis.get(i));
+            dataset.addValue(dataList3.get(i), "Tiff low size", nameOfAxis.get(i));
+            dataset.addValue(dataList4.get(i), "JPEG 100KO", nameOfAxis.get(i));
+            dataset.addValue(dataList5.get(i), "Pdf 1MO", nameOfAxis.get(i));
         }
 
         // Create the JFreeChart object
@@ -57,6 +63,7 @@ public class GraphGenerator
 
         CategoryPlot plot = (CategoryPlot) chart.getPlot();
         plot.setBackgroundPaint(new Color(245, 245, 245));
+
         // plot.setRangeGridlinePaint(Color.lightGray);
 
         CategoryAxis domainAxis = plot.getDomainAxis();
@@ -78,9 +85,12 @@ public class GraphGenerator
         renderer.setBarPainter(new StandardBarPainter());
         renderer.setItemMargin(0.05);
         renderer.setMaximumBarWidth(0.2);
-        GradientPaint gp0 = new GradientPaint(0.0f, 0.0f, new Color(79, 129, 189), 0.0f, 0.0f, new Color(79, 129, 189));
-        renderer.setSeriesPaint(0, gp0);
-        // Generate the graph image
+        // GradientPaint gp0 = new GradientPaint(0.0f, 0.0f, new Color(79, 129,
+        // 189), 0.0f, 0.0f, new Color(79, 129, 189));
+        // renderer.setSeriesPaint(0, gp0);
+        TextTitle legendText = new TextTitle("\n number of users : " + numberUsers);
+        legendText.setPosition(RectangleEdge.BOTTOM);
+        chart.addSubtitle(legendText);
         byte[] graphImage = generateGraphImage(chart);
 
         // Attach the graph image to the Allure report
@@ -96,16 +106,16 @@ public class GraphGenerator
         }
         if (warning != 0)
         {
-            dataset.setValue("Warning : >800ms & <120000ms", warning);
+            dataset.setValue("Warning : >800ms & <60000ms", warning);
         }
         if (failed != 0)
         {
-            dataset.setValue("Failed >120000ms", failed);
+            dataset.setValue("Failed >60000ms", failed);
         }
         JFreeChart chart = ChartFactory.createPieChart("Global graph", dataset, true, true, false);
         PiePlot plot = (PiePlot) chart.getPlot();
-        plot.setSectionPaint("Failed >120000ms", Color.RED);
-        plot.setSectionPaint("Warning : >800ms & <120000ms", Color.YELLOW);
+        plot.setSectionPaint("Failed >60000ms", Color.RED);
+        plot.setSectionPaint("Warning : >800ms & <60000ms", Color.YELLOW);
         plot.setSectionPaint("Passed : <800ms", Color.GREEN);
         plot.setLabelGenerator(new StandardPieSectionLabelGenerator("{0} = {1}"));
         byte[] graphImage = generateGraphImage(chart);

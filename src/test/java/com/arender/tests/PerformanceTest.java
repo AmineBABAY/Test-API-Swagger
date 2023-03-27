@@ -21,6 +21,7 @@ import org.testng.annotations.Test;
 
 import com.arender.actions.AssertActions;
 import com.arender.actions.GraphGenerator;
+import com.arender.actions.Result;
 import com.arender.actions.Tasks;
 
 public class PerformanceTest extends AssertActions
@@ -30,19 +31,15 @@ public class PerformanceTest extends AssertActions
 
     private static ArrayList<File> listFiles = new ArrayList<>();
 
-    private ArrayList<Long> uploadList = new ArrayList<>();
+    private Result pdf100KO = new Result("PDF_100KO.pdf");
 
-    private ArrayList<Long> getLayoutList = new ArrayList<>();
+    private Result pdf1MO = new Result("PDF_1MO.pdf");
 
-    private ArrayList<Long> getBookmarksList = new ArrayList<>();
+    private Result tiffLowSize = new Result("TIFF_LOWSIZE.tiff");
 
-    private ArrayList<Long> getImage100pxList = new ArrayList<>();
+    private Result doc100KO = new Result("DOC_100KO.doc");
 
-    private ArrayList<Long> getImage800pxList = new ArrayList<>();
-
-    private ArrayList<Long> getTextPositionList = new ArrayList<>();
-
-    private ArrayList<Long> evictList = new ArrayList<>();
+    private Result jpeg100KO = new Result("JPEG_100KO.jpeg");
 
     private int numberUploadOK = 0, numberGetLayoutOK = 0, numberGetBookmarksOK = 0, numberGetImage100pxOK = 0,
             numberGetImage800pxOK = 0, numberGetTextPositionOK = 0, numberEvictOK = 0, passed = 0, warning = 0,
@@ -89,12 +86,12 @@ public class PerformanceTest extends AssertActions
         return list.stream().min(Long::compare).orElse(null);
     }
 
-    private long calculMean(ArrayList<Long> list)
-    {
-        return (long) list.stream().mapToLong(Long::longValue).average().orElse(Double.NaN);
-    }
-
-    private void verifTime(ArrayList<Long> list)
+    // private long calculMean(ArrayList<Long> list)
+    // {
+    // return (long)
+    // list.stream().mapToLong(Long::longValue).average().orElse(Double.NaN);
+    // }
+    private void checkTime(ArrayList<Long> list)
     {
         for (int i = 0; i < list.size(); i++)
         {
@@ -102,7 +99,7 @@ public class PerformanceTest extends AssertActions
             {
                 passed++;
             }
-            else if (list.get(i) > 800 && list.get(i) < 120000)
+            else if (list.get(i) > 800 && list.get(i) < 60000)
             {
                 warning++;
             }
@@ -111,6 +108,18 @@ public class PerformanceTest extends AssertActions
                 failed++;
             }
         }
+    }
+
+    private void checkTimePerDoc(Result result)
+    {
+        checkTime(result.getUploadList());
+        checkTime(result.getGetLayoutList());
+        checkTime(result.getGetBookmarksList());
+        checkTime(result.getGetTextPositionList());
+        checkTime(result.getGetImage100pxList());
+        checkTime(result.getGetImage800pxList());
+        checkTime(result.getEvictList());
+
     }
 
     public void testMultipleRequests() throws Exception
@@ -133,15 +142,20 @@ public class PerformanceTest extends AssertActions
                         Tasks task = new Tasks(fileToUpload);
                         addTasks(tasks, task);
                     }
-                    completed.incrementAndGet();
+
                 }
                 catch (Exception e)
                 {
                     LOGGER.error("exception : " + e.getMessage() + " Time : " + LocalTime.now());
                 }
+                finally
+                {
+                    completed.incrementAndGet();
+                }
             });
 
         }
+
         executorGroup.shutdown();
         executorGroup.awaitTermination(5, TimeUnit.MINUTES);
         for (int i = 0; i < tasks.size(); i++)
@@ -149,7 +163,27 @@ public class PerformanceTest extends AssertActions
             Tasks task = tasks.get(i);
             if (task.getUploadResponse() != null)
             {
-                uploadList.add(task.getUploadResponse().time());
+                switch (task.getName())
+                {
+                case "PDF_1MO.pdf":
+                    pdf1MO.getUploadList().add(task.getUploadResponse().time());
+                    break;
+                case "PDF_100KO.pdf":
+                    pdf100KO.getUploadList().add(task.getUploadResponse().time());
+                    break;
+                case "JPEG_100KO.jpeg":
+                    jpeg100KO.getUploadList().add(task.getUploadResponse().time());
+                    break;
+                case "DOC_100KO.doc":
+                    doc100KO.getUploadList().add(task.getUploadResponse().time());
+                    break;
+                case "TIFF_LOWSIZE.tiff":
+                    tiffLowSize.getUploadList().add(task.getUploadResponse().time());
+                    break;
+                default:
+                    break;
+                }
+
                 if (task.getUploadResponse().getStatusCode() == 200)
                 {
                     numberUploadOK++;
@@ -157,7 +191,27 @@ public class PerformanceTest extends AssertActions
             }
             if (task.getGetLayoutResponse() != null)
             {
-                getLayoutList.add(task.getGetLayoutResponse().time());
+                switch (task.getName())
+                {
+                case "PDF_1MO.pdf":
+                    pdf1MO.getGetLayoutList().add(task.getGetLayoutResponse().time());
+                    break;
+                case "PDF_100KO.pdf":
+                    pdf100KO.getGetLayoutList().add(task.getGetLayoutResponse().time());
+                    break;
+                case "JPEG_100KO.jpeg":
+                    jpeg100KO.getGetLayoutList().add(task.getGetLayoutResponse().time());
+                    break;
+                case "DOC_100KO.doc":
+                    doc100KO.getGetLayoutList().add(task.getGetLayoutResponse().time());
+                    break;
+                case "TIFF_LOWSIZE.tiff":
+                    tiffLowSize.getGetLayoutList().add(task.getGetLayoutResponse().time());
+                    break;
+                default:
+                    break;
+                }
+
                 if (task.getGetLayoutResponse().getStatusCode() == 200)
                 {
                     numberGetLayoutOK++;
@@ -165,7 +219,27 @@ public class PerformanceTest extends AssertActions
             }
             if (task.getGetBookmarksResponse() != null)
             {
-                getBookmarksList.add(task.getGetBookmarksResponse().time());
+                switch (task.getName())
+                {
+                case "PDF_1MO.pdf":
+                    pdf1MO.getGetBookmarksList().add(task.getGetBookmarksResponse().time());
+                    break;
+                case "PDF_100KO.pdf":
+                    pdf100KO.getGetBookmarksList().add(task.getGetBookmarksResponse().time());
+                    break;
+                case "JPEG_100KO.jpeg":
+                    jpeg100KO.getGetBookmarksList().add(task.getGetBookmarksResponse().time());
+                    break;
+                case "DOC_100KO.doc":
+                    doc100KO.getGetBookmarksList().add(task.getGetBookmarksResponse().time());
+                    break;
+                case "TIFF_LOWSIZE.tiff":
+                    tiffLowSize.getGetBookmarksList().add(task.getGetBookmarksResponse().time());
+                    break;
+                default:
+                    break;
+                }
+
                 if (task.getGetBookmarksResponse().getStatusCode() == 200)
                 {
                     numberGetBookmarksOK++;
@@ -173,7 +247,27 @@ public class PerformanceTest extends AssertActions
             }
             if (task.getEvictResponse() != null)
             {
-                evictList.add(task.getEvictResponse().time());
+                switch (task.getName())
+                {
+                case "PDF_1MO.pdf":
+                    pdf1MO.getEvictList().add(task.getEvictResponse().time());
+                    break;
+                case "PDF_100KO.pdf":
+                    pdf100KO.getEvictList().add(task.getEvictResponse().time());
+                    break;
+                case "JPEG_100KO.jpeg":
+                    jpeg100KO.getEvictList().add(task.getEvictResponse().time());
+                    break;
+                case "DOC_100KO.doc":
+                    doc100KO.getEvictList().add(task.getEvictResponse().time());
+                    break;
+                case "TIFF_LOWSIZE.tiff":
+                    tiffLowSize.getEvictList().add(task.getEvictResponse().time());
+                    break;
+                default:
+                    break;
+                }
+
                 if (task.getEvictResponse().getStatusCode() == 200)
                 {
                     numberEvictOK++;
@@ -182,7 +276,26 @@ public class PerformanceTest extends AssertActions
 
             for (int l = 0; l < task.getGetImage100pxResponses().size(); l++)
             {
-                getImage100pxList.add(task.getGetImage100pxResponses().get(l).time());
+                switch (task.getName())
+                {
+                case "PDF_1MO.pdf":
+                    pdf1MO.getGetImage100pxList().add(task.getGetImage100pxResponses().get(l).time());
+                    break;
+                case "PDF_100KO.pdf":
+                    pdf100KO.getGetImage100pxList().add(task.getGetImage100pxResponses().get(l).time());
+                    break;
+                case "JPEG_100KO.jpeg":
+                    jpeg100KO.getGetImage100pxList().add(task.getGetImage100pxResponses().get(l).time());
+                    break;
+                case "DOC_100KO.doc":
+                    doc100KO.getGetImage100pxList().add(task.getGetImage100pxResponses().get(l).time());
+                    break;
+                case "TIFF_LOWSIZE.tiff":
+                    tiffLowSize.getGetImage100pxList().add(task.getGetImage100pxResponses().get(l).time());
+                    break;
+                default:
+                    break;
+                }
                 if (task.getGetImage100pxResponses().get(l).getStatusCode() == 200)
                 {
                     numberGetImage100pxOK++;
@@ -190,7 +303,27 @@ public class PerformanceTest extends AssertActions
             }
             for (int m = 0; m < task.getGetImage800pxResponses().size(); m++)
             {
-                getImage800pxList.add(task.getGetImage800pxResponses().get(m).time());
+                switch (task.getName())
+                {
+                case "PDF_1MO.pdf":
+                    pdf1MO.getGetImage800pxList().add(task.getGetImage800pxResponses().get(m).time());
+                    break;
+                case "PDF_100KO.pdf":
+                    pdf100KO.getGetImage800pxList().add(task.getGetImage800pxResponses().get(m).time());
+                    break;
+                case "JPEG_100KO.jpeg":
+                    jpeg100KO.getGetImage800pxList().add(task.getGetImage800pxResponses().get(m).time());
+                    break;
+                case "DOC_100KO.doc":
+                    doc100KO.getGetImage800pxList().add(task.getGetImage800pxResponses().get(m).time());
+                    break;
+                case "TIFF_LOWSIZE.tiff":
+                    tiffLowSize.getGetImage800pxList().add(task.getGetImage800pxResponses().get(m).time());
+                    break;
+                default:
+                    break;
+                }
+
                 if (task.getGetImage800pxResponses().get(m).getStatusCode() == 200)
                 {
                     numberGetImage800pxOK++;
@@ -198,7 +331,27 @@ public class PerformanceTest extends AssertActions
             }
             for (int n = 0; n < task.getGetTextPositionResponses().size(); n++)
             {
-                getTextPositionList.add(task.getGetTextPositionResponses().get(n).time());
+                switch (task.getName())
+                {
+                case "PDF_1MO.pdf":
+                    pdf1MO.getGetTextPositionList().add(task.getGetTextPositionResponses().get(n).time());
+                    break;
+                case "PDF_100KO.pdf":
+                    pdf100KO.getGetTextPositionList().add(task.getGetTextPositionResponses().get(n).time());
+                    break;
+                case "JPEG_100KO.jpeg":
+                    jpeg100KO.getGetTextPositionList().add(task.getGetTextPositionResponses().get(n).time());
+                    break;
+                case "DOC_100KO.doc":
+                    doc100KO.getGetTextPositionList().add(task.getGetTextPositionResponses().get(n).time());
+                    break;
+                case "TIFF_LOWSIZE.tiff":
+                    tiffLowSize.getGetTextPositionList().add(task.getGetTextPositionResponses().get(n).time());
+                    break;
+                default:
+                    break;
+                }
+
                 if (task.getGetTextPositionResponses().get(n).getStatusCode() == 200)
                 {
                     numberGetTextPositionOK++;
@@ -206,20 +359,91 @@ public class PerformanceTest extends AssertActions
             }
 
         }
-        LOGGER.info("Total users : " + completed.get());
-        LOGGER.info("Total upload : " + uploadList.size() + " Total OK : " + numberUploadOK);
-        LOGGER.info("Total getLayout : " + getLayoutList.size() + " Total OK : " + numberGetLayoutOK);
-        LOGGER.info("Total getBookmarks : " + getBookmarksList.size() + " Total OK : " + numberGetBookmarksOK);
-        LOGGER.info("Total getImage100px : " + getImage100pxList.size() + " Total OK : " + numberGetImage100pxOK);
-        LOGGER.info("Total getImage800px : " + getImage800pxList.size() + " Total OK : " + numberGetImage800pxOK);
-        LOGGER.info("Total getTextPosition : " + getTextPositionList.size() + " Total OK : " + numberGetTextPositionOK);
-        LOGGER.info("Total evictDocument : " + evictList.size() + " Total OK : " + numberEvictOK);
-
+        LOGGER.info(" \n ******************************* Done ******************************************* \n");
     }
 
     private synchronized void addTasks(ArrayList<Tasks> tasks, Tasks task) throws Exception
     {
         tasks.add(task);
+    }
+
+    private void generateResult()
+    {
+        checkTimePerDoc(doc100KO);
+        checkTimePerDoc(jpeg100KO);
+        checkTimePerDoc(pdf100KO);
+        checkTimePerDoc(pdf1MO);
+        checkTimePerDoc(tiffLowSize);
+
+        int totalUpload = doc100KO.getUploadList().size() + jpeg100KO.getUploadList().size()
+                + pdf100KO.getUploadList().size() + pdf1MO.getUploadList().size() + tiffLowSize.getUploadList().size();
+        int totalGetLayout = doc100KO.getGetLayoutList().size() + jpeg100KO.getGetLayoutList().size()
+                + pdf100KO.getGetLayoutList().size() + pdf1MO.getGetLayoutList().size()
+                + tiffLowSize.getGetLayoutList().size();
+
+        int totalGetBookmarks = doc100KO.getGetBookmarksList().size() + jpeg100KO.getGetBookmarksList().size()
+                + pdf100KO.getGetBookmarksList().size() + pdf1MO.getGetBookmarksList().size()
+                + tiffLowSize.getGetBookmarksList().size();
+
+        int totalGetTextPosition = doc100KO.getGetTextPositionList().size() + jpeg100KO.getGetTextPositionList().size()
+                + pdf100KO.getGetTextPositionList().size() + pdf1MO.getGetTextPositionList().size()
+                + tiffLowSize.getGetTextPositionList().size();
+
+        int totalGetImage100px = doc100KO.getGetImage100pxList().size() + jpeg100KO.getGetImage100pxList().size()
+                + pdf100KO.getGetImage100pxList().size() + pdf1MO.getGetImage100pxList().size()
+                + tiffLowSize.getGetImage100pxList().size();
+
+        int totalGetImage800px = doc100KO.getGetImage800pxList().size() + jpeg100KO.getGetImage800pxList().size()
+                + pdf100KO.getGetImage800pxList().size() + pdf1MO.getGetImage800pxList().size()
+                + tiffLowSize.getGetImage800pxList().size();
+
+        int totalEvict = doc100KO.getEvictList().size() + jpeg100KO.getEvictList().size()
+                + pdf100KO.getEvictList().size() + pdf1MO.getEvictList().size() + tiffLowSize.getEvictList().size();
+
+        ArrayList<String> nameOfAxis = new ArrayList<String>(Arrays
+                .asList(new String[] { "Min", "Percentile50", "Percentile75", "Percentile95", "Percentile99", "Max" }));
+
+        GraphGenerator.globalGraph(passed, failed, warning, "Global graph");
+
+        GraphGenerator.generateGraph(stat(doc100KO.getUploadList()), stat(pdf100KO.getUploadList()),
+                stat(tiffLowSize.getUploadList()), stat(jpeg100KO.getUploadList()), stat(pdf1MO.getUploadList()),
+                nameOfAxis, "Upload", "Total of request : " + totalUpload + "  Total Passed : " + numberUploadOK,
+                "Time (ms)", "report of Upload", completed.get());
+
+        GraphGenerator.generateGraph(stat(doc100KO.getGetLayoutList()), stat(pdf100KO.getGetLayoutList()),
+                stat(tiffLowSize.getGetLayoutList()), stat(jpeg100KO.getGetLayoutList()),
+                stat(pdf1MO.getGetLayoutList()), nameOfAxis, "Get Layout",
+                "Total of request : " + totalGetLayout + "  Total Passed : " + numberGetLayoutOK, "Time (ms)",
+                "report of get layout", completed.get());
+
+        GraphGenerator.generateGraph(stat(doc100KO.getGetBookmarksList()), stat(pdf100KO.getGetBookmarksList()),
+                stat(tiffLowSize.getGetBookmarksList()), stat(jpeg100KO.getGetBookmarksList()),
+                stat(pdf1MO.getGetBookmarksList()), nameOfAxis, "Get Bookmarks",
+                "Total of request : " + totalGetBookmarks + "  Total Passed : " + numberGetBookmarksOK, "Time (ms)",
+                "report of get bookmarks", completed.get());
+
+        GraphGenerator.generateGraph(stat(doc100KO.getGetTextPositionList()), stat(pdf100KO.getGetTextPositionList()),
+                stat(tiffLowSize.getGetTextPositionList()), stat(jpeg100KO.getGetTextPositionList()),
+                stat(pdf1MO.getGetTextPositionList()), nameOfAxis, "Get text position",
+                "Total of request : " + totalGetTextPosition + "  Total Passed : " + numberGetTextPositionOK,
+                "Time (ms)", "report of get text position", completed.get());
+
+        GraphGenerator.generateGraph(stat(doc100KO.getGetImage100pxList()), stat(pdf100KO.getGetImage100pxList()),
+                stat(tiffLowSize.getGetImage100pxList()), stat(jpeg100KO.getGetImage100pxList()),
+                stat(pdf1MO.getGetImage100pxList()), nameOfAxis, "Get image 100px",
+                "Total of request : " + totalGetImage100px + "  Total Passed : " + numberGetImage100pxOK, "Time (ms)",
+                "report of get image 100px", completed.get());
+
+        GraphGenerator.generateGraph(stat(doc100KO.getGetImage800pxList()), stat(pdf100KO.getGetImage800pxList()),
+                stat(tiffLowSize.getGetImage100pxList()), stat(jpeg100KO.getGetImage100pxList()),
+                stat(pdf1MO.getGetImage800pxList()), nameOfAxis, "Get image 800px",
+                "Total of request : " + totalGetImage800px + "  Total Passed : " + numberGetImage800pxOK, "Time (ms)",
+                "report of get image 800px", completed.get());
+
+        GraphGenerator.generateGraph(stat(doc100KO.getEvictList()), stat(pdf100KO.getEvictList()),
+                stat(tiffLowSize.getEvictList()), stat(jpeg100KO.getEvictList()), stat(pdf1MO.getEvictList()),
+                nameOfAxis, "Evict document", "Total of request : " + totalEvict + "  Total Passed : " + numberEvictOK,
+                "Time (ms)", "report of evict", completed.get());
     }
 
     @Test()
@@ -235,39 +459,7 @@ public class PerformanceTest extends AssertActions
             testMultipleRequests();
 
         }
-        verifTime(uploadList);
-        verifTime(getLayoutList);
-        verifTime(getImage100pxList);
-        verifTime(getImage800pxList);
-        verifTime(getBookmarksList);
-        verifTime(getTextPositionList);
-        verifTime(evictList);
-
-        ArrayList<String> nameOfAxis = new ArrayList<String>(Arrays
-                .asList(new String[] { "Min", "Percentile50", "Percentile75", "Percentile95", "Percentile99", "Max" }));
-
-        GraphGenerator.globalGraph(passed, failed, warning, "Global graph");
-        GraphGenerator.generateGraph(stat(uploadList), nameOfAxis, "Upload",
-                "Total of request : " + uploadList.size() + "  Total Passed : " + numberUploadOK, "Time (ms)",
-                "report of Upload");
-        GraphGenerator.generateGraph(stat(getLayoutList), nameOfAxis, "Get Layout",
-                "Total of request : " + getLayoutList.size() + "  Total Passed : " + numberGetLayoutOK, "Time (ms)",
-                "report of getLayout");
-        GraphGenerator.generateGraph(stat(getImage100pxList), nameOfAxis, "Get image 100px",
-                "Total of reuquest : " + getImage100pxList.size() + "  Total Passed : " + numberGetImage100pxOK,
-                "Time (ms)", "report of Get image 100px");
-        GraphGenerator.generateGraph(stat(getImage800pxList), nameOfAxis, "Get image 800px",
-                "Total of reuquest : " + getImage800pxList.size() + "  Total Passed : " + numberGetImage800pxOK,
-                "Time (ms)", "report of Get image 800px");
-        GraphGenerator.generateGraph(stat(getBookmarksList), nameOfAxis, "Get Bookmarks",
-                "Total of reuquest : " + getBookmarksList.size() + "  Total Passed : " + numberGetBookmarksOK,
-                "Time (ms)", "report of getBookmarks");
-        GraphGenerator.generateGraph(stat(getTextPositionList), nameOfAxis, "Get Text position",
-                "Total of reuquest : " + getTextPositionList.size() + "  Total Passed : " + numberGetTextPositionOK,
-                "Time (ms)", "report of getTextPosition");
-        GraphGenerator.generateGraph(stat(evictList), nameOfAxis, "Evict",
-                "Total of reuquest : " + evictList.size() + "  Total Passed : " + numberEvictOK, "Time (ms)",
-                "report of Evict");
+        generateResult();
 
     }
 
