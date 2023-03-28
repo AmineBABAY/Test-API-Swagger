@@ -97,7 +97,7 @@ public class GraphGenerator
         Allure.addAttachment(fileName, "image/png", new ByteArrayInputStream(graphImage), ".png");
     }
 
-    public static void globalGraph(int passed, int failed, int warning, String fileName)
+    public static void globalGraph(int passed, int failed, int warning, String fileName, int numberUsers)
     {
         DefaultPieDataset<String> dataset = new DefaultPieDataset<String>();
         if (passed != 0)
@@ -118,6 +118,9 @@ public class GraphGenerator
         plot.setSectionPaint("Warning : >800ms & <60000ms", Color.YELLOW);
         plot.setSectionPaint("Passed : <800ms", Color.GREEN);
         plot.setLabelGenerator(new StandardPieSectionLabelGenerator("{0} = {1}"));
+        TextTitle legendText = new TextTitle("\n number of users : " + numberUsers);
+        legendText.setPosition(RectangleEdge.BOTTOM);
+        chart.addSubtitle(legendText);
         byte[] graphImage = generateGraphImage(chart);
 
         // Attach the graph image to the Allure report
