@@ -20,6 +20,119 @@ public class Result
 
     private ArrayList<Long> evictList = new ArrayList<>();
 
+    private int totalUploadOK = 0, totalGetLayoutOK = 0, totalGetBoomarksOK = 0, totalGetImage100pxOK = 0,
+            totalGetImage800pxOK = 0, totalGetTextPositionOK = 0, totalEvictOK = 0;
+
+    public void incrementTotalEvictOK()
+    {
+        this.totalEvictOK++;
+    }
+
+    public void incrementTotalGetTextPositionOK()
+    {
+        this.totalGetTextPositionOK++;
+    }
+
+    public void incrementTotalGetImage800pxOK()
+    {
+        this.totalGetImage800pxOK++;
+    }
+
+    public void incrementTotalGetImage100pxOK()
+    {
+        this.totalGetImage100pxOK++;
+    }
+
+    public void incrementTotalGetBoomarksOK()
+    {
+        this.totalGetBoomarksOK++;
+    }
+
+    public void incrementTotalgetLayoutOK()
+    {
+        this.totalGetLayoutOK++;
+    }
+
+    public int getTotalUploadOK()
+    {
+        return totalUploadOK;
+    }
+
+    public void setTotalUploadOK(int totalUploadOK)
+    {
+        this.totalUploadOK = totalUploadOK;
+    }
+
+    public int getTotalgetLayoutOK()
+    {
+        return totalGetLayoutOK;
+    }
+
+    public void setTotalgetLayoutOK(int totalgetLayoutOK)
+    {
+        this.totalGetLayoutOK = totalgetLayoutOK;
+    }
+
+    public int getTotalGetBoomarksOK()
+    {
+        return totalGetBoomarksOK;
+    }
+
+    public void setTotalGetBoomarksOK(int totalGetBoomarksOK)
+    {
+        this.totalGetBoomarksOK = totalGetBoomarksOK;
+    }
+
+    public int getTotalGetImage100pxOK()
+    {
+        return totalGetImage100pxOK;
+    }
+
+    public void setTotalGetImage100pxOK(int totalGetImage100pxOK)
+    {
+        this.totalGetImage100pxOK = totalGetImage100pxOK;
+    }
+
+    public int getTotalGetImage800pxOK()
+    {
+        return totalGetImage800pxOK;
+    }
+
+    public void setTotalGetImage800pxOK(int totalGetImage800pxOK)
+    {
+        this.totalGetImage800pxOK = totalGetImage800pxOK;
+    }
+
+    public int getTotalGetTextPositionOK()
+    {
+        return totalGetTextPositionOK;
+    }
+
+    public void setTotalGetTextPositionOK(int totalGetTextPositionOK)
+    {
+        this.totalGetTextPositionOK = totalGetTextPositionOK;
+    }
+
+    public int getTotalEvictOK()
+    {
+        return totalEvictOK;
+    }
+
+    public void setTotalEvictOK(int totalEvictOK)
+    {
+        this.totalEvictOK = totalEvictOK;
+    }
+
+    public void incrementTotalUploadOK()
+    {
+        this.totalUploadOK++;
+    }
+
+    public void setTotalUpladOK(int totalUploadOK)
+    {
+        this.totalUploadOK = totalUploadOK;
+    }
+
     public Result(String name)
     {
         this.name = name;

@@ -7,6 +7,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -125,6 +126,181 @@ public class GraphGenerator
 
         // Attach the graph image to the Allure report
         Allure.addAttachment(fileName, "image/png", new ByteArrayInputStream(graphImage), ".png");
+    }
+
+    public static void generateTable(List<Result> listOfResult)
+    {
+
+        StringBuilder tableHtml = new StringBuilder();
+        tableHtml.append(
+                "<style> table, th, td {border: 1px solid black;border-collapse: collapse;padding: 15px;}</style>");
+        tableHtml.append("<table border=1>");
+        tableHtml.append("<caption>Global result</caption>");
+        tableHtml.append("<tr>");
+
+        tableHtml.append("<th>").append("Request").append("</th>");
+        tableHtml.append("<th>").append("Total").append("</th>");
+        tableHtml.append("<th>").append("OK").append("</th>");
+        tableHtml.append("<th>").append("KO").append("</th>");
+        tableHtml.append("<th>").append("Min").append("</th>");
+        tableHtml.append("<th>").append("Pct 50").append("</th>");
+        tableHtml.append("<th>").append("Pct 75").append("</th>");
+        tableHtml.append("<th>").append("Pct 95").append("</th>");
+        tableHtml.append("<th>").append("Pct 99").append("</th>");
+        tableHtml.append("<th>").append("Max").append("</th>");
+        tableHtml.append("</tr>");
+
+        for (int i = 0; i < listOfResult.size(); i++)
+        {
+            tableHtml.append("<tr>");
+            tableHtml.append("<td>").append("Upload : " + listOfResult.get(i).getName()).append("</td>");
+            tableHtml.append("<td>").append(listOfResult.get(i).getUploadList().size()).append("</td>");
+            tableHtml.append("<td>").append(listOfResult.get(i).getTotalUploadOK()).append("</td>");
+            tableHtml.append("<td>")
+                    .append(listOfResult.get(i).getUploadList().size() - listOfResult.get(i).getTotalUploadOK())
+                    .append("</td>");
+            tableHtml.append("<td>").append(Stat.calculMin(listOfResult.get(i).getUploadList())).append("</td>");
+            tableHtml.append("<td>").append(Stat.calculPercentile(listOfResult.get(i).getUploadList(), 50.0))
+                    .append("</td>");
+            tableHtml.append("<td>").append(Stat.calculPercentile(listOfResult.get(i).getUploadList(), 75.0))
+                    .append("</td>");
+            tableHtml.append("<td>").append(Stat.calculPercentile(listOfResult.get(i).getUploadList(), 95.0))
+                    .append("</td>");
+            tableHtml.append("<td>").append(Stat.calculPercentile(listOfResult.get(i).getUploadList(), 99.0))
+                    .append("</td>");
+            tableHtml.append("<td>").append(Stat.calculMax(listOfResult.get(i).getUploadList())).append("</td>");
+            tableHtml.append("</tr>");
+        }
+        for (int i = 0; i < listOfResult.size(); i++)
+        {
+            tableHtml.append("<tr>");
+            tableHtml.append("<td>").append("Get Layout : " + listOfResult.get(i).getName()).append("</td>");
+            tableHtml.append("<td>").append(listOfResult.get(i).getGetLayoutList().size()).append("</td>");
+            tableHtml.append("<td>").append(listOfResult.get(i).getTotalgetLayoutOK()).append("</td>");
+            tableHtml.append("<td>")
+                    .append(listOfResult.get(i).getGetLayoutList().size() - listOfResult.get(i).getTotalgetLayoutOK())
+                    .append("</td>");
+            tableHtml.append("<td>").append(Stat.calculMin(listOfResult.get(i).getGetLayoutList())).append("</td>");
+            tableHtml.append("<td>").append(Stat.calculPercentile(listOfResult.get(i).getGetLayoutList(), 50.0))
+                    .append("</td>");
+            tableHtml.append("<td>").append(Stat.calculPercentile(listOfResult.get(i).getGetLayoutList(), 75.0))
+                    .append("</td>");
+            tableHtml.append("<td>").append(Stat.calculPercentile(listOfResult.get(i).getGetLayoutList(), 95.0))
+                    .append("</td>");
+            tableHtml.append("<td>").append(Stat.calculPercentile(listOfResult.get(i).getGetLayoutList(), 99.0))
+                    .append("</td>");
+            tableHtml.append("<td>").append(Stat.calculMax(listOfResult.get(i).getGetLayoutList())).append("</td>");
+            tableHtml.append("</tr>");
+        }
+        for (int i = 0; i < listOfResult.size(); i++)
+        {
+            tableHtml.append("<tr>");
+            tableHtml.append("<td>").append("Get Bookmarks : " + listOfResult.get(i).getName()).append("</td>");
+            tableHtml.append("<td>").append(listOfResult.get(i).getGetBookmarksList().size()).append("</td>");
+            tableHtml.append("<td>").append(listOfResult.get(i).getTotalGetBoomarksOK()).append("</td>");
+            tableHtml.append("<td>").append(
+                    listOfResult.get(i).getGetBookmarksList().size() - listOfResult.get(i).getTotalGetBoomarksOK())
+                    .append("</td>");
+            tableHtml.append("<td>").append(Stat.calculMin(listOfResult.get(i).getGetBookmarksList())).append("</td>");
+            tableHtml.append("<td>").append(Stat.calculPercentile(listOfResult.get(i).getGetBookmarksList(), 50.0))
+                    .append("</td>");
+            tableHtml.append("<td>").append(Stat.calculPercentile(listOfResult.get(i).getGetBookmarksList(), 75.0))
+                    .append("</td>");
+            tableHtml.append("<td>").append(Stat.calculPercentile(listOfResult.get(i).getGetBookmarksList(), 95.0))
+                    .append("</td>");
+            tableHtml.append("<td>").append(Stat.calculPercentile(listOfResult.get(i).getGetBookmarksList(), 99.0))
+                    .append("</td>");
+            tableHtml.append("<td>").append(Stat.calculMax(listOfResult.get(i).getGetBookmarksList())).append("</td>");
+            tableHtml.append("</tr>");
+        }
+        for (int i = 0; i < listOfResult.size(); i++)
+        {
+            tableHtml.append("<tr>");
+            tableHtml.append("<td>").append("Get TextPosition : " + listOfResult.get(i).getName()).append("</td>");
+            tableHtml.append("<td>").append(listOfResult.get(i).getGetTextPositionList().size()).append("</td>");
+            tableHtml.append("<td>").append(listOfResult.get(i).getTotalGetTextPositionOK()).append("</td>");
+            tableHtml.append("<td>").append(listOfResult.get(i).getGetTextPositionList().size()
+                    - listOfResult.get(i).getTotalGetTextPositionOK()).append("</td>");
+            tableHtml.append("<td>").append(Stat.calculMin(listOfResult.get(i).getGetTextPositionList()))
+                    .append("</td>");
+            tableHtml.append("<td>").append(Stat.calculPercentile(listOfResult.get(i).getGetTextPositionList(), 50.0))
+                    .append("</td>");
+            tableHtml.append("<td>").append(Stat.calculPercentile(listOfResult.get(i).getGetTextPositionList(), 75.0))
+                    .append("</td>");
+            tableHtml.append("<td>").append(Stat.calculPercentile(listOfResult.get(i).getGetTextPositionList(), 95.0))
+                    .append("</td>");
+            tableHtml.append("<td>").append(Stat.calculPercentile(listOfResult.get(i).getGetTextPositionList(), 99.0))
+                    .append("</td>");
+            tableHtml.append("<td>").append(Stat.calculMax(listOfResult.get(i).getGetTextPositionList()))
+                    .append("</td>");
+            tableHtml.append("</tr>");
+        }
+        for (int i = 0; i < listOfResult.size(); i++)
+        {
+            tableHtml.append("<tr>");
+            tableHtml.append("<td>").append("Get Image 100px : " + listOfResult.get(i).getName()).append("</td>");
+            tableHtml.append("<td>").append(listOfResult.get(i).getGetImage100pxList().size()).append("</td>");
+            tableHtml.append("<td>").append(listOfResult.get(i).getTotalGetImage100pxOK()).append("</td>");
+            tableHtml.append("<td>").append(
+                    listOfResult.get(i).getGetImage100pxList().size() - listOfResult.get(i).getTotalGetImage100pxOK())
+                    .append("</td>");
+            tableHtml.append("<td>").append(Stat.calculMin(listOfResult.get(i).getGetImage100pxList())).append("</td>");
+            tableHtml.append("<td>").append(Stat.calculPercentile(listOfResult.get(i).getGetImage100pxList(), 50.0))
+                    .append("</td>");
+            tableHtml.append("<td>").append(Stat.calculPercentile(listOfResult.get(i).getGetImage100pxList(), 75.0))
+                    .append("</td>");
+            tableHtml.append("<td>").append(Stat.calculPercentile(listOfResult.get(i).getGetImage100pxList(), 95.0))
+                    .append("</td>");
+            tableHtml.append("<td>").append(Stat.calculPercentile(listOfResult.get(i).getGetImage100pxList(), 99.0))
+                    .append("</td>");
+            tableHtml.append("<td>").append(Stat.calculMax(listOfResult.get(i).getGetImage100pxList())).append("</td>");
+            tableHtml.append("</tr>");
+        }
+        for (int i = 0; i < listOfResult.size(); i++)
+        {
+            tableHtml.append("<tr>");
+            tableHtml.append("<td>").append("Get Image 800px : " + listOfResult.get(i).getName()).append("</td>");
+            tableHtml.append("<td>").append(listOfResult.get(i).getGetImage800pxList().size()).append("</td>");
+            tableHtml.append("<td>").append(listOfResult.get(i).getTotalGetImage800pxOK()).append("</td>");
+            tableHtml.append("<td>").append(
+                    listOfResult.get(i).getGetImage800pxList().size() - listOfResult.get(i).getTotalGetImage800pxOK())
+                    .append("</td>");
+            tableHtml.append("<td>").append(Stat.calculMin(listOfResult.get(i).getGetImage800pxList())).append("</td>");
+            tableHtml.append("<td>").append(Stat.calculPercentile(listOfResult.get(i).getGetImage800pxList(), 50.0))
+                    .append("</td>");
+            tableHtml.append("<td>").append(Stat.calculPercentile(listOfResult.get(i).getGetImage800pxList(), 75.0))
+                    .append("</td>");
+            tableHtml.append("<td>").append(Stat.calculPercentile(listOfResult.get(i).getGetImage800pxList(), 95.0))
+                    .append("</td>");
+            tableHtml.append("<td>").append(Stat.calculPercentile(listOfResult.get(i).getGetImage800pxList(), 99.0))
+                    .append("</td>");
+            tableHtml.append("<td>").append(Stat.calculMax(listOfResult.get(i).getGetImage800pxList())).append("</td>");
+            tableHtml.append("</tr>");
+        }
+        for (int i = 0; i < listOfResult.size(); i++)
+        {
+            tableHtml.append("<tr>");
+            tableHtml.append("<td>").append("Evict document : " + listOfResult.get(i).getName()).append("</td>");
+            tableHtml.append("<td>").append(listOfResult.get(i).getEvictList().size()).append("</td>");
+            tableHtml.append("<td>").append(listOfResult.get(i).getTotalEvictOK()).append("</td>");
+            tableHtml.append("<td>")
+                    .append(listOfResult.get(i).getEvictList().size() - listOfResult.get(i).getTotalEvictOK())
+                    .append("</td>");
+            tableHtml.append("<td>").append(Stat.calculMin(listOfResult.get(i).getEvictList())).append("</td>");
+            tableHtml.append("<td>").append(Stat.calculPercentile(listOfResult.get(i).getEvictList(), 50.0))
+                    .append("</td>");
+            tableHtml.append("<td>").append(Stat.calculPercentile(listOfResult.get(i).getEvictList(), 75.0))
+                    .append("</td>");
+            tableHtml.append("<td>").append(Stat.calculPercentile(listOfResult.get(i).getEvictList(), 95.0))
+                    .append("</td>");
+            tableHtml.append("<td>").append(Stat.calculPercentile(listOfResult.get(i).getEvictList(), 99.0))
+                    .append("</td>");
+            tableHtml.append("<td>").append(Stat.calculMax(listOfResult.get(i).getEvictList())).append("</td>");
+            tableHtml.append("</tr>");
+        }
+        tableHtml.append("</table>");
+        Allure.addAttachment("JTable", "text/html", tableHtml.toString(), "html");
+
     }
 
     private static byte[] generateGraphImage(JFreeChart chart)
