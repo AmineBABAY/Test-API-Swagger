@@ -53,6 +53,18 @@ public class Documents extends Initialization
         return RestAssured.given().contentType("application/json").when().get("/documents/" + id + "/check");
     }
 
+    public static Response getFileChunk(String id, String range, String format)
+    {
+        return RestAssured.given().queryParam("format", format).when().header("Range", range)
+                .get("/documents/" + id + "/file/chunk");
+    }
+
+    public static Response getFileChunk(String id, String range)
+    {
+        return RestAssured.given().contentType("application/json").when().header("Range", range)
+                .get("/documents/" + id + "/file/chunk");
+    }
+
     public static Response getDocument(String id)
     {
         return RestAssured.given().contentType("application/json").when().get("/documents/" + id);

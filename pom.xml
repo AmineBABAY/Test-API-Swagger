@@ -67,11 +67,6 @@
 			<version>1.2.17</version>
 		</dependency>
 		<dependency>
-			<groupId>org.knowm.xchart</groupId>
-			<artifactId>xchart</artifactId>
-			<version>3.8.3</version>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-math3</artifactId>
 			<version>3.6.1</version>
