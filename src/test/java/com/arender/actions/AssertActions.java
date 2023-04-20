@@ -2,7 +2,6 @@ package com.arender.actions;
 
 import static org.testng.Assert.assertEquals;
 
-import com.arender.utlis.Config;
 import com.arender.utlis.Initialization;
 
 import io.restassured.response.Response;
@@ -12,7 +11,8 @@ public class AssertActions extends Initialization
 
     public void verifyStatusCode(Response response, int code)
     {
-        assertEquals(response.getStatusCode() == code, true, "value of status code is" + response.getStatusCode());
+        assertEquals(response.getStatusCode() == code, true,
+                "\nvalue of status code is : " + response.getStatusCode() + "\nExpected : " + code);
     }
 
     public void verifyResponseBody(String actual, String expected, String description)

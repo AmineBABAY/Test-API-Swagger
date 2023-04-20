@@ -11,5 +11,6 @@
     <suite-file path="pages.xml"></suite-file>
     <suite-file path="printable.xml"></suite-file>
     <suite-file path="transformation.xml"></suite-file>
+    <suite-file path="chunk.xml"></suite-file>
 </suite-files>
 </suite>
