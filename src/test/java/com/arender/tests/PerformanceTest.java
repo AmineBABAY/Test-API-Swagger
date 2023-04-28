@@ -19,9 +19,8 @@ import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import com.arender.actions.AssertActions;
-import com.arender.actions.GraphGenerator;
 import com.arender.actions.Result;
-import com.arender.actions.Stat;
+import com.arender.actions.SendDataToOpenSearch;
 import com.arender.actions.Tasks;
 
 public class PerformanceTest extends AssertActions
@@ -504,67 +503,90 @@ public class PerformanceTest extends AssertActions
 
     private void generateResult()
     {
-        checkTimePerDoc(doc100KO);
-        checkTimePerDoc(jpeg100KO);
-        checkTimePerDoc(pdf100KO);
-        checkTimePerDoc(pdf1MO);
-        checkTimePerDoc(tiffLowSize);
-        calculTotalRequest();
-        calculTotalRequestOK();
-
-        ArrayList<String> nameOfAxis = new ArrayList<String>(Arrays
-                .asList(new String[] { "Min", "Percentile50", "Percentile75", "Percentile95", "Percentile99", "Max" }));
-
-        GraphGenerator.globalGraph(passed, failed, warning, "Global graph", completed.get());
-
-        GraphGenerator.generateGraph(Stat.calculStat(doc100KO.getUploadList()),
-                Stat.calculStat(pdf100KO.getUploadList()), Stat.calculStat(tiffLowSize.getUploadList()),
-                Stat.calculStat(jpeg100KO.getUploadList()), Stat.calculStat(pdf1MO.getUploadList()), nameOfAxis,
-                "Upload", "Total of request : " + totalUpload + "  Total Passed : " + numberUploadOK, "Time (ms)",
-                "report of Upload", completed.get());
-
-        GraphGenerator.generateGraph(Stat.calculStat(doc100KO.getGetLayoutList()),
-                Stat.calculStat(pdf100KO.getGetLayoutList()), Stat.calculStat(tiffLowSize.getGetLayoutList()),
-                Stat.calculStat(jpeg100KO.getGetLayoutList()), Stat.calculStat(pdf1MO.getGetLayoutList()), nameOfAxis,
-                "Get Layout", "Total of request : " + totalGetLayout + "  Total Passed : " + numberGetLayoutOK,
-                "Time (ms)", "report of get layout", completed.get());
-
-        GraphGenerator.generateGraph(Stat.calculStat(doc100KO.getGetBookmarksList()),
-                Stat.calculStat(pdf100KO.getGetBookmarksList()), Stat.calculStat(tiffLowSize.getGetBookmarksList()),
-                Stat.calculStat(jpeg100KO.getGetBookmarksList()), Stat.calculStat(pdf1MO.getGetBookmarksList()),
-                nameOfAxis, "Get Bookmarks",
-                "Total of request : " + totalGetBookmarks + "  Total Passed : " + numberGetBookmarksOK, "Time (ms)",
-                "report of get bookmarks", completed.get());
-
-        GraphGenerator.generateGraph(Stat.calculStat(doc100KO.getGetTextPositionList()),
-                Stat.calculStat(pdf100KO.getGetTextPositionList()),
-                Stat.calculStat(tiffLowSize.getGetTextPositionList()),
-                Stat.calculStat(jpeg100KO.getGetTextPositionList()), Stat.calculStat(pdf1MO.getGetTextPositionList()),
-                nameOfAxis, "Get text position",
-                "Total of request : " + totalGetTextPosition + "  Total Passed : " + numberGetTextPositionOK,
-                "Time (ms)", "report of get text position", completed.get());
-
-        GraphGenerator.generateGraph(Stat.calculStat(doc100KO.getGetImage100pxList()),
-                Stat.calculStat(pdf100KO.getGetImage100pxList()), Stat.calculStat(tiffLowSize.getGetImage100pxList()),
-                Stat.calculStat(jpeg100KO.getGetImage100pxList()), Stat.calculStat(pdf1MO.getGetImage100pxList()),
-                nameOfAxis, "Get image 100px",
-                "Total of request : " + totalGetImage100px + "  Total Passed : " + numberGetImage100pxOK, "Time (ms)",
-                "report of get image 100px", completed.get());
-
-        GraphGenerator.generateGraph(Stat.calculStat(doc100KO.getGetImage800pxList()),
-                Stat.calculStat(pdf100KO.getGetImage800pxList()), Stat.calculStat(tiffLowSize.getGetImage800pxList()),
-                Stat.calculStat(jpeg100KO.getGetImage800pxList()), Stat.calculStat(pdf1MO.getGetImage800pxList()),
-                nameOfAxis, "Get image 800px",
-                "Total of request : " + totalGetImage800px + "  Total Passed : " + numberGetImage800pxOK, "Time (ms)",
-                "report of get image 800px", completed.get());
-
-        GraphGenerator.generateGraph(Stat.calculStat(doc100KO.getEvictList()), Stat.calculStat(pdf100KO.getEvictList()),
-                Stat.calculStat(tiffLowSize.getEvictList()), Stat.calculStat(jpeg100KO.getEvictList()),
-                Stat.calculStat(pdf1MO.getEvictList()), nameOfAxis, "Evict document",
-                "Total of request : " + totalEvict + "  Total Passed : " + numberEvictOK, "Time (ms)",
-                "report of evict", completed.get());
-        List<Result> listOfResults = Arrays.asList(doc100KO, pdf100KO, tiffLowSize, jpeg100KO, pdf1MO);
-        GraphGenerator.generateTable(listOfResults);
+        // checkTimePerDoc(doc100KO);
+        // checkTimePerDoc(jpeg100KO);
+        // checkTimePerDoc(pdf100KO);
+        // checkTimePerDoc(pdf1MO);
+        // checkTimePerDoc(tiffLowSize);
+        // calculTotalRequest();
+        // calculTotalRequestOK();
+        //
+        // ArrayList<String> nameOfAxis = new ArrayList<String>(Arrays
+        // .asList(new String[] { "Min", "Percentile50", "Percentile75",
+        // "Percentile95", "Percentile99", "Max" }));
+        //
+        // GraphGenerator.globalGraph(passed, failed, warning, "Global graph",
+        // completed.get());
+        //
+        // GraphGenerator.generateGraph(Stat.calculStat(doc100KO.getUploadList()),
+        // Stat.calculStat(pdf100KO.getUploadList()),
+        // Stat.calculStat(tiffLowSize.getUploadList()),
+        // Stat.calculStat(jpeg100KO.getUploadList()),
+        // Stat.calculStat(pdf1MO.getUploadList()), nameOfAxis,
+        // "Upload", "Total of request : " + totalUpload + " Total Passed : " +
+        // numberUploadOK, "Time (ms)",
+        // "report of Upload", completed.get());
+        //
+        // GraphGenerator.generateGraph(Stat.calculStat(doc100KO.getGetLayoutList()),
+        // Stat.calculStat(pdf100KO.getGetLayoutList()),
+        // Stat.calculStat(tiffLowSize.getGetLayoutList()),
+        // Stat.calculStat(jpeg100KO.getGetLayoutList()),
+        // Stat.calculStat(pdf1MO.getGetLayoutList()), nameOfAxis,
+        // "Get Layout", "Total of request : " + totalGetLayout + " Total Passed
+        // : " + numberGetLayoutOK,
+        // "Time (ms)", "report of get layout", completed.get());
+        //
+        // GraphGenerator.generateGraph(Stat.calculStat(doc100KO.getGetBookmarksList()),
+        // Stat.calculStat(pdf100KO.getGetBookmarksList()),
+        // Stat.calculStat(tiffLowSize.getGetBookmarksList()),
+        // Stat.calculStat(jpeg100KO.getGetBookmarksList()),
+        // Stat.calculStat(pdf1MO.getGetBookmarksList()),
+        // nameOfAxis, "Get Bookmarks",
+        // "Total of request : " + totalGetBookmarks + " Total Passed : " +
+        // numberGetBookmarksOK, "Time (ms)",
+        // "report of get bookmarks", completed.get());
+        //
+        // GraphGenerator.generateGraph(Stat.calculStat(doc100KO.getGetTextPositionList()),
+        // Stat.calculStat(pdf100KO.getGetTextPositionList()),
+        // Stat.calculStat(tiffLowSize.getGetTextPositionList()),
+        // Stat.calculStat(jpeg100KO.getGetTextPositionList()),
+        // Stat.calculStat(pdf1MO.getGetTextPositionList()),
+        // nameOfAxis, "Get text position",
+        // "Total of request : " + totalGetTextPosition + " Total Passed : " +
+        // numberGetTextPositionOK,
+        // "Time (ms)", "report of get text position", completed.get());
+        //
+        // GraphGenerator.generateGraph(Stat.calculStat(doc100KO.getGetImage100pxList()),
+        // Stat.calculStat(pdf100KO.getGetImage100pxList()),
+        // Stat.calculStat(tiffLowSize.getGetImage100pxList()),
+        // Stat.calculStat(jpeg100KO.getGetImage100pxList()),
+        // Stat.calculStat(pdf1MO.getGetImage100pxList()),
+        // nameOfAxis, "Get image 100px",
+        // "Total of request : " + totalGetImage100px + " Total Passed : " +
+        // numberGetImage100pxOK, "Time (ms)",
+        // "report of get image 100px", completed.get());
+        //
+        // GraphGenerator.generateGraph(Stat.calculStat(doc100KO.getGetImage800pxList()),
+        // Stat.calculStat(pdf100KO.getGetImage800pxList()),
+        // Stat.calculStat(tiffLowSize.getGetImage800pxList()),
+        // Stat.calculStat(jpeg100KO.getGetImage800pxList()),
+        // Stat.calculStat(pdf1MO.getGetImage800pxList()),
+        // nameOfAxis, "Get image 800px",
+        // "Total of request : " + totalGetImage800px + " Total Passed : " +
+        // numberGetImage800pxOK, "Time (ms)",
+        // "report of get image 800px", completed.get());
+        //
+        // GraphGenerator.generateGraph(Stat.calculStat(doc100KO.getEvictList()),
+        // Stat.calculStat(pdf100KO.getEvictList()),
+        // Stat.calculStat(tiffLowSize.getEvictList()),
+        // Stat.calculStat(jpeg100KO.getEvictList()),
+        // Stat.calculStat(pdf1MO.getEvictList()), nameOfAxis, "Evict document",
+        // "Total of request : " + totalEvict + " Total Passed : " +
+        // numberEvictOK, "Time (ms)",
+        // "report of evict", completed.get());
+        // List<Result> listOfResults = Arrays.asList(doc100KO, pdf100KO,
+        // tiffLowSize, jpeg100KO, pdf1MO);
+        // GraphGenerator.generateTable(listOfResults);
 
         LOGGER.info("Total users : " + completed.get());
         LOGGER.info("Total upload : " + totalUpload + " Total OK : " + numberUploadOK);
@@ -575,6 +597,8 @@ public class PerformanceTest extends AssertActions
         LOGGER.info("Total getTextPosition : " + totalGetTextPosition + " Total OK : " + numberGetTextPositionOK);
         LOGGER.info("Total evictDocument : " + totalEvict + " Total OK : " + numberEvictOK);
         LOGGER.info(" \n ******************************* Done ******************************************* \n");
+        List<Result> resultList = Arrays.asList(pdf100KO, pdf1MO, tiffLowSize, doc100KO, jpeg100KO);
+        SendDataToOpenSearch.SendData(resultList);
     }
 
     @Test()
