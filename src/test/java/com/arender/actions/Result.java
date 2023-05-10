@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 public class Result
 {
+    private int numberOfUsers;
+
     private String name;
 
     private ArrayList<Long> uploadList = new ArrayList<>();
@@ -22,6 +24,26 @@ public class Result
 
     private int totalUploadOK = 0, totalGetLayoutOK = 0, totalGetBoomarksOK = 0, totalGetImage100pxOK = 0,
             totalGetImage800pxOK = 0, totalGetTextPositionOK = 0, totalEvictOK = 0;
+
+    public int getNumberOfUsers()
+    {
+        return numberOfUsers;
+    }
+
+    public void setNumberOfUsers(int numberOfUsers)
+    {
+        this.numberOfUsers = numberOfUsers;
+    }
+
+    public int getTotalGetLayoutOK()
+    {
+        return totalGetLayoutOK;
+    }
+
+    public void setTotalGetLayoutOK(int totalGetLayoutOK)
+    {
+        this.totalGetLayoutOK = totalGetLayoutOK;
+    }
 
     public void incrementTotalEvictOK()
     {
