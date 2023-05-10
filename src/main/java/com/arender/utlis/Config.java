@@ -20,6 +20,10 @@ public class Config
 
     public static String url;
 
+    public static String trustStore;
+
+    public static String pwdTrustStore;
+
     public static int numberOfUsers;
 
     public static long durationOfTest;
@@ -49,6 +53,8 @@ public class Config
         file = System.getProperty("file");
         numberOfUsers = Integer.parseInt(System.getProperty("number_of_users"));
         durationOfTest = Long.parseLong(System.getProperty("durationOfTest"));
+        trustStore = System.getProperty("trustStore");
+        pwdTrustStore = System.getProperty("pwdTrustStore");
     }
 
     public static void localConfig()
@@ -57,6 +63,8 @@ public class Config
         file = prop.getProperty("file");
         numberOfUsers = Integer.parseInt(prop.getProperty("number_of_users"));
         durationOfTest = Long.parseLong(prop.getProperty("durationOfTest"));
+        trustStore = prop.getProperty("trustStore");
+        pwdTrustStore = prop.getProperty("pwdTrustStore");
     }
 
     public static JSONObject readJsonFile(String nameOfFile)

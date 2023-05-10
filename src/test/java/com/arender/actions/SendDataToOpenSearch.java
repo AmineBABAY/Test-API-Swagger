@@ -9,6 +9,7 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
+import org.apache.log4j.Logger;
 import org.opensearch.client.RestClient;
 import org.opensearch.client.RestClientBuilder;
 import org.opensearch.client.base.RestClientTransport;
@@ -16,14 +17,13 @@ import org.opensearch.client.base.Transport;
 import org.opensearch.client.json.jackson.JacksonJsonpMapper;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._global.IndexRequest;
-import org.opensearch.client.opensearch._global.SearchResponse;
-import org.opensearch.client.opensearch.indices.CreateRequest;
-import org.opensearch.client.opensearch.indices.IndexSettings;
-import org.opensearch.client.opensearch.indices.PutSettingsRequest;
-import org.opensearch.client.opensearch.indices.put_settings.IndexSettingsBody;
+
+import com.arender.tests.PerformanceTest;
 
 public class SendDataToOpenSearch
 {
+    private final static Logger LOGGER = Logger.getLogger(PerformanceTest.class);
+
     public static void SendData(List<Result> resultList)
     {
         RestClient restClient = null;
@@ -50,27 +50,7 @@ public class SendDataToOpenSearch
             Transport transport = new RestClientTransport(restClient, new JacksonJsonpMapper());
             OpenSearchClient client = new OpenSearchClient(transport);
 
-            // Create the index
-            String index = "sample-index";
-            CreateRequest createIndexRequest = new CreateRequest.Builder().index(index).build();
-            client.indices().create(createIndexRequest);
-
-            // Add some settings to the index
-            IndexSettings indexSettings = new IndexSettings.Builder().autoExpandReplicas("0-all").build();
-            IndexSettingsBody settingsBody = new IndexSettingsBody.Builder().settings(indexSettings).build();
-            PutSettingsRequest putSettingsRequest = new PutSettingsRequest.Builder().index(index).value(settingsBody)
-                    .build();
-            client.indices().putSettings(putSettingsRequest);
-
-            // Index some data
             indexData(resultList, client);
-
-            // Search for the document
-            SearchResponse<IndexData> searchResponse = client.search(s -> s.index(index), IndexData.class);
-            for (int i = 0; i < searchResponse.hits().hits().size(); i++)
-            {
-                System.out.println(searchResponse.hits().hits().get(i).source());
-            }
 
         }
         catch (IOException e)
@@ -88,7 +68,7 @@ public class SendDataToOpenSearch
             }
             catch (IOException e)
             {
-                System.out.println(e.toString());
+                LOGGER.info(e.toString());
             }
         }
     }
@@ -97,7 +77,7 @@ public class SendDataToOpenSearch
     {
         for (Result res : resultList)
         {
-            IndexRequest<Result> indexRequest = new IndexRequest.Builder<Result>().index(res.getName())
+            IndexRequest<Result> indexRequest = new IndexRequest.Builder<Result>().index(res.getName().toLowerCase())
                     .id("ID" + res.getName()).value(res).build();
             client.index(indexRequest);
         }
