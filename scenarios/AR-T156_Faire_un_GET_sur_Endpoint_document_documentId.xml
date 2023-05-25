@@ -5,7 +5,7 @@
 	<test name="upload document then check the document and the body is not empty">
 		<classes>
 			<class name="com.arender.tests.CheckInfosDocTest">
-			<methods>
+				<methods>
 					<include name="getDocumentForPdf" />
 					<include name="getDocumentForDoc" />
 					<include name="getDocumentForJPG" />

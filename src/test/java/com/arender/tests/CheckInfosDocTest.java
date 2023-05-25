@@ -37,7 +37,7 @@ public class CheckInfosDocTest extends AssertActions
     @Test()
     public void getDocumentForDoc()
     {
-        String documentId = uploadDocument("doc");
+        String documentId = uploadDocument("doc_with_100KO");
         Response response = Documents.getDocument(documentId);
         verifyStatusCode(response, 200);
         Assert.assertNotNull(response.body(), "Body of your document is null !");
@@ -45,9 +45,9 @@ public class CheckInfosDocTest extends AssertActions
     }
 
     @Test()
-    public void getDocumentForJPG()
+    public void getDocumentForJpg()
     {
-        String documentId = uploadDocument("jpg");
+        String documentId = uploadDocument("imageB");
         Response response = Documents.getDocument(documentId);
         verifyStatusCode(response, 200);
         Assert.assertNotNull(response.body(), "Body of your document is null !");
