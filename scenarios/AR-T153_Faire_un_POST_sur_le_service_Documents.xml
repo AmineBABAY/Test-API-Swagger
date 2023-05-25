@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="AR-T153 Swagger API : Faire un POST sur le service Documents">
+
+	<test name="Vérifier l'upload d'un document via une requête POST vers le endpoint Documents">
+		<classes>
+			<class name="com.arender.tests.documentTest">
+				<methods>
+					<include name="uploadPdfDocument" />
+					<include name="uploadJpgDocument" />
+					<include name="uploadTiffDocument" />
+					<include name="uploadDocDocument" />
+					<include name="uploadZipDocument" />
+					<include name="uploadEmlDocument" />
+					<include name="uploadMp4Document" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+
+
+</suite>
