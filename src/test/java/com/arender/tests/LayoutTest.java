@@ -69,11 +69,12 @@ public class LayoutTest extends AssertActions
     @Test()
     public void getDocumentLayoutForMsg()
     {
-        String txtDocumentId = uploadDocument("txt");
+        String txtDocumentId = uploadDocument("msg");
         Response response = Documents.getDocumentLayout(txtDocumentId);
         verifyStatusCode(response, 200);
         JsonPath jsonPath = JsonPath.from(response.asString());
-        assertTrue(jsonPath.get("pageDimensionsList.dpi").toString() != null);
+        assertTrue(jsonPath.get("children.mimeType").toString().contains("text/html"));
+        assertTrue(jsonPath.get("type").toString().contains("DocumentContainer"));
     }
 
     @Test()
