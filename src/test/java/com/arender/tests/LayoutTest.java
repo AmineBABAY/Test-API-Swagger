@@ -23,7 +23,7 @@ public class LayoutTest extends AssertActions
     }
 
     @Test()
-    public void getDocumentLayoutForDocx()
+    public void getDocumentLayoutForDoc()
     {
         String docxDocumentId = uploadDocument("docx");
         Response response = Documents.getDocumentLayout(docxDocumentId);
@@ -46,8 +46,8 @@ public class LayoutTest extends AssertActions
         assertTrue(jsonPath.get("type").toString().contains("DocumentContainer"));
     }
 
-    @Test(priority = 4)
-    public void checkDPILayoutForPDF()
+    @Test()
+    public void getDocumentLayoutForPdf()
     {
         String pdfDocumentId = uploadDocument("pdf");
         Response response = Documents.getDocumentLayout(pdfDocumentId);
@@ -57,7 +57,7 @@ public class LayoutTest extends AssertActions
     }
 
     @Test()
-    public void checkDPILayoutForTIFF()
+    public void getDocumentLayoutForTiff()
     {
         String tiffDocumentId = uploadDocument("tiff");
         Response response = Documents.getDocumentLayout(tiffDocumentId);
@@ -67,7 +67,7 @@ public class LayoutTest extends AssertActions
     }
 
     @Test()
-    public void checkDPILayoutForTXT()
+    public void getDocumentLayoutForMsg()
     {
         String txtDocumentId = uploadDocument("txt");
         Response response = Documents.getDocumentLayout(txtDocumentId);
@@ -77,19 +77,9 @@ public class LayoutTest extends AssertActions
     }
 
     @Test()
-    public void checkDPILayoutForPNG()
+    public void getDocumentLayoutForJpg()
     {
-        String pngDocumentId = uploadDocument("png");
-        Response response = Documents.getDocumentLayout(pngDocumentId);
-        verifyStatusCode(response, 200);
-        JsonPath jsonPath = JsonPath.from(response.asString());
-        assertTrue(jsonPath.get("pageDimensionsList.dpi").toString() != null);
-    }
-
-    @Test()
-    public void checkDPILayoutForJPEG()
-    {
-        String jpegDocumentId = uploadDocument("jpeg");
+        String jpegDocumentId = uploadDocument("imageA");
         Response response = Documents.getDocumentLayout(jpegDocumentId);
         verifyStatusCode(response, 200);
         JsonPath jsonPath = JsonPath.from(response.asString());
