@@ -5,7 +5,6 @@ import static org.testng.Assert.assertTrue;
 import java.io.UnsupportedEncodingException;
 
 import org.testng.Assert;
-import org.testng.SkipException;
 import org.testng.annotations.Test;
 
 import com.arender.actions.AssertActions;
@@ -39,22 +38,10 @@ public class DestinationTest extends AssertActions
         // Get the result content of request
         String responseContent = response.jsonPath().getString("namedDestinations");
 
-        // if the content of namedestinations is not empty
-        if (responseContent.contains("[]"))
-
-        {
-
-            // if not check that the content of namedestination is empty
-            throw new SkipException("The list is empty the document does not contain namedestination");
-
-        }
-        else
-        {
-            // check the namedestination contains the attribute name
-            Assert.assertTrue(responseContent.contains("name"));
-            // check the namedestination contains the attribute page
-            Assert.assertTrue(responseContent.contains("page"));
-        }
+        // check the namedestination contains the attribute name
+        Assert.assertTrue(responseContent.contains("name"));
+        // check the namedestination contains the attribute page
+        Assert.assertTrue(responseContent.contains("page"));
 
     }
 
@@ -71,7 +58,6 @@ public class DestinationTest extends AssertActions
 
         // check the namedestination is empty !
         Assert.assertTrue(responseContent.contains("[]"));
-        Assert.assertTrue(responseContent.isEmpty());
 
     }
 
