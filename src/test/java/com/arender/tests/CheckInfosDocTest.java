@@ -25,11 +25,62 @@ public class CheckInfosDocTest extends AssertActions
     }
 
     @Test()
-    public void getDocumentTest()
+    public void getDocumentForPdf()
     {
-        String documentId = uploadDocument(file);
+        String documentId = uploadDocument("pdf");
         Response response = Documents.getDocument(documentId);
         verifyStatusCode(response, 200);
+        Assert.assertNotNull(response.body(), "Body of your document is null !");
+
+    }
+
+    @Test()
+    public void getDocumentForDoc()
+    {
+        String documentId = uploadDocument("doc_with_100KO");
+        Response response = Documents.getDocument(documentId);
+        verifyStatusCode(response, 200);
+        Assert.assertNotNull(response.body(), "Body of your document is null !");
+
+    }
+
+    @Test()
+    public void getDocumentForJpg()
+    {
+        String documentId = uploadDocument("imageB");
+        Response response = Documents.getDocument(documentId);
+        verifyStatusCode(response, 200);
+        Assert.assertNotNull(response.body(), "Body of your document is null !");
+
+    }
+
+    @Test()
+    public void getDocumentForTiff()
+    {
+        String documentId = uploadDocument("tiff");
+        Response response = Documents.getDocument(documentId);
+        verifyStatusCode(response, 200);
+        Assert.assertNotNull(response.body(), "Body of your document is null !");
+
+    }
+
+    @Test()
+    public void getDocumentForMsg()
+    {
+        String documentId = uploadDocument("msg");
+        Response response = Documents.getDocument(documentId);
+        verifyStatusCode(response, 200);
+        Assert.assertNotNull(response.body(), "Body of your document is null !");
+
+    }
+
+    @Test()
+    public void getDocumentForZip()
+    {
+        String documentId = uploadDocument("zip");
+        Response response = Documents.getDocument(documentId);
+        verifyStatusCode(response, 200);
+        Assert.assertNotNull(response.body(), "Body of your document is null !");
 
     }
 
