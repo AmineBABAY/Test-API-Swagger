@@ -10,7 +10,6 @@
 					<include name="getPrintableDocumentOfJpg" />
 					<include name="getPrintableDocumentOfTiff" />
 					<include name="getPrintableDocumentOfDoc" />
-					<include name="getPrintableDocumentOfZip" />
 				</methods>
 			</class>
 		</classes>
