@@ -34,7 +34,6 @@ public class SignatureTest extends AssertActions
         verifyStatusCode(response, 200);
         // Get the list of signatures
         String responseContent = response.jsonPath().getString("signatures");
-        System.out.print(responseContent);
         // verify that the list of signature is not empty
         Assert.assertTrue(responseContent.contains("name"));
         Assert.assertTrue(responseContent.contains("date"));
