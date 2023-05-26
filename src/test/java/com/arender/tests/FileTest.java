@@ -24,12 +24,56 @@ public class FileTest extends AssertActions
     }
 
     @Test()
-    public void getDocumentAndCheckFormat()
+    public void getDocumentAndCheckFormatForPdf()
     {
-        String documentId = uploadDocument("docx");
-        Response response = Documents.getDocumentContent(documentId, "docx");
+        String documentId = uploadDocument("pdf");
+        Response response = Documents.getDocumentContent(documentId, "pdf");
         verifyStatusCode(response, 200);
-        assertTrue(response.getHeaders().get("Content-Type").toString().contains("officedocument"),
+        assertTrue(response.getHeaders().get("Content-Type").toString().contains("application/pdf"),
+                "This file does not contain the correct format");
+
+    }
+
+    @Test()
+    public void getDocumentAndCheckFormatForDoc()
+    {
+        String documentId = uploadDocument("doc_with_100KO");
+        Response response = Documents.getDocumentContent(documentId, "doc");
+        verifyStatusCode(response, 200);
+        assertTrue(response.getHeaders().get("Content-Type").toString().contains("application/msword"),
+                "This file does not contain the correct format");
+
+    }
+
+    @Test()
+    public void getDocumentAndCheckFormatForTiff()
+    {
+        String documentId = uploadDocument("tiff");
+        Response response = Documents.getDocumentContent(documentId, "tiff");
+        verifyStatusCode(response, 200);
+        assertTrue(response.getHeaders().get("Content-Type").toString().contains("image/tiff"),
+                "This file does not contain the correct format");
+
+    }
+
+    @Test()
+    public void getDocumentAndCheckFormatForPng()
+    {
+        String documentId = uploadDocument("png");
+        Response response = Documents.getDocumentContent(documentId, "png");
+        verifyStatusCode(response, 200);
+        assertTrue(response.getHeaders().get("Content-Type").toString().contains("image/png"),
+                "This file does not contain the correct format");
+
+    }
+
+    @Test()
+    public void getDocumentAndCheckFormatForEml()
+    {
+        String documentId = uploadDocument("eml");
+        Response response = Documents.getDocumentContent(documentId, "eml");
+        verifyStatusCode(response, 200);
+        assertTrue(response.getHeaders().get("Content-Type").toString().contains("message/rfc822"),
                 "This file does not contain the correct format");
 
     }
