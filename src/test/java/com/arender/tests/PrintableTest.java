@@ -13,6 +13,9 @@ import io.restassured.response.Response;
 public class PrintableTest extends AssertActions
 {
 
+    private String bodyContains = "" + "<<" + "\n/Type /Action" + "\n/S /JavaScript"
+            + "\n/JS (this.print\\(\\);this.closeDoc\\(true\\))" + "\n>>";
+
     private String uploadDocument(String f)
     {
         Response response = Documents.uploadDocument(f);
@@ -24,14 +27,60 @@ public class PrintableTest extends AssertActions
     }
 
     @Test()
-    public void getPrintableDocumentTest()
+    public void getPrintableDocumentOfPdf()
     {
-        String documentId = uploadDocument(file);
+        String documentId = uploadDocument("pdf");
         Response response = Documents.getPrintableDocument(documentId);
         verifyStatusCode(response, 200);
         assertTrue(String.valueOf(response.getHeaders().get("content-type")).equals("Content-Type=application/pdf"));
-        String bodyContains = "" + "<<" + "\n/Type /Action" + "\n/S /JavaScript"
-                + "\n/JS (this.print\\(\\);this.closeDoc\\(true\\))" + "\n>>";
+
+        assertTrue(response.asString().contains(bodyContains),
+                "the body of your response does not contains the right code");
+    }
+
+    @Test()
+    public void getPrintableDocumentOfJpg()
+    {
+        String documentId = uploadDocument("jpg");
+        Response response = Documents.getPrintableDocument(documentId);
+        verifyStatusCode(response, 200);
+        assertTrue(String.valueOf(response.getHeaders().get("content-type")).equals("Content-Type=application/pdf"));
+
+        assertTrue(response.asString().contains(bodyContains),
+                "the body of your response does not contains the right code");
+    }
+
+    @Test()
+    public void getPrintableDocumentOfTiff()
+    {
+        String documentId = uploadDocument("tiff");
+        Response response = Documents.getPrintableDocument(documentId);
+        verifyStatusCode(response, 200);
+        assertTrue(String.valueOf(response.getHeaders().get("content-type")).equals("Content-Type=application/pdf"));
+
+        assertTrue(response.asString().contains(bodyContains),
+                "the body of your response does not contains the right code");
+    }
+
+    @Test()
+    public void getPrintableDocumentOfDoc()
+    {
+        String documentId = uploadDocument("doc_with_100KO");
+        Response response = Documents.getPrintableDocument(documentId);
+        verifyStatusCode(response, 200);
+        assertTrue(String.valueOf(response.getHeaders().get("content-type")).equals("Content-Type=application/pdf"));
+
+        assertTrue(response.asString().contains(bodyContains),
+                "the body of your response does not contains the right code");
+    }
+
+    @Test()
+    public void getPrintableDocumentOfZip()
+    {
+        String documentId = uploadDocument("zip");
+        Response response = Documents.getPrintableDocument(documentId);
+        verifyStatusCode(response, 200);
+        assertTrue(String.valueOf(response.getHeaders().get("content-type")).equals("Content-Type=application/pdf"));
 
         assertTrue(response.asString().contains(bodyContains),
                 "the body of your response does not contains the right code");
