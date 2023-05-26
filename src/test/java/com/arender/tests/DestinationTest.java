@@ -29,7 +29,7 @@ public class DestinationTest extends AssertActions
     }
 
     @Test()
-    public void getNameDestinationTest() throws UnsupportedEncodingException
+    public void getNameDestinationForDocumentWithDestination() throws UnsupportedEncodingException
     {
         String documentId = uploadDocument("destination");
         // Make a GET request on the end point destinations
@@ -55,6 +55,23 @@ public class DestinationTest extends AssertActions
             // check the namedestination contains the attribute page
             Assert.assertTrue(responseContent.contains("page"));
         }
+
+    }
+
+    @Test()
+    public void documentWithoutDestination() throws UnsupportedEncodingException
+    {
+        String documentId = uploadDocument("without_destination");
+        // Make a GET request on the end point destinations
+        Response response = Documents.getNameDestination(documentId);
+        // verify status of request is ok
+        verifyStatusCode(response, 200);
+        // Get the result content of request
+        String responseContent = response.jsonPath().getString("namedDestinations");
+
+        // check the namedestination is empty !
+        Assert.assertTrue(responseContent.contains("[]"));
+        Assert.assertTrue(responseContent.isEmpty());
 
     }
 
