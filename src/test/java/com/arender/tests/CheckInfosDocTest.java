@@ -85,13 +85,83 @@ public class CheckInfosDocTest extends AssertActions
     }
 
     @Test()
-    public void checkDocumentTest()
+    public void checkPdfDocument()
 
     {
-        String documentId = uploadDocument(file);
+        String documentId = uploadDocument("pdf");
         Response response = Documents.checkDocument(documentId);
         verifyStatusCode(response, 200);
-        Assert.assertNotNull(response.body(), "Body of your document is null !");
+
+    }
+
+    @Test()
+    public void checkVideoDocument()
+
+    {
+        String documentId = uploadDocument("mp4");
+        Response response = Documents.checkDocument(documentId);
+        verifyStatusCode(response, 200);
+
+    }
+
+    @Test()
+    public void checkGifDocument()
+
+    {
+        String documentId = uploadDocument("gif");
+        Response response = Documents.checkDocument(documentId);
+        verifyStatusCode(response, 200);
+
+    }
+
+    @Test()
+    public void checkPngDocument()
+
+    {
+        String documentId = uploadDocument("png");
+        Response response = Documents.checkDocument(documentId);
+        verifyStatusCode(response, 200);
+
+    }
+
+    @Test()
+    public void checkTiffDocument()
+
+    {
+        String documentId = uploadDocument("tiff");
+        Response response = Documents.checkDocument(documentId);
+        verifyStatusCode(response, 200);
+
+    }
+
+    @Test()
+    public void checkZipDocument()
+
+    {
+        String documentId = uploadDocument("zip");
+        Response response = Documents.checkDocument(documentId);
+        verifyStatusCode(response, 200);
+
+    }
+
+    @Test()
+    public void checkEmlDocument()
+
+    {
+        String documentId = uploadDocument("eml");
+        Response response = Documents.checkDocument(documentId);
+        verifyStatusCode(response, 200);
+
+    }
+
+    @Test()
+    public void checkDocDocument()
+
+    {
+        String documentId = uploadDocument("doc_with_100KO");
+        Response response = Documents.checkDocument(documentId);
+        verifyStatusCode(response, 200);
+
     }
 
     @Test()
