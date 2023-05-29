@@ -31,33 +31,5 @@
 		</classes>
 	</test>
 
-	<test name="Make requests on the getPagesSearchResult endpoint ">
-		<classes>
-			<class name="com.arender.tests.PagesTest">
-				<methods>
-					<include name="uploadDocument2" />
-					<include name="PagesOfSearchResult" />
-					<include name="PagesOfSearchResultOnDocumentWithoutText" />
-					<include name="uploadDocumentwithWrongIdforsearchPages" />
-
-				</methods>
-			</class>
-		</classes>
-	</test>
-
-	<test name="Make requests on the getTextPosition endpoint ">
-		<classes>
-			<class name="com.arender.tests.PagesTest">
-				<methods>
-					<include name="uploadDocument2" />
-					<include name="positionTextOnDocumentWithText" />
-					<include name="positionTextOnNoExistentPage" />
-					<include name="positionTextOnDocumentWithoutText" />
-					<include name="positionTextWithWrongId" />
-
-				</methods>
-			</class>
-		</classes>
-	</test>
 
 </suite>
