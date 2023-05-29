@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-<suite name="Annotation test">
+<suite name="AR-T198 Swagger API - Make a GET request on the /documents/{documentId}/file/annotations Endpoint - Check Code">
 
 	<test name="Extracting annotations from a PDF document ">
 		<classes>
