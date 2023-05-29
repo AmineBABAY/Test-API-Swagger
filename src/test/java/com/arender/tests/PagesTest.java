@@ -80,6 +80,21 @@ public class PagesTest extends AssertActions
     }
 
     @Test()
+    public void searchOnDocumentWithNoExistingText()
+    {
+
+        String documentId = uploadDocument("pdf");
+        Response response = Documents.searchPageForTextPositions(documentId, "testtest", 4);
+
+        verifyStatusCode(response, 200);
+
+        String responseContent = response.jsonPath().getString("searchResults");
+
+        Assert.assertEquals(responseContent, "[]");
+
+    }
+
+    @Test()
     public void searchTextOnNoExistentPage()
     {
         String documentId = uploadDocument("pdf");
@@ -87,7 +102,7 @@ public class PagesTest extends AssertActions
         Response response = Documents.searchPageForTextPositions(documentId, "arondor", 20);
 
         // verify status of request is ok
-        verifyStatusCode(response, 500);
+        verifyStatusCode(response, 400);
 
     }
 
@@ -133,7 +148,7 @@ public class PagesTest extends AssertActions
     }
 
     @Test()
-    public void uploadDocumentwithWrongId()
+    public void SearchResultWithWrongId()
     {
 
         Response response = Documents.searchPageForTextPositions("bad id", "arondor", 4);
