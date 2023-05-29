@@ -34,6 +34,14 @@ public class ChunkTest extends AssertActions
     }
 
     @Test()
+    public void getFileChunkWithPositiveDescendingRange()
+    {
+        String documentAId = uploadDocument("text-to-Ascii");
+        Response response = Documents.getFileChunk(documentAId, "bytes=6-2");
+        verifyStatusCode(response, 400);
+    }
+
+    @Test()
     public void getFileChunkWithNegativeRange()
     {
         String documentAId = uploadDocument("text-to-Ascii");
@@ -42,7 +50,7 @@ public class ChunkTest extends AssertActions
     }
 
     @Test()
-    public void getFileChunkWithNotNumberRange()
+    public void getFileChunkWithLettersRange()
     {
         String documentAId = uploadDocument("text-to-Ascii");
         Response response = Documents.getFileChunk(documentAId, "bytes=a-e");

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="AR-T175 Swagger API: GET the endpoint /documents/{documentId}/file/chunk - Check the Range">
+
+	<test name="get different call for /documents/docId/file/chunk ">
+		<classes>
+			<class name="com.arender.tests.ChunkTest">
+				<include name="getFileChunkWithNegativeRange" />
+				<include name="getFileChunkWithLettersRange" />
+				<include name="getFileChunkWithPositiveRange" />
+				<include name="getFileChunkWithPositiveDescendingRange" />
+			</class>
+		</classes>
+	</test>
+
+</suite>
