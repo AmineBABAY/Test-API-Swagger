@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="AR-T172 Swagger API : Make calls to the Endpoint DELETE /documents/{documentId}">
+
+	<test name="Make request on evictDocument endpoint ">
+		<classes>
+			<class name="com.arender.tests.DeleteTest">
+				<methods>
+					<include name="evictDocument" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+
+</suite>
