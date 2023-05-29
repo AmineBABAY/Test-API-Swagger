@@ -92,16 +92,34 @@ public class PagesTest extends AssertActions
     }
 
     @Test()
-    public void PagesOfSearchResult()
+    public void PagesOfSearchResultWithExistingText()
     {
         String documentId = uploadDocument("pdf");
         Response response = Documents.getPagesSearchResult(documentId, "arondor");
         verifyStatusCode(response, 200);
         String nubmerPage = response.jsonPath().getString("pageList");
+        String searchText = response.jsonPath().getString("searchText");
         String ListOfNumber = "[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]";
 
         Assert.assertEquals(nubmerPage, ListOfNumber);
+        Assert.assertEquals(searchText, "arondor");
 
+    }
+
+    @Test()
+    public void PagesOfSearchResultWithNonExistentText()
+    {
+
+        String documentId = uploadDocument("pdf");
+        Response response = Documents.getPagesSearchResult(documentId, "testtest");
+        verifyStatusCode(response, 200);
+
+        String responseContent = response.jsonPath().getString("pageList");
+        String searchText = response.jsonPath().getString("searchText");
+
+        Assert.assertEquals(documentId, response.jsonPath().getString("uuid.id"));
+        Assert.assertEquals(searchText, "testtest");
+        Assert.assertEquals(responseContent, "[]");
     }
 
     @Test()
@@ -115,21 +133,6 @@ public class PagesTest extends AssertActions
         String responseContent = response.jsonPath().getString("searchResults");
 
         Assert.assertEquals(responseContent, "[]");
-    }
-
-    @Test()
-    public void PagesOfSearchResultOnDocumentWithoutText()
-    {
-
-        String documentId = uploadDocument("imageA");
-        Response response = Documents.getPagesSearchResult(documentId, "arondor");
-        verifyStatusCode(response, 200);
-
-        String responseContent = response.jsonPath().getString("pageList");
-
-        Assert.assertEquals(responseContent, "[]");
-
-        Assert.assertEquals(documentId, response.jsonPath().getString("uuid.id"));
     }
 
     @Test()
