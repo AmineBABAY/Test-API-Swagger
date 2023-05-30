@@ -25,9 +25,37 @@ public class BookmarkTest extends AssertActions
     }
 
     @Test()
-    public void documentWithBookmarks()
+    public void docxDocumentWithBookmarks()
     {
-        String documentId = uploadDocument("bookmark");
+        String documentId = uploadDocument("bookmark_docx");
+        Response response = Documents.getBookmarks(documentId);
+        verifyStatusCode(response, 200);
+        String responseContent = response.jsonPath().getString("bookmarks");
+        Assert.assertTrue(responseContent.contains("title"));
+        Assert.assertTrue(responseContent.contains("page"));
+        Assert.assertTrue(responseContent.contains("namedDestination"));
+        Assert.assertTrue(responseContent.contains("textPosition"));
+
+    }
+
+    @Test()
+    public void pptDocumentWithBookmarks()
+    {
+        String documentId = uploadDocument("bookmark_ppt");
+        Response response = Documents.getBookmarks(documentId);
+        verifyStatusCode(response, 200);
+        String responseContent = response.jsonPath().getString("bookmarks");
+        Assert.assertTrue(responseContent.contains("title"));
+        Assert.assertTrue(responseContent.contains("page"));
+        Assert.assertTrue(responseContent.contains("namedDestination"));
+        Assert.assertTrue(responseContent.contains("textPosition"));
+
+    }
+
+    @Test()
+    public void pdfDocumentWithBookmarks()
+    {
+        String documentId = uploadDocument("bookmark_pdf");
         Response response = Documents.getBookmarks(documentId);
         verifyStatusCode(response, 200);
         String responseContent = response.jsonPath().getString("bookmarks");
@@ -41,7 +69,7 @@ public class BookmarkTest extends AssertActions
     @Test()
     public void documentWithoutBookmark()
     {
-        String documentId = uploadDocument("imageA");
+        String documentId = uploadDocument("bookmark_empty");
 
         Response response2 = Documents.getBookmarks(documentId);
         String responseContent = response2.jsonPath().getString("bookmarks");
