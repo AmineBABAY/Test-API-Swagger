@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="AR-T189 Swagger API: GET the endpoint /document/{documentId}/file - trigger conversion to a supported format - Check code">
+
+	<test name="Make a conversion by specifying a format ">
+		<classes>
+			<class name="com.arender.tests.FileTest">
+				<methods>
+					<include name="getDocumentWithConvertType" />
+					<include name="getDocumentWithDifferentFormat" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+
+</suite>
