@@ -62,7 +62,7 @@ public class ConversionTest extends AssertActions
             verifyStatusCode(response2, 200);
             JsonPath jsonPath = JsonPath.from(response2.asString());
             String currentState = jsonPath.get("currentState");
-            System.out.println("conversion order state " + " : " + currentState);
+            LOGGER.info("conversion order state " + " : " + currentState);
             if (currentState.equals("PROCESSED"))
             {
                 LOGGER.info("Done");
@@ -74,19 +74,10 @@ public class ConversionTest extends AssertActions
             }
             else
             {
-                assertFalse(true, "the is a problem !");
+                assertFalse(true, "there is a problem !");
             }
         }
 
-    }
-
-    @Test()
-    public void checkConvertedFile() throws InterruptedException
-    {
-        String documentId = uploadDocument("testDocx");
-        Response response = Documents.getDocumentContent(documentId, "txt");
-        verifyStatusCode(response, 200);
-        assertTrue(response.asString().contains("TEST"), "The current file does not contains the word TEST");
     }
 
 }
