@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="AR-T187 Swagger API : Make a GET request on the /document/{documentId} /pages/{page}/image Endpoint with an existing page number - Check code -">
+
+	<test name="Make a request on getPageImage endpoint">
+		<classes>
+			<class name="com.arender.tests.PagesTest">
+				<methods>
+					<include name="getPageImageWithoutDescription" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+</suite>
