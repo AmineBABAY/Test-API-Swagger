@@ -5,7 +5,6 @@ import static org.testng.Assert.assertTrue;
 import java.io.UnsupportedEncodingException;
 
 import org.testng.Assert;
-import org.testng.SkipException;
 import org.testng.annotations.Test;
 
 import com.arender.actions.AssertActions;
@@ -29,7 +28,7 @@ public class DestinationTest extends AssertActions
     }
 
     @Test()
-    public void getNameDestinationTest() throws UnsupportedEncodingException
+    public void getNameDestinationForDocumentWithDestination() throws UnsupportedEncodingException
     {
         String documentId = uploadDocument("destination");
         // Make a GET request on the end point destinations
@@ -39,22 +38,26 @@ public class DestinationTest extends AssertActions
         // Get the result content of request
         String responseContent = response.jsonPath().getString("namedDestinations");
 
-        // if the content of namedestinations is not empty
-        if (responseContent.contains("[]"))
+        // check the namedestination contains the attribute name
+        Assert.assertTrue(responseContent.contains("name"));
+        // check the namedestination contains the attribute page
+        Assert.assertTrue(responseContent.contains("page"));
 
-        {
+    }
 
-            // if not check that the content of namedestination is empty
-            throw new SkipException("The list is empty the document does not contain namedestination");
+    @Test()
+    public void documentWithoutDestination() throws UnsupportedEncodingException
+    {
+        String documentId = uploadDocument("without_destination");
+        // Make a GET request on the end point destinations
+        Response response = Documents.getNameDestination(documentId);
+        // verify status of request is ok
+        verifyStatusCode(response, 200);
+        // Get the result content of request
+        String responseContent = response.jsonPath().getString("namedDestinations");
 
-        }
-        else
-        {
-            // check the namedestination contains the attribute name
-            Assert.assertTrue(responseContent.contains("name"));
-            // check the namedestination contains the attribute page
-            Assert.assertTrue(responseContent.contains("page"));
-        }
+        // check the namedestination is empty !
+        Assert.assertTrue(responseContent.contains("[]"));
 
     }
 

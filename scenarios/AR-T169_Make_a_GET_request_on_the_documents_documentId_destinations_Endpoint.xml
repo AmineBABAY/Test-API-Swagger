@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="AR-T169 Swagger API : Make a GET request on the /documents/{documentId}/destinations Endpoint">
+
+	<test name="Make requests on the destinations endpoint ">
+		<classes>
+			<class name="com.arender.tests.DestinationTest">
+				<methods>
+					<include name="getNameDestinationForDocumentWithDestination" />
+					<include name="documentWithoutDestination" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+
+</suite>
