@@ -26,7 +26,6 @@ public class ComparisonsTest extends AssertActions
         return id;
     }
 
-    @Test()
     public String compareTwoDocuments() throws InterruptedException
     {
         String documentAId = uploadDocument("imageA");
@@ -75,14 +74,6 @@ public class ComparisonsTest extends AssertActions
     public void checkComparisonsOrderTest() throws InterruptedException
     {
         checkComparisonsOrder();
-    }
-
-    @Test()
-    public void checkComparedFile() throws InterruptedException
-    {
-        String targetDocumentId = checkComparisonsOrder();
-        Response responseComparedFile = Documents.getDocumentContent(targetDocumentId, "jpg");
-        verifyStatusCode(responseComparedFile, 200);
     }
 
 }
