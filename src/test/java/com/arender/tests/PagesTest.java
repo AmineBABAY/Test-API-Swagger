@@ -176,14 +176,14 @@ public class PagesTest extends AssertActions
     }
 
     @Test()
-    public void positionTextOnNoExistentPage()
+    public void positionTextOnNoExistingPage()
     {
         String documentId = uploadDocument("pdf");
         // search for text in a page that does not exsite in the document
         Response response = Documents.getTextPosition(documentId, 20);
 
         // verify status of request is ok
-        verifyStatusCode(response, 500);
+        verifyStatusCode(response, 400);
 
     }
 
@@ -200,6 +200,18 @@ public class PagesTest extends AssertActions
 
         // verify that the list of search result is empty
         Assert.assertEquals(responseContent, "[]");
+    }
+
+    @Test()
+    public void positionTextOnDocumentWithoutTextOnNoExistentPage()
+    {
+        String documentId = uploadDocument("imageA");
+        // search for text in a page that does not exsite in the document
+        Response response = Documents.getTextPosition(documentId, 20);
+
+        // verify status of request is ok
+        verifyStatusCode(response, 400);
+
     }
 
     @Test()
