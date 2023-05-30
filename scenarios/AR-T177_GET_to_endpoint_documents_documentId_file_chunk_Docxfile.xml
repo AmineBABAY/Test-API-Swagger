@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="AR-T177 Swagger API: GET to endpoint /documents/{documentId}/file/chunk - Docx file-">
+
+	<test name="Make request on chunk endpoint for docx file">
+		<classes>
+			<class name="com.arender.tests.ChunkTest">
+				<methods>
+					<include name="getFileChunkWithPositiveRange_Docx" />
+					<include name="getFileChunkWithPositiveRangeAndFormatPDF_Docx" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+</suite>
