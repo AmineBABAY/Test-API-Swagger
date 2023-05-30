@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="AR-T160 Swagger API: GET the endpoint /document/{documentId} /pages/{page}/text">
+
+	<test name="Make requests on the serachPageForTextPositions endpoint ">
+		<classes>
+			<class name="com.arender.tests.PagesTest">
+				<methods>
+					<include name="searchOnDocumentWithText" />
+					<include name="searchTextOnNoExistentPage" />
+					<include name="searchOnDocumentWithNoExistingText" />
+					<include name="SearchResultWithWrongId" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+
+</suite>
