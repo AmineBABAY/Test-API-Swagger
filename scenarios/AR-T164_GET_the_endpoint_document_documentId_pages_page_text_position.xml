@@ -9,7 +9,7 @@
 					<include name="positionTextOnDocumentWithText" />
 					<include name="positionTextOnNoExistingPage" />
 					<include name="positionTextOnDocumentWithoutText" />
-					<include name="positionTextOnDocumentWithoutTextOnNoExistentPage" />
+					<include name="positionTextOnDocumentWithoutTextOnNoExistingPage" />
 				</methods>
 			</class>
 		</classes>

@@ -95,7 +95,7 @@ public class PagesTest extends AssertActions
     }
 
     @Test()
-    public void searchTextOnNoExistentPage()
+    public void searchTextOnNoExistingPage()
     {
         String documentId = uploadDocument("pdf");
         // search for text in a page that does not exsite in the document
@@ -218,7 +218,7 @@ public class PagesTest extends AssertActions
     }
 
     @Test()
-    public void positionTextOnDocumentWithoutTextOnNoExistentPage()
+    public void positionTextOnDocumentWithoutTextOnNoExistingPage()
     {
         String documentId = uploadDocument("imageA");
         // search for text in a page that does not exsite in the document

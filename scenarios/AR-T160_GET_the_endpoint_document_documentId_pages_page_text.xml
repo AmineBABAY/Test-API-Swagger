@@ -7,7 +7,7 @@
 			<class name="com.arender.tests.PagesTest">
 				<methods>
 					<include name="searchOnDocumentWithText" />
-					<include name="searchTextOnNoExistentPage" />
+					<include name="searchTextOnNoExistingPage" />
 					<include name="searchOnDocumentWithNoExistingText" />
 					<include name="SearchResultWithWrongId" />
 				</methods>
