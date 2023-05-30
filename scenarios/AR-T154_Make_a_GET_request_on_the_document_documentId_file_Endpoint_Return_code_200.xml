@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="AR-T154 Swagger API : Make a GET request on the /document/{documentId}/file Endpoint - Return code 200">
+
+	<test name="Make requests on the file endpoint ">
+		<classes>
+			<class name="com.arender.tests.FileTest">
+				<methods>
+					<include name="getDocumentAndCheckFormatForPdf" />
+					<include name="getDocumentAndCheckFormatForDoc" />
+					<include name="getDocumentAndCheckFormatForTiff" />
+					<include name="getDocumentAndCheckFormatForPng" />
+					<include name="getDocumentAndCheckFormatForEml" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+
+</suite>
