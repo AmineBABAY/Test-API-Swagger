@@ -7,7 +7,7 @@
 			<class name="com.arender.tests.PagesTest">
 				<methods>
 					<include name="positionTextOnDocumentWithText" />
-					<include name="positionTextOnNoExistentPage" />
+					<include name="positionTextOnNoExistingPage" />
 					<include name="positionTextOnDocumentWithoutText" />
 					<include name="positionTextOnDocumentWithoutTextOnNoExistentPage" />
 				</methods>
