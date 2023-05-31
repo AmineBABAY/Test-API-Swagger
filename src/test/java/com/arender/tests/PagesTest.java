@@ -57,7 +57,7 @@ public class PagesTest extends AssertActions
     {
         String documentId = uploadDocument("pdf");
         Response response = Documents.getPageImage(documentId, 1000);
-        verifyStatusCode(response, 500);
+        verifyStatusCode(response, 400);
     }
 
     @Test()
