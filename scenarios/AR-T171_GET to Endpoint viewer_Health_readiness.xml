@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="AR-T171 GET to Endpoint viewer/Health/readiness">
+
+	<test name="Check readniess">
+		<classes>
+			<class name="com.arender.tests.HealthRecordsViewerTest"/>
+		</classes>
+	</test>
+
+
+</suite>
