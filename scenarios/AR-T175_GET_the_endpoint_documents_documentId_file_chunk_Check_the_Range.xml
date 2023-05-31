@@ -5,10 +5,12 @@
 	<test name="get different call for /documents/docId/file/chunk ">
 		<classes>
 			<class name="com.arender.tests.ChunkTest">
-				<include name="getFileChunkWithNegativeRange" />
-				<include name="getFileChunkWithLettersRange" />
-				<include name="getFileChunkWithPositiveRange" />
-				<include name="getFileChunkWithPositiveDescendingRange" />
+				<methods>
+					<include name="getFileChunkWithNegativeRange" />
+					<include name="getFileChunkWithLettersRange" />
+					<include name="getFileChunkWithPositiveRange" />
+					<include name="getFileChunkWithPositiveDescendingRange" />
+				</methods>
 			</class>
 		</classes>
 	</test>
