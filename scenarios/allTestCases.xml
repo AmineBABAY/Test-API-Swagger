@@ -1,4 +1,4 @@
-<suite name="Unit tests">
+<suite name="All test cases">
 <suite-files>
     <suite-file path="AR-T153_Make_a_Post_to_the_Documents_Service.xml"></suite-file>
     <suite-file path="AR-T154_Make_a_GET_request_on_the_document_documentId_file_Endpoint_Return_code_200.xml"></suite-file>
