@@ -1,17 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-<suite name="Document test">
-
-	<test name="upload document then check the document and the body is not empty">
+<suite name="AR-T155 Make a GET on the Endpoints of the Documents controller with a wrong documentId">
+	<test name="Test endpoint get document with wrong documentId">
 		<classes>
-			<class name="com.arender.tests.CheckInfosDocTest"></class>
+			<class name="com.arender.tests.documentTest">
+				<methods>
+					<include name="getDocumentWithWrongDocumentId"/>
+					<include name="getBookmarksWithWrongId" />
+					<include name="checkDocumentWithWrongDocumentId" />
+					<include name="getNameDestinationWithWrongId" />
+					<include name="getDocumentContentWithWrongId" />
+					<include name="getDocumentAnnotationsWithWrongId" />
+					<include name="getFileChunkWithWrongId" />
+					<include name="getDocumentLayoutWithWrongId" />
+					<include name="getPagesSearchResultWithWrongId" />
+					<include name="getPageImageWithWrongId" />
+					<include name="SearchForTextPositionsWithWrongId" />
+					<include name="getTextPositionWithWrongId" />
+					<include name="getPrintableDocumentWithWrongId" />
+					<include name="getSignaturesWithWrongId" />
+				</methods>
+			
+			</class>
 		</classes>
 	</test>
 
-	<test name="Check if the document is deleted">
-		<classes>
-			<class name="com.arender.tests.DeleteTest"></class>
-		</classes>
-	</test>
 
 </suite>
