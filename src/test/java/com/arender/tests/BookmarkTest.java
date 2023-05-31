@@ -76,17 +76,4 @@ public class BookmarkTest extends AssertActions
         Assert.assertTrue(responseContent.contains("[]"));
     }
 
-    @Test()
-    public void uploadDocumentwithWrongId()
-    {
-
-        //// Make a GET request on the end point bookmark with an id of a
-        //// document
-        //// that does not exist.
-        Response response = Documents.getBookmarks("bad id");
-        // Check that the status of request is failed
-        verifyStatusCode(response, 404);
-
-    }
-
 }

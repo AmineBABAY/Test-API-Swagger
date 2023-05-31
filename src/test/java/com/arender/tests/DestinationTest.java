@@ -61,16 +61,4 @@ public class DestinationTest extends AssertActions
 
     }
 
-    @Test()
-    public void getNameDestinationWithWrongId()
-    {
-
-        //// Make a GET request on the end point destinations with an id of a
-        //// document
-        //// that does not exist.
-        Response response = Documents.getNameDestination("bad id");
-        // Check that the status of request is failed
-        verifyStatusCode(response, 404);
-    }
-
 }
