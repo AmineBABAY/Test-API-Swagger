@@ -7,11 +7,14 @@
 			<class name="com.arender.tests.LayoutTest">
 				<methods>
 					<include name="getDocumentLayoutForPdf" />
-					<include name="getDocumentLayoutForDoc" />
+					<include name="getDocumentLayoutForDocx" />
 					<include name="getDocumentLayoutForZip" />
 					<include name="getDocumentLayoutForJpg" />
 					<include name="getDocumentLayoutForTiff" />
-					<include name="getDocumentLayoutForMsg" />
+					<include name="getDocumentLayoutForMsg" />					
+					<include name="getDocumentLayoutForOrientedTiff" />
+					<include name="getDocumentLayoutForTxt" />
+					<include name="getDocumentLayoutForPng" />
 				</methods>
 			</class>
 		</classes>

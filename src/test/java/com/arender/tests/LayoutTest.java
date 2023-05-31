@@ -23,14 +23,15 @@ public class LayoutTest extends AssertActions
     }
 
     @Test()
-    public void getDocumentLayoutForDoc()
+    public void getDocumentLayoutForDocx()
     {
         String docxDocumentId = uploadDocument("docx");
         Response response = Documents.getDocumentLayout(docxDocumentId);
-
         verifyStatusCode(response, 200);
         JsonPath jsonPath = JsonPath.from(response.asString());
-        assertTrue(jsonPath.get("type").toString().contains("DocumentPageLayout"));
+        assertTrue(jsonPath.get("type").toString().contains("DocumentPageLayout"),
+                "The document layout is not present !");
+        assertTrue(jsonPath.get("pageDimensionsList.dpi").toString() != null, "The value of DPI is null !");
 
     }
 
@@ -39,11 +40,12 @@ public class LayoutTest extends AssertActions
     {
         String zipDocumentId = uploadDocument("zip");
         Response response = Documents.getDocumentLayout(zipDocumentId);
-
         verifyStatusCode(response, 200);
         JsonPath jsonPath = JsonPath.from(response.asString());
-        assertTrue(jsonPath.get("children.children.documentId.id").toString().contains("/1/1"));
-        assertTrue(jsonPath.get("type").toString().contains("DocumentContainer"));
+        assertTrue(jsonPath.get("children.children.documentId.id").toString().contains("/1/1"),
+                "Problem with the children of zip");
+        assertTrue(jsonPath.get("type").toString().contains("DocumentContainer"),
+                "The document layout is not present !");
     }
 
     @Test()
@@ -53,16 +55,20 @@ public class LayoutTest extends AssertActions
         Response response = Documents.getDocumentLayout(pdfDocumentId);
         verifyStatusCode(response, 200);
         JsonPath jsonPath = JsonPath.from(response.asString());
-        assertTrue(jsonPath.get("pageDimensionsList.dpi").toString() != null);
+        assertTrue(jsonPath.get("type").toString().contains("DocumentPageLayout"),
+                "The document layout is not present !");
+        assertTrue(jsonPath.get("pageDimensionsList.dpi").toString() != null, "The value of DPI is null !");
     }
 
     @Test()
-    public void getDocumentLayoutForTiff()
+    public void getDocumentLayoutForOrientedTiff()
     {
         String tiffDocumentId = uploadDocument("tiff");
         Response response = Documents.getDocumentLayout(tiffDocumentId);
         verifyStatusCode(response, 200);
         JsonPath jsonPath = JsonPath.from(response.asString());
+        assertTrue(jsonPath.get("type").toString().contains("DocumentPageLayout"),
+                "The document layout is not present !");
         assertTrue(jsonPath.get("pageDimensionsList.dpi").toString().equals("[300]"));
     }
 
@@ -74,7 +80,8 @@ public class LayoutTest extends AssertActions
         verifyStatusCode(response, 200);
         JsonPath jsonPath = JsonPath.from(response.asString());
         assertTrue(jsonPath.get("children.mimeType").toString().contains("text/html"));
-        assertTrue(jsonPath.get("type").toString().contains("DocumentContainer"));
+        assertTrue(jsonPath.get("type").toString().contains("DocumentContainer"),
+                "The document layout is not present !");
     }
 
     @Test()
@@ -84,7 +91,45 @@ public class LayoutTest extends AssertActions
         Response response = Documents.getDocumentLayout(jpegDocumentId);
         verifyStatusCode(response, 200);
         JsonPath jsonPath = JsonPath.from(response.asString());
-        assertTrue(jsonPath.get("pageDimensionsList.dpi").toString() != null);
+        assertTrue(jsonPath.get("type").toString().contains("DocumentPageLayout"),
+                "The document layout is not present !");
+        assertTrue(jsonPath.get("pageDimensionsList.dpi").toString() != null, "The value of DPI is null !");
+    }
+
+    @Test()
+    public void getDocumentLayoutForTxt()
+    {
+        String jpegDocumentId = uploadDocument("txt");
+        Response response = Documents.getDocumentLayout(jpegDocumentId);
+        verifyStatusCode(response, 200);
+        JsonPath jsonPath = JsonPath.from(response.asString());
+        assertTrue(jsonPath.get("type").toString().contains("DocumentPageLayout"),
+                "The document layout is not present !");
+        assertTrue(jsonPath.get("pageDimensionsList.dpi").toString() != null, "The value of DPI is null !");
+    }
+
+    @Test()
+    public void getDocumentLayoutForTiff()
+    {
+        String jpegDocumentId = uploadDocument("tiff_with_1MO");
+        Response response = Documents.getDocumentLayout(jpegDocumentId);
+        verifyStatusCode(response, 200);
+        JsonPath jsonPath = JsonPath.from(response.asString());
+        assertTrue(jsonPath.get("type").toString().contains("DocumentPageLayout"),
+                "The document layout is not present !");
+        assertTrue(jsonPath.get("pageDimensionsList.dpi").toString() != null, "The value of DPI is null !");
+    }
+
+    @Test()
+    public void getDocumentLayoutForPng()
+    {
+        String jpegDocumentId = uploadDocument("png");
+        Response response = Documents.getDocumentLayout(jpegDocumentId);
+        verifyStatusCode(response, 200);
+        JsonPath jsonPath = JsonPath.from(response.asString());
+        assertTrue(jsonPath.get("type").toString().contains("DocumentPageLayout"),
+                "The document layout is not present !");
+        assertTrue(jsonPath.get("pageDimensionsList.dpi").toString() != null, "The value of DPI is null !");
     }
 
 }
