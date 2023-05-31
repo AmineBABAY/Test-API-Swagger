@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="AR-T167 Swagger API: make calls to the Transformations/ controller to build a document with or without annotations - check code">
+
+	<test name="Transforamtion for document builder without annotations">
+		<classes>
+			<class name="com.arender.tests.TransformationTest">
+				<methods>
+					<include name="transformDocumentBuilderWithoutAnnotations" />
+					<include name="checkTranformationOrder" />
+					<include name="checkTranformedFile" />
+
+				</methods>
+			</class>
+
+		</classes>
+	</test>
+
+	<test name="Transforamtion for document builder with annotations ">
+		<classes>
+			<class name="com.arender.tests.TransformationTest">
+				<methods>
+					<include name="transformDocumentBuilderWithAnnotations" />
+					<include name="checkTranformationOrderWithAnno" />
+					<include name="checkTranformedFileWithAnno" />
+
+				</methods>
+			</class>
+		</classes>
+	</test>
+
+
+</suite>

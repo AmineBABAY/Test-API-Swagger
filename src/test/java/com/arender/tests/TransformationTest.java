@@ -29,8 +29,8 @@ public class TransformationTest extends AssertActions
 
     private String transformDocumentBuilderWithoutAnnotations() throws InterruptedException
     {
-        String documentId = uploadDocument("pdf_");
-        String documentId2 = uploadDocument("fw4_pdf");
+        String documentId = uploadDocument("transf_doc1");
+        String documentId2 = uploadDocument("transf_doc2");
         String body;
         // read the json file for transformation
         JSONObject contentFile = Config.readJsonFile("transformationBodyWithoutAnno");
@@ -107,8 +107,8 @@ public class TransformationTest extends AssertActions
 
     public String transformDocumentBuilderWithAnnotations() throws InterruptedException
     {
-        String documentId = uploadDocument("pdf_");
-        String documentId2 = uploadDocument("fw4_pdf");
+        String documentId = uploadDocument("transf_doc1");
+        String documentId2 = uploadDocument("transf_doc2");
         String body;
         // read the json file for transformation
         JSONObject contentFile = Config.readJsonFile("transformationBodyWithAnno");
