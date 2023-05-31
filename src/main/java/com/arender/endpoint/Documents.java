@@ -76,6 +76,12 @@ public class Documents extends Initialization
 
     }
 
+    public static Response getDocumentContent(String idDocument)
+    {
+        return RestAssured.given().when().get("/documents/" + idDocument + "/file");
+
+    }
+
     public static Response getDocumentLayout(String idDocument)
     {
         return RestAssured.given().when().get("/documents/" + idDocument + "/layout");

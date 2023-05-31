@@ -26,50 +26,162 @@ public class documentTest extends AssertActions
     @Test()
     public void uploadPdfDocument()
     {
-        String documentId = uploadDocument("pdf");
+        uploadDocument("pdf");
 
     }
 
     @Test()
     public void uploadJpgDocument()
     {
-        String documentId = uploadDocument("jpg");
+        uploadDocument("jpg");
 
     }
 
     @Test()
     public void uploadTiffDocument()
     {
-        String documentId = uploadDocument("tiff");
+        uploadDocument("tiff");
 
     }
 
     @Test()
     public void uploadDocDocument()
     {
-        String documentId = uploadDocument("doc_with_100KO");
+        uploadDocument("doc_with_100KO");
 
     }
 
     @Test()
     public void uploadZipDocument()
     {
-        String documentId = uploadDocument("zip");
+        uploadDocument("zip");
 
     }
 
     @Test()
     public void uploadEmlDocument()
     {
-        String documentId = uploadDocument("eml");
+        uploadDocument("eml");
 
     }
 
     @Test()
     public void uploadMp4Document()
     {
-        String documentId = uploadDocument("mp4");
+        uploadDocument("mp4");
 
     }
 
+    @Test()
+    public void getDocumentWithWrongDocumentId()
+    {
+
+        Response response = Documents.getDocument("bad id");
+        verifyStatusCode(response, 404);
+
+    }
+
+    @Test()
+    public void getBookmarksWithWrongId()
+    {
+
+        Response response = Documents.getBookmarks("bad id");
+        verifyStatusCode(response, 404);
+
+    }
+
+    @Test()
+    public void checkDocumentWithWrongDocumentId()
+    {
+        Response response = Documents.checkDocument("bad id");
+        verifyStatusCode(response, 404);
+    }
+
+    @Test()
+    public void getNameDestinationWithWrongId()
+    {
+
+        Response response = Documents.getNameDestination("bad id");
+        verifyStatusCode(response, 404);
+    }
+
+    @Test()
+    public void getDocumentContentWithWrongId()
+    {
+
+        Response response = Documents.getDocumentContent("bad id");
+        verifyStatusCode(response, 404);
+    }
+
+    @Test()
+    public void getDocumentAnnotationsWithWrongId()
+    {
+
+        Response response = Documents.getDocumentAnnotations("bad id");
+        verifyStatusCode(response, 404);
+    }
+
+    @Test()
+    public void getFileChunkWithWrongId()
+    {
+
+        Response response = Documents.getFileChunk("bad id", "bytes=5-3");
+        verifyStatusCode(response, 404);
+    }
+
+    @Test()
+    public void getDocumentLayoutWithWrongId()
+    {
+
+        Response response = Documents.getDocumentLayout("bad id");
+        verifyStatusCode(response, 404);
+    }
+
+    @Test()
+    public void getPagesSearchResultWithWrongId()
+    {
+
+        Response response = Documents.getPagesSearchResult("bad id", "any param");
+        verifyStatusCode(response, 404);
+    }
+
+    @Test()
+    public void getPageImageWithWrongId()
+    {
+
+        Response response = Documents.getPageImage("bad id", 0);
+        verifyStatusCode(response, 404);
+    }
+
+    @Test()
+    public void SearchForTextPositionsWithWrongId()
+    {
+
+        Response response = Documents.searchPageForTextPositions("bad id", "bad param", 0);
+        verifyStatusCode(response, 404);
+    }
+
+    @Test()
+    public void getTextPositionWithWrongId()
+    {
+
+        Response response = Documents.getTextPosition("bad id", 0);
+        verifyStatusCode(response, 404);
+    }
+
+    @Test()
+    public void getPrintableDocumentWithWrongId()
+    {
+
+        Response response = Documents.getPrintableDocument("bad id");
+        verifyStatusCode(response, 404);
+    }
+
+    @Test()
+    public void getSignaturesWithWrongId()
+    {
+
+        Response response = Documents.getSignatures("bad id");
+        verifyStatusCode(response, 404);
+    }
 }

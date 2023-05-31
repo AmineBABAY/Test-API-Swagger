@@ -164,19 +164,4 @@ public class CheckInfosDocTest extends AssertActions
 
     }
 
-    @Test()
-    public void getDocumentWithWrongDocumentIdTest()
-    {
-
-        Response response = Documents.getDocument("A");
-        verifyStatusCode(response, 404);
-
-    }
-
-    @Test()
-    public void checkDocumentWithWrongDocumentIdTest()
-    {
-        Response response = Documents.checkDocument("A");
-        verifyStatusCode(response, 404);
-    }
 }
