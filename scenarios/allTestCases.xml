@@ -17,7 +17,9 @@
 		<suite-file path="AR-T169_Make_a_GET_request_on_the_documents_documentId_destinations_Endpoint.xml"></suite-file>
 		<suite-file path="AR-T172_Make_calls_to_the_Endpoint_DELETE_documents_documentId.xml"></suite-file>
 		<suite-file path="AR-T174_GET_to_endpoint_documents_docId_check.xml"></suite-file>
+		<suite-file path="AR-T175_GET_the_endpoint_documents_documentId_file_chunk_Check_the_Range.xml"></suite-file>
 		<suite-file path="AR-T177_GET_to_endpoint_documents_documentId_file_chunk_Docxfile.xml"></suite-file>
+		<suite-file path="AR-T188_Make_a_GET_request_to_the_Endpoint_document_page_image_with_a_wrong_page_number.xml"></suite-file>
 		<suite-file path="AR-T187_Make_a_GET_request_on_the_document_documentId_pages_page_image_Endpoint_with_an_existing_page_number_Check_code.xml"></suite-file>
 		<suite-file path="AR-T189_GET_the_endpoint_document_documentId_file_trigger_conversion_to_a_supported_format_Checkcode.xml"></suite-file>
 		<suite-file path="AR-T198_Make_a_GET_request_on_the_documents_documentId_file_annotations_Endpoint_Check_Code.xml"></suite-file>

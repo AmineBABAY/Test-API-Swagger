@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="AR-T188_Make a GET request to the Endpoint /document/{documentId} /pages/{page}/image with a wrong page number">
+
+	<test name="Make a request on getPageImage endpoint">
+		<classes>
+			<class name="com.arender.tests.PagesTest">
+				<methods>
+					<include name="getPageImageWithWrongPage" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+</suite>
