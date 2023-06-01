@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="AR-T191_AR-T192_Making calls to the Transformations controller">
+
+	<test name="Alter Document Content Transformation ">
+		<classes>
+			<class name="com.arender.tests.TransformationTest">
+				<methods>
+					<include name="alterDocumentContentTest" />
+					<include name="checkAlterDocTranformationOrderTest" />
+
+				</methods>
+			</class>
+		</classes>
+	</test>
+
+	<test name="Transforamtion for document with FDF annotations ">
+		<classes>
+			<class name="com.arender.tests.TransformationTest">
+				<methods>
+					<include name="transformDocumentWithFDFAnnotationsTest" />
+					<include name="checkTranformationOrderWithFDFAnnoTest" />
+				</methods>
+			</class>
+		</classes>
+	</test>
+
+
+</suite>
