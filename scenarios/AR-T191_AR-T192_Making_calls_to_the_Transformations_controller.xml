@@ -6,7 +6,7 @@
 		<classes>
 			<class name="com.arender.tests.TransformationTest">
 				<methods>
-					<include name="alterDocumentContentTest" />
+					<include name="transformationOrderIdForAlterDocumentContentTest" />
 					<include name="checkAlterDocTranformationOrderTest" />
 
 				</methods>
@@ -18,7 +18,7 @@
 		<classes>
 			<class name="com.arender.tests.TransformationTest">
 				<methods>
-					<include name="transformDocumentWithFDFAnnotationsTest" />
+					<include name="transformationOrderIdForDocumentWithFDFAnnotationsTest" />
 					<include name="checkTranformationOrderWithFDFAnnoTest" />
 				</methods>
 			</class>

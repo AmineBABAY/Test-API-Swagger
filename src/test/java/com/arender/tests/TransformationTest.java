@@ -236,7 +236,7 @@ public class TransformationTest extends AssertActions
     }
 
     @Test()
-    public void alterDocumentContentTest() throws InterruptedException
+    public void transformationOrderIdForAlterDocumentContentTest() throws InterruptedException
     {
         alterDocumentContent();
     }
@@ -323,7 +323,7 @@ public class TransformationTest extends AssertActions
     }
 
     @Test()
-    public void transformDocumentWithFDFAnnotationsTest() throws InterruptedException
+    public void transformationOrderIdForDocumentWithFDFAnnotationsTest() throws InterruptedException
     {
         transformDocumentWithFDFAnnotations();
     }
