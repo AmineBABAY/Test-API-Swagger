@@ -229,12 +229,14 @@ public class TransformationTest extends AssertActions
         verifyStatusCode(transformation, 200);
         JsonPath jsonPath = JsonPath.from(transformation.asString());
         // get the returnd id of transformation
-        return jsonPath.get("transformationOrderId.id");
+        String transformationOrderId = jsonPath.get("transformationOrderId.id");
+        assertTrue(transformationOrderId.length() != 0, "the transformation order document ID is not generated");
+        return transformationOrderId;
 
     }
 
     @Test()
-    public void alterDocumentContentTest() throws InterruptedException
+    public void transformationOrderIdForAlterDocumentContentTest() throws InterruptedException
     {
         alterDocumentContent();
     }
@@ -260,7 +262,7 @@ public class TransformationTest extends AssertActions
 
     }
 
-    @Test()
+    @Test(dependsOnMethods = "transformationOrderIdForAlterDocumentContentTest")
     public void checkAlterDocTranformationOrderTest() throws InterruptedException
     {
         checkAlterDocTranformationOrder();
@@ -314,12 +316,14 @@ public class TransformationTest extends AssertActions
         verifyStatusCode(response, 200);
         JsonPath jsonPath = JsonPath.from(response.asString());
         // get the returnd id of transformation
-        return jsonPath.get("transformationOrderId.id");
+        String transformationOrderId = jsonPath.get("transformationOrderId.id");
+        assertTrue(transformationOrderId.length() != 0, "the transformation order document ID is not generated");
+        return transformationOrderId;
 
     }
 
     @Test()
-    public void transformDocumentWithFDFAnnotationsTest() throws InterruptedException
+    public void transformationOrderIdForDocumentWithFDFAnnotationsTest() throws InterruptedException
     {
         transformDocumentWithFDFAnnotations();
     }
@@ -345,7 +349,7 @@ public class TransformationTest extends AssertActions
         return transformationWithFDFAnnoResultDocumentID;
     }
 
-    @Test()
+    @Test(dependsOnMethods = "transformationOrderIdForDocumentWithFDFAnnotationsTest")
     public void checkTranformationOrderWithFDFAnnoTest() throws InterruptedException
     {
         checkTranformationOrderWithFDFAnno();
