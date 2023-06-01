@@ -262,7 +262,7 @@ public class TransformationTest extends AssertActions
 
     }
 
-    @Test(dependsOnMethods = "alterDocumentContentTest")
+    @Test(dependsOnMethods = "transformationOrderIdForAlterDocumentContentTest")
     public void checkAlterDocTranformationOrderTest() throws InterruptedException
     {
         checkAlterDocTranformationOrder();
@@ -349,7 +349,7 @@ public class TransformationTest extends AssertActions
         return transformationWithFDFAnnoResultDocumentID;
     }
 
-    @Test(dependsOnMethods = "transformDocumentWithFDFAnnotationsTest")
+    @Test(dependsOnMethods = "transformationOrderIdForDocumentWithFDFAnnotationsTest")
     public void checkTranformationOrderWithFDFAnnoTest() throws InterruptedException
     {
         checkTranformationOrderWithFDFAnno();
