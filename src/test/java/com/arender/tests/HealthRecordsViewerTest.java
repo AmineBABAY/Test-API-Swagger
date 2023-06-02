@@ -16,4 +16,10 @@ public class HealthRecordsViewerTest extends AssertActions
         Response response = HealthRecordsViewer.readiness();
         verifyStatusCode(response, 200);
     }
+
+    public void checkDisplayRecords()
+    {
+        Response response = HealthRecordsViewer.displayRecords();
+        verifyStatusCode(response, 200);
+    }
 }

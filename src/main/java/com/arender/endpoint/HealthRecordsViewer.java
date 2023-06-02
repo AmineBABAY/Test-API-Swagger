@@ -23,4 +23,10 @@ public class HealthRecordsViewer extends Initialization
 
         return RestAssured.given().when().get("/health/readiness");
     }
+
+    public static Response displayRecords()
+    {
+
+        return RestAssured.given().when().get("/health/records");
+    }
 }
