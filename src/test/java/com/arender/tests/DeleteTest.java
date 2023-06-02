@@ -26,7 +26,7 @@ public class DeleteTest extends AssertActions
     @Test()
     public void evictDocument()
     {
-        String documentId = uploadDocument(file);
+        String documentId = uploadDocument("pdf");
         Response response = Documents.evictDocument(documentId);
 
         verifyStatusCode(response, 200);
