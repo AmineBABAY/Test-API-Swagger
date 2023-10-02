@@ -34,11 +34,12 @@ public class TransformationTest extends AssertActions
         String body;
         // read the json file for transformation
         JSONObject contentFile = Config.readJsonFile("transformationBodyWithoutAnno");
-        // get the transformationdetails object
-        JSONObject transformationdetails = contentFile.getJSONObject("transformationDetails");
-        // from the transformationdetails object, get the transformationElements
-        // array
-        JSONArray transformationElements = transformationdetails.getJSONArray("transformationElements");
+        // get the transformationdetails array
+        JSONArray transformationDetailsArray = contentFile.getJSONArray("transformationDetails");
+        /// get the first transformationDetails object in the array
+        JSONObject firstTransformationDetails = transformationDetailsArray.getJSONObject(0);
+        // get the transformationElements array
+        JSONArray transformationElements = firstTransformationDetails.getJSONArray("transformationElements");
 
         // get the first JSON Object in the JSON transformationElements Array
         JSONObject firstItemObject = (JSONObject) transformationElements.get(0);
