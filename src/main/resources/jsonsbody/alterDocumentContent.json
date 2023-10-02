@@ -22,11 +22,13 @@
     ]
   },
   "format": "pdf",
-  "transformationDetails": {
-    "transformationElements": [
-      {
-        "documentId": "String"
-      }
-    ]
-  }
+  "transformationDetails": [
+    {
+       "transformationElements": [
+          {
+             "documentId": "string"
+          }
+       ]
+    }
+  ]
 }
