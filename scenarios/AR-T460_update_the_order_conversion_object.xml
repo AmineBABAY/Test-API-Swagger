@@ -6,8 +6,8 @@
 		<classes>
 			<class name="com.arender.tests.ConversionTest">
 				<methods>
-					<include name="convertDocxToTxtTest"></include>
-					<include name="checkConversionOrder"></include>
+					<include name="postConversionTest"></include>
+					<include name="checkCurrentState"></include>
 				</methods>
 				</class>
 		</classes>
