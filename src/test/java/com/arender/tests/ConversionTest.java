@@ -88,7 +88,7 @@ public class ConversionTest extends AssertActions
 
         JSONObject json = Config.readJsonFile("conversionsBody");
         json.put("documentId", documentId);
-        json.put("format", "txt");
+        json.put("format", "mp4");
         body = json.toString();
 
         Response response = Conversions.convertDocumentToTargetFormat(body);
@@ -99,8 +99,9 @@ public class ConversionTest extends AssertActions
 
     @Test()
     public void postConversionTest()
+
     {
-        Assert.assertTrue(postConversion().contains("-mp4"), "Your id does not contains .mp4");
+        Assert.assertTrue(postConversion().contains("-mp4"), "Your id does not contains -mp4");
     }
 
     @Test()
