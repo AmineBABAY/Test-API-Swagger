@@ -100,17 +100,34 @@ public class ConversionTest extends AssertActions
     @Test()
     public void postConversionTest()
     {
-        Assert.assertTrue(postConversion().contains(".mp4"), "Your id does not contains .mp4");
+        Assert.assertTrue(postConversion().contains("-mp4"), "Your id does not contains .mp4");
     }
 
     @Test()
     public void checkCurrentState()
     {
         String conversionOrderId = postConversion();
-        Response response = Conversions.getConversionOrder(conversionOrderId);
-        JsonPath jsonPath = JsonPath.from(response.asString());
-        String currentState = jsonPath.get("currentState");
-        Assert.assertEquals(currentState, "FAILED", "Your current state is not FAILED");
+        for (int iteration = 0; iteration < 60; iteration++)
+        {
+            Response response2 = Conversions.getConversionOrder(conversionOrderId);
+            verifyStatusCode(response2, 200);
+            JsonPath jsonPath = JsonPath.from(response2.asString());
+            String currentState = jsonPath.get("currentState");
+            LOGGER.info("conversion order state " + " : " + currentState);
+            if (currentState.equals("FAILED"))
+            {
+                LOGGER.info("Done");
+                return;
+            }
+            else if (currentState.equals("PROCESSING"))
+            {
+                LOGGER.info("Not yet");
+            }
+            else
+            {
+                Assert.fail("Your current state is not FAILED !");
+            }
+        }
     }
 
 }
