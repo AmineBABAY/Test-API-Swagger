@@ -5,6 +5,7 @@ import static org.testng.Assert.assertTrue;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import com.arender.actions.AssertActions;
@@ -78,6 +79,56 @@ public class ConversionTest extends AssertActions
             }
         }
 
+    }
+
+    public String postConversion()
+    {
+        String documentId = uploadDocument("testDocx");
+        String body;
+
+        JSONObject json = Config.readJsonFile("conversionsBody");
+        json.put("documentId", documentId);
+        json.put("format", "mp4");
+        body = json.toString();
+
+        Response response = Conversions.convertDocumentToTargetFormat(body);
+        verifyStatusCode(response, 200);
+        JsonPath jsonPath = JsonPath.from(response.asString());
+        return jsonPath.get("conversionOrderId.id");
+    }
+
+    @Test()
+    public void postConversionTest()
+
+    {
+        Assert.assertTrue(postConversion().contains("-mp4"), "Your id does not contains -mp4");
+    }
+
+    @Test()
+    public void checkCurrentState()
+    {
+        String conversionOrderId = postConversion();
+        for (int iteration = 0; iteration < 60; iteration++)
+        {
+            Response response2 = Conversions.getConversionOrder(conversionOrderId);
+            verifyStatusCode(response2, 200);
+            JsonPath jsonPath = JsonPath.from(response2.asString());
+            String currentState = jsonPath.get("currentState");
+            LOGGER.info("conversion order state " + " : " + currentState);
+            if (currentState.equals("FAILED"))
+            {
+                LOGGER.info("Done");
+                return;
+            }
+            else if (currentState.equals("PROCESSING"))
+            {
+                LOGGER.info("Not yet");
+            }
+            else
+            {
+                Assert.fail("Your current state is not FAILED !");
+            }
+        }
     }
 
 }
