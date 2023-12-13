@@ -108,30 +108,32 @@
     ]
   },
   "format": "pdf",
-  "transformationDetails": {
-    "transformationElements": [
+  "transformationDetails": [
       {
-        "documentId": "string",
-        "pagesSelectionList": [
-          {
-            "maxPage": 4,
-            "minPage": 1
-          },
-          {
-            "maxPage": 1,
-            "minPage": 1
-          }
-        ]
-      },
-      {
-        "documentId": "string",
-        "pagesSelectionList": [
-          {
-            "maxPage": 1,
-            "minPage": 1
-          }
-        ]
-      }
-    ]
-  }
+      "transformationElements": [
+        {
+          "documentId": "string",
+          "pagesSelectionList": [
+            {
+              "maxPage": 4,
+              "minPage": 1
+            },
+            {
+              "maxPage": 1,
+              "minPage": 1
+            }
+          ]
+        },
+        {
+          "documentId": "string",
+          "pagesSelectionList": [
+            {
+              "maxPage": 1,
+              "minPage": 1
+            }
+          ]
+        }
+      ]
+    }
+  ]
 }
