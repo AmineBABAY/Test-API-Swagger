@@ -237,4 +237,14 @@ public class PagesTest extends AssertActions
         verifyStatusCode(response, 404);
     }
 
+    @Test()
+    public void getPageImageWithJpegImage()
+    {
+        String documentId = uploadDocument("justif");
+        Response response = Documents.getPageImage(documentId, 0);
+        verifyStatusCode(response, 200);
+        assertTrue(response.header("content-type").equals("image/jpeg"));
+
+    }
+
 }

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="AR-T1050 Make a GET request on the /document/{documentId} /pages/{page}/image Endpoint with Jpeg image">
+
+	<test name="Make calls on getPageImage ">
+		<classes>
+			<class name="com.arender.tests.PagesTest">
+				<methods>
+					<include name="getPageImageWithJpegImage"></include>
+				</methods>
+				</class>
+		</classes>
+	</test>
+
+</suite>
