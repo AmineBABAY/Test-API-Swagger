@@ -2,6 +2,8 @@ package com.arender.tests;
 
 import static org.testng.Assert.assertTrue;
 
+import java.util.List;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -246,5 +248,232 @@ public class PagesTest extends AssertActions
         assertTrue(response.header("content-type").equals("image/jpeg"));
 
     }
+    
+    @Test()
+    public void positionTextOnDocumentDoc2_error()
+    {
+    	
+    	String documentId = uploadDocument("doc_2_error_timeout");
+    	
+    	for (int pageNumber = 0; pageNumber < 2; pageNumber++) {
+    		
+    		// search for a text on a specific page
+    		Response response = Documents.getTextPosition(documentId, pageNumber);
+
+    		// verify status of request is ok
+    		verifyStatusCode(response, 200);
+    		// Get the content of request
+    		String responseContent = response.jsonPath().getString("positionTextList");
+    		// get the value of pageNumber
+    		int nubmerPage = response.jsonPath().getInt("pageNumber");
+
+    		// verify that the search result contains the field positionText
+    		Assert.assertTrue(responseContent.contains("position"));
+    		// verify that the number page returned is the number of page entered
+    		Assert.assertEquals(nubmerPage, pageNumber);
+    	}
+        
+
+    }
+    
+    @Test()
+    public void positionTextOnDocumentdoc_1_error_timeout()
+    {
+    	
+    	String documentId = uploadDocument("doc_1_error_timeout");
+    	
+    	for (int pageNumber = 0; pageNumber < 2; pageNumber++) {
+    		
+    		// search for a text on a specific page
+    		Response response = Documents.getTextPosition(documentId, pageNumber);
+
+    		// verify status of request is ok
+    		verifyStatusCode(response, 200);
+    		// Get the content of request
+    		String responseContent = response.jsonPath().getString("positionTextList");
+    		// get the value of pageNumber
+    		int nubmerPage = response.jsonPath().getInt("pageNumber");
+
+    		// verify that the search result contains the field positionText
+    		Assert.assertTrue(responseContent.contains("position"));
+    		// verify that the number page returned is the number of page entered
+    		Assert.assertEquals(nubmerPage, pageNumber);
+    	}
+        
+
+    }
+    
+    @Test()
+    public void positionTextOnDocumentDoc_success_smartanchors()
+    {
+    	String documentId = uploadDocument("doc_success_smartanchors");
+    	
+    	for (int pageNumber = 0; pageNumber < 2; pageNumber++) {
+    		
+    		// search for a text on a specific page
+    		Response response = Documents.getTextPosition(documentId, pageNumber);
+
+    		// verify status of request is ok
+    		verifyStatusCode(response, 200);
+    		// Get the content of request
+    		String responseContent = response.jsonPath().getString("positionTextList");
+    		// get the value of pageNumber
+    		int nubmerPage = response.jsonPath().getInt("pageNumber");
+
+    		// verify that the search result contains the field positionText
+    		Assert.assertTrue(responseContent.contains("position"));
+    		// verify that the number page returned is the number of page entered
+    		Assert.assertEquals(nubmerPage, pageNumber);
+    	}
+        
+
+    }
+    
+    @Test()
+    public void positionTextOnDocumentAttachments960()
+    {
+    	String documentId = uploadDocument("attachments960");
+    	
+    	for (int pageNumber = 0; pageNumber < 3; pageNumber++) {
+    		
+    		// search for a text on a specific page
+    		Response response = Documents.getTextPosition(documentId, pageNumber);
+
+    		// verify status of request is ok
+    		verifyStatusCode(response, 200);
+    		// Get the content of request
+    		String responseContent = response.jsonPath().getString("positionTextList");
+    		// get the value of pageNumber
+    		int nubmerPage = response.jsonPath().getInt("pageNumber");
+
+    		// verify that the search result contains the field positionText
+    		Assert.assertTrue(responseContent.contains("position"));
+    		// verify that the number page returned is the number of page entered
+    		Assert.assertEquals(nubmerPage, pageNumber);
+    	}
+        
+
+    }
+    
+    @Test()
+    public void smartAnchorsDisplayed()
+    {
+    	
+    		String documentId = uploadDocument("TestVorlage");
+    		// search for a text on a specific page
+    		Response response = Documents.getTextPosition(documentId, 1);
+
+    		// verify status of request is ok
+    		verifyStatusCode(response, 200);
+    		
+            // Récupérer la liste "positionTextList" du corps de la réponse
+            List<String> positionTextList = response.jsonPath().getList("positionTextList.text");
+
+            // Définir les textes attendus
+            String[] expectedTexts = {
+                "{{s1|radio|14|Datenschutz|f|JA}}",
+                "{{s1|radio|14|Datenschutz|f|NEIN}}",
+                "{{s1|radio|14|Einwilligung|f|JA}} Die Einwilligung wird erteilt",
+                "{{s1|radio|14|Einwilligung|f|NEIN}} Die Einwilligung wird nicht erteilt"
+            };
+
+            // Vérifier que tous les textes attendus sont présents dans la réponse
+            for (String expectedText : expectedTexts) {
+                Assert.assertTrue(positionTextList.contains(expectedText));
+            }
+
+    }
+    
+    @Test()
+    public void getPagesSearchResultAfterInitiatingSearch()
+    {
+
+        String documentId = uploadDocument("PDFReference15_v5");
+        Response response = Documents.getPagesSearchResult(documentId, "Portable");
+        verifyStatusCode(response, 500);
+
+       
+    }
+    
+    @Test()
+    public void positionTextOnDocumentMonsuperfichier()
+    {
+    	String documentId = uploadDocument("monsuperfichier");
+    	
+    	for (int pageNumber = 0; pageNumber < 23; pageNumber++) {
+    		
+    		// search for a text on a specific page
+    		Response response = Documents.getTextPosition(documentId, pageNumber);
+
+    		// verify status of request is ok
+    		verifyStatusCode(response, 200);
+    		// Get the content of request
+    		String responseContent = response.jsonPath().getString("positionTextList");
+    		// get the value of pageNumber
+    		int nubmerPage = response.jsonPath().getInt("pageNumber");
+
+    		// verify that the search result contains the field positionText
+    		Assert.assertTrue(responseContent.contains("position"));
+    		// verify that the number page returned is the number of page entered
+    		Assert.assertEquals(nubmerPage, pageNumber);
+    	}
+        
+
+    }
+    
+    @Test()
+    public void positionTextOnDocumentWith_4_AnchorsDisplayed()
+    {
+    	
+    			   String documentId = uploadDocument("contratto_94_MEZZALIRA");
+    	    		// search for a text on a specific page
+    	    		Response response = Documents.getTextPosition(documentId, 0);
+
+    	    		// verify status of request is ok
+    	    		verifyStatusCode(response, 200);
+    	    		
+    	            // Récupérer la liste "positionTextList" du corps de la réponse
+    	            List<String> positionTextList = response.jsonPath().getList("positionTextList.text");
+
+    	            // Définir les textes attendus
+    	            String[] expectedTexts = {
+    	                "{{s1|checkbox|10|f|f|ChkCondizioni}}",
+    	                "{{s1|checkbox|10|f|f|ChkPrivacy}}",
+    	                "{{s1|checkbox|10|f|f|ChkInformativa}}",
+    	                "{{s1|signature|85|37}}"
+    	            };
+
+    	            // Vérifier que tous les textes attendus sont présents dans la réponse
+    	            for (String expectedText : expectedTexts) {
+    	                Assert.assertTrue(positionTextList.contains(expectedText));
+    	            }
+    	       
+    	}
+    
+    @Test()
+    public void positionTextOnDocumentWith_1_AnchorsDisplayed()
+    {
+    	
+    			   String documentId = uploadDocument("1_RATEL_Florient");
+    	    		// search for a text on a specific page
+    	    		Response response = Documents.getTextPosition(documentId, 0);
+
+    	    		// verify status of request is ok
+    	    		verifyStatusCode(response, 200);
+    	    		
+    	            // Récupérer la liste "positionTextList" du corps de la réponse
+    	            List<String> positionTextList = response.jsonPath().getList("positionTextList.text");
+
+    	            // Définir les textes attendus
+    	            String[] expectedTexts = {
+    	                "{{s1|signature|85|37}}"
+    	            };
+
+    	            // Vérifier que tous les textes attendus sont présents dans la réponse
+    	            for (String expectedText : expectedTexts) {
+    	                Assert.assertTrue(positionTextList.contains(expectedText));
+    	            }
+    	       
+    	}
 
 }

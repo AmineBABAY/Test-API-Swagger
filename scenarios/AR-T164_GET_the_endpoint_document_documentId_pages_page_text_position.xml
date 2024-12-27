@@ -10,6 +10,8 @@
 					<include name="positionTextOnNoExistingPage" />
 					<include name="positionTextOnDocumentWithoutText" />
 					<include name="positionTextOnDocumentWithoutTextOnNoExistingPage" />
+					<include name="positionTextOnDocumentWith_4_AnchorsDisplayed" />
+					<include name="positionTextOnDocumentWith_1_AnchorsDisplayed" />
 				</methods>
 			</class>
 		</classes>
