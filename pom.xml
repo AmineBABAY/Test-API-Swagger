@@ -46,7 +46,7 @@
 		<dependency>
 			<groupId>io.qameta.allure</groupId>
 			<artifactId>allure-testng</artifactId>
-			<version>${allure-testng-version}</version>
+			<version>2.32.0</version>
 		</dependency>
 		<dependency>
             <groupId>io.qameta.allure</groupId>
